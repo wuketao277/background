@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,4 +28,11 @@ public class Customer {
     @Id
     @GeneratedValue
     private Integer id;
+
+    /**
+     * 客户中文名称
+     * 最多200个字符，不允许为空
+     */
+    @Column(length = 200, nullable = false)
+    private String customerChineseName;
 }
