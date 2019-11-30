@@ -20,4 +20,12 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @return
      */
     List<Candidate> findByEnglishName(String englishName);
+    /**
+     * 通过中文名称查找候选人
+     *
+     * @param chineseName
+     * @return
+     */
+    List<Candidate> findByChineseName(String chineseName);
+
 }

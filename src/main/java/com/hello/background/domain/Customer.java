@@ -35,4 +35,11 @@ public class Customer {
      */
     @Column(length = 200, nullable = false)
     private String customerChineseName;
+
+    /**
+     * 客户英文名称
+     * 最多200个字符，不允许为空
+     */
+    @Column(length = 200, nullable = false)
+    private String customerEnglishName;
 }

@@ -34,4 +34,10 @@ public class Candidate {
      */
     @Column(length = 100)
     private String englishName;
+
+    /**
+     * 候选人中文名字
+     */
+    @Column(length = 50)
+    private String chineseName;
 }
