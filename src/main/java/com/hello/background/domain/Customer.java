@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * 客户
@@ -19,4 +21,10 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @Entity
 public class Customer {
+    /**
+     * 新闻主键id
+     */
+    @Id
+    @GeneratedValue
+    private Integer id;
 }
