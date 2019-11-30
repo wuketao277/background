@@ -49,4 +49,22 @@ public class MyTask {
      */
     @Column(nullable = false)
     private LocalDateTime executeDateTime;
+
+    /**
+     * 任务的内容
+     */
+    @Column(length = 2000, nullable = false)
+    private String taskContent;
+
+    /**
+     * 任务的创建人ID
+     */
+    @Column(length = 50, nullable = false)
+    private String createUserId;
+
+    /**
+     * 任务的时间
+     */
+    @Column(nullable = false)
+    private LocalDateTime createDateTime;
 }
