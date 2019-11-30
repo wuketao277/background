@@ -8,7 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.Entity;
 
 /**
- * 候选人
+ * 案件
+ *
  * @author wuketao
  * @date 2019/11/30
  * @Description
@@ -18,5 +19,5 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Candidate {
+public class Case {
 }
