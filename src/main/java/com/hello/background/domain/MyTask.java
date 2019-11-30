@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.Column;
+import java.time.LocalDateTime;
 
 /**
  * 我的任务
@@ -36,4 +37,22 @@ public class MyTask {
      */
     @Column(length = 200, nullable = false)
     private String taskTitle;
+
+    /**
+     * 任务的内容
+     */
+    @Column(length = 2000, nullable = false)
+    private String taskContent;
+
+    /**
+     * 任务的创建人ID
+     */
+    @Column(length = 50, nullable = false)
+    private String createUserId;
+
+    /**
+     * 任务的时间
+     */
+    @Column(nullable = false)
+    private LocalDateTime createDateTime;
 }
