@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,4 +28,10 @@ public class Candidate {
     @Id
     @GeneratedValue
     private Integer id;
+
+    /**
+     * 候选人中文名字
+     */
+    @Column(length = 50)
+    private String chineseName;
 }
