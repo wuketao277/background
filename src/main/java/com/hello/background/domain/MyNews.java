@@ -38,7 +38,7 @@ public class MyNews {
      * 新闻优先级，1~5，1最低，5最高
      */
     @Column(nullable = false)
-    private Integer priority;
+    private String priority;
 
     /**
      * 新闻标题
@@ -60,6 +60,12 @@ public class MyNews {
      */
     @Column(length = 500)
     private String link;
+
+    /**
+     * 发布状态：true表示发布，false表示不发布
+     */
+    @Column
+    private Boolean publish;
 
     /**
      * 创建时间

@@ -1,6 +1,8 @@
 package com.hello.background.repository;
 
 import com.hello.background.domain.MyNews;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface MyNewsRepository extends JpaRepository<MyNews, Integer> {
+
+    /**
+     * 通过新闻名称或新闻内容，模糊匹配。获取分页数据
+     *
+     * @param title    新闻标题关键字
+     * @param content  新闻内容关键字
+     * @param pageable 分页信息
+     * @return
+     */
+    Page<MyNews> findByTitleLikeOrContentLike(String title, String content, Pageable pageable);
 }

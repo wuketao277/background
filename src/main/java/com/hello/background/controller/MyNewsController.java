@@ -1,13 +1,13 @@
 package com.hello.background.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.hello.background.domainservice.MyNewsDomainService;
 import com.hello.background.vo.MyNewsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 /**
  * 新闻领域对象 控制器
@@ -24,21 +24,30 @@ public class MyNewsController {
     private MyNewsDomainService myNewsDomainService;
 
     /**
-     * 创建新闻
+     * 保存新闻
      *
      * @param vo 新闻视图对象
      * @return
      */
-    @PostMapping("create")
-    public JSONObject create(MyNewsVO vo) {
-        JSONObject jo = new JSONObject();
-        if (myNewsDomainService.create(vo)) {
-            jo.put("flag", true);
-            jo.put("msg", "保存成功！");
-        } else {
-            jo.put("flag", false);
-            jo.put("msg", "保存失败！");
-        }
-        return jo;
+    @PostMapping("saveNews")
+    public MyNewsVO saveNews(@RequestBody MyNewsVO vo) {
+        vo.setCreateUserId("1");
+        vo.setCreateUserName("wuketao");
+        vo.setCreateTime(LocalDateTime.now());
+        MyNewsVO result = myNewsDomainService.saveNews(vo);
+        return result;
+    }
+
+    /**
+     * 查询新闻，分页
+     *
+     * @param search      搜索关键字
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("queryNewsPage")
+    public Page<MyNewsVO> queryNewsPage(String search, Integer currentPage, Integer pageSize) {
+        return myNewsDomainService.queryNewsPage(search, currentPage, pageSize);
     }
 }

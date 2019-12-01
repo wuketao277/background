@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * 新闻领域对象视图对象
  *
@@ -23,7 +25,7 @@ public class MyNewsVO {
     /**
      * 新闻优先级，1~5，1最低，5最高
      */
-    private Integer priority;
+    private String priority;
 
     /**
      * 新闻标题
@@ -44,6 +46,11 @@ public class MyNewsVO {
     private String link;
 
     /**
+     * 发布状态：true表示发布，false表示不发布
+     */
+    private Boolean publish;
+
+    /**
      * 创建人id
      */
     private String createUserId;
@@ -52,4 +59,9 @@ public class MyNewsVO {
      * 创建人姓名
      */
     private String createUserName;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
 }
