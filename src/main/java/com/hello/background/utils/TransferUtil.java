@@ -50,4 +50,23 @@ public class TransferUtil {
             }
         }
     }
+
+    /**
+     * 泛型类转换
+     *
+     * @param source 源对象
+     * @param t      目标类
+     * @param <T>    目标类
+     * @return 目标类实例
+     */
+    public static <T> Object transferTo(Object source, T t) {
+        Object o = null;
+        try {
+            o = ((Class) t).newInstance();
+            transfer(source, o);
+        } catch (Exception ex) {
+            log.error("{}", ex);
+        }
+        return o;
+    }
 }

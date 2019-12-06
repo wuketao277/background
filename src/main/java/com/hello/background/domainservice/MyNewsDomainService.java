@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 新闻领域服务类
@@ -90,5 +92,15 @@ public class MyNewsDomainService {
                 new PageRequest(map.getPageable().getPageNumber() + 1, map.getPageable().getPageSize()),
                 map.getTotalElements());
         return map;
+    }
+
+    /**
+     * 获取所有新闻
+     *
+     * @return
+     */
+    public List<MyNewsVO> findAll() {
+        List<MyNews> all = myNewsRepository.findAll();
+        return all.stream().map(x -> (MyNewsVO) TransferUtil.transferTo(x, MyNewsVO.class)).collect(Collectors.toList());
     }
 }

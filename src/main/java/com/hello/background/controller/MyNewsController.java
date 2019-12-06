@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 新闻领域对象 控制器
@@ -22,6 +23,16 @@ import java.time.LocalDateTime;
 public class MyNewsController {
     @Autowired
     private MyNewsDomainService myNewsDomainService;
+
+    /**
+     * 获取所有新闻
+     *
+     * @return 新闻列表
+     */
+    @GetMapping("findAll")
+    public List<MyNewsVO> findAll() {
+        return myNewsDomainService.findAll();
+    }
 
     /**
      * 保存新闻
