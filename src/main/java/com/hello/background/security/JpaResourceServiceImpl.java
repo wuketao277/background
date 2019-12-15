@@ -1,4 +1,4 @@
-package com.hello.background.service;
+package com.hello.background.security;
 
 import com.hello.background.domain.Resource;
 import com.hello.background.repository.ResourceRepository;
@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2019/11/1
  * @Description
  */
-@Service("MybatisResourceServiceImpl")
-public class MybatisResourceServiceImpl implements ResourceService {
+@Service("JpaResourceServiceImpl")
+public class JpaResourceServiceImpl implements ResourceService {
 
     @Autowired
     private ResourceRepository resourceRepository;

@@ -1,6 +1,5 @@
 package com.hello.background.security;
 
-import com.hello.background.service.ResourceService;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -22,7 +21,7 @@ import java.util.Map;
 @Service
 public class MyFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-    @Resource(name = "MybatisResourceServiceImpl")
+    @Resource(name = "JpaResourceServiceImpl")
     private ResourceService resourceService;
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
