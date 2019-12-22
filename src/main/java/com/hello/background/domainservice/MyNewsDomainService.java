@@ -82,15 +82,17 @@ public class MyNewsDomainService {
     public Page<MyNewsVO> queryNewsPage(String search, Integer currentPage, Integer pageSize) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize);
         Page<MyNews> myNewsPage = null;
+        long total = 0;
         if (Strings.isNullOrEmpty(search)) {
             myNewsPage = myNewsRepository.findAll(pageable);
+            total = myNewsRepository.count();
         } else {
             myNewsPage = myNewsRepository.findByTitleLikeOrContentLike(search, search, pageable);
+            total = myNewsRepository.countByTitleLikeOrContentLike(search, search);
         }
         Page<MyNewsVO> map = myNewsPage.map(myNews -> fromDOToVO(myNews));
         map = new PageImpl<>(map.getContent(),
-                new PageRequest(map.getPageable().getPageNumber() + 1, map.getPageable().getPageSize()),
-                map.getTotalElements());
+                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()), total);
         return map;
     }
 

@@ -25,4 +25,13 @@ public interface MyNewsRepository extends JpaRepository<MyNews, Integer> {
      * @return
      */
     Page<MyNews> findByTitleLikeOrContentLike(String title, String content, Pageable pageable);
+
+    /**
+     * 计算符合条件的记录数
+     *
+     * @param title   新闻标题关键字
+     * @param content 新闻内容关键字
+     * @return
+     */
+    long countByTitleLikeOrContentLike(String title, String content);
 }

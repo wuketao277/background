@@ -29,7 +29,7 @@ public class CandidateController {
     }
 
     @PostMapping("save")
-    public CandidateVO save(CandidateVO vo) {
+    public CandidateVO save(@RequestBody CandidateVO vo) {
         return candidateService.save(vo);
     }
 
