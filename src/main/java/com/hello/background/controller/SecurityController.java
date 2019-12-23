@@ -27,6 +27,13 @@ public class SecurityController {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * 登录
+     *
+     * @param vo
+     * @param session
+     * @return
+     */
     @RequestMapping("login")
     public JSONObject login(@RequestBody LoginUser vo, HttpSession session) {
         JSONObject jo = new JSONObject();
@@ -39,6 +46,16 @@ public class SecurityController {
             jo.put("status", false);
         }
         return jo;
+    }
+
+    /**
+     * 退出登录
+     *
+     * @param session
+     */
+    @RequestMapping("logout")
+    public void logout(HttpSession session) {
+        session.removeAttribute("user");
     }
 
     /**
