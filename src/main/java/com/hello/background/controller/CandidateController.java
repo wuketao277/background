@@ -1,7 +1,7 @@
 package com.hello.background.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hello.background.domainservice.CandidateService;
+import com.hello.background.service.CandidateService;
 import com.hello.background.vo.CandidateVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class CandidateController {
     }
 
     /**
-     * 查询新闻，分页
+     * 查询分页
      *
      * @param search      搜索关键字
      * @param currentPage 当前页

@@ -10,10 +10,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * 案件
- *
  * @author wuketao
- * @date 2019/11/30
+ * @date 2019/12/28
  * @Description
  */
 @Slf4j
@@ -21,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Case {
+public class ClientLinkMan {
     /**
      * 新闻主键id
      */
@@ -36,16 +34,40 @@ public class Case {
     private Integer clientId;
 
     /**
-     * 职位名称
+     * 联系人中文名
      */
     @Column(length = 200)
-    private String title;
+    private String chineseName;
 
     /**
-     * 描述
+     * 联系人英文名
      */
-    @Column(length = 2000)
-    private String description;
+    @Column(length = 200)
+    private String englishName;
+
+    /**
+     * 联系人地址
+     */
+    @Column(length = 200)
+    private String address;
+
+    /**
+     * 联系人邮箱
+     */
+    @Column(length = 200)
+    private String email;
+
+    /**
+     * 联系人手机号
+     */
+    @Column(length = 20)
+    private String mobileNo;
+
+    /**
+     * 联系人固话号
+     */
+    @Column(length = 20)
+    private String phoneNo;
 
     /**
      * 状态

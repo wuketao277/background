@@ -62,7 +62,7 @@ public class TransferUtil {
     public static <T> Object transferTo(Object source, T t) {
         Object o = null;
         try {
-            o = ((Class) t).newInstance();
+            o = t.getClass().newInstance();
             transfer(source, o);
         } catch (Exception ex) {
             log.error("{}", ex);

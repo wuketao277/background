@@ -1,6 +1,6 @@
 package com.hello.background.controller;
 
-import com.hello.background.domainservice.MyNewsDomainService;
+import com.hello.background.service.MyNewsDomainService;
 import com.hello.background.vo.MyNewsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

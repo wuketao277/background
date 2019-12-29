@@ -1,19 +1,21 @@
 package com.hello.background.domain;
 
-import com.hello.background.constant.CaseStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
- * 案件
+ * 客户
  *
  * @author wuketao
- * @date 2019/11/30
+ * @date 2019/12/28
  * @Description
  */
 @Slf4j
@@ -21,37 +23,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Case {
+public class Client {
     /**
-     * 新闻主键id
+     * 主键id
      */
     @Id
     @GeneratedValue
     private Integer id;
 
     /**
-     * 客户id
-     */
-    @Column
-    private Integer clientId;
-
-    /**
-     * 职位名称
+     * 中文名
      */
     @Column(length = 200)
-    private String title;
+    private String chineseName;
 
     /**
-     * 描述
+     * 英文名
      */
-    @Column(length = 2000)
-    private String description;
-
-    /**
-     * 状态
-     */
-    @Enumerated
-    private CaseStatusEnum status;
+    @Column(length = 200)
+    private String englishName;
 
     /**
      * 创建时间

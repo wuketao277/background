@@ -1,4 +1,4 @@
-package com.hello.background.domainservice;
+package com.hello.background.service;
 
 import com.google.common.base.Strings;
 import com.hello.background.domain.MyNews;

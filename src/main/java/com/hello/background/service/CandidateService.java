@@ -1,4 +1,4 @@
-package com.hello.background.domainservice;
+package com.hello.background.service;
 
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.context.AnalysisContext;
@@ -62,7 +62,7 @@ public class CandidateService {
     }
 
     /**
-     * 查询新闻，分页
+     * 查询分页
      *
      * @param search      搜索关键字
      * @param currentPage 当前页
