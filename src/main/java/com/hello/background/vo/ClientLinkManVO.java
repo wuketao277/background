@@ -1,6 +1,5 @@
 package com.hello.background.vo;
 
-import com.hello.background.constant.CaseStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,11 +54,6 @@ public class ClientLinkManVO {
      * 联系人固话号
      */
     private String phoneNo;
-
-    /**
-     * 状态
-     */
-    private CaseStatusEnum status;
 
     /**
      * 创建时间

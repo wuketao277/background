@@ -1,12 +1,14 @@
 package com.hello.background.domain;
 
-import com.hello.background.constant.CaseStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -68,12 +70,6 @@ public class ClientLinkMan {
      */
     @Column(length = 20)
     private String phoneNo;
-
-    /**
-     * 状态
-     */
-    @Enumerated
-    private CaseStatusEnum status;
 
     /**
      * 创建时间

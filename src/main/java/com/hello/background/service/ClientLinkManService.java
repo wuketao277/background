@@ -12,6 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author wuketao
  * @date 2019/12/29
@@ -26,6 +29,17 @@ public class ClientLinkManService {
         ClientLinkMan clm = (ClientLinkMan) TransferUtil.transferTo(vo, ClientLinkMan.class);
         clm = clientLinkManRepository.save(clm);
         return (ClientLinkManVO) TransferUtil.transferTo(clm, ClientLinkManVO.class);
+    }
+
+    /**
+     * 通过 客户id查找所有联系人
+     *
+     * @param clientId 客户id
+     * @return
+     */
+    public List<ClientLinkManVO> queryByClientId(Integer clientId) {
+        List<ClientLinkMan> list = clientLinkManRepository.queryByClientId(clientId);
+        return list.stream().map(man -> (ClientLinkManVO) TransferUtil.transferTo(man, ClientLinkManVO.class)).collect(Collectors.toList());
     }
 
     /**

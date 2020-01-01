@@ -45,7 +45,7 @@ public class ClientService {
             page = clientRepository.findAll(pageable);
             total = clientRepository.count();
         } else {
-            page = clientRepository.findByEnglishNameLikeOrAndChineseNameLike(search, search, pageable);
+            page = clientRepository.findByEnglishNameLikeOrChineseNameLike(search, search, pageable);
             total = clientRepository.countByEnglishNameLikeOrChineseNameLike(search, search);
         }
         Page<ClientVO> map = page.map(x -> (ClientVO) TransferUtil.transferTo(x, ClientVO.class));
@@ -53,5 +53,16 @@ public class ClientService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 通过id 获取客户对象
+     *
+     * @param id 客户id
+     * @return
+     */
+    public ClientVO queryById(Integer id) {
+        Client client = clientRepository.queryById(id);
+        return (ClientVO) TransferUtil.transferTo(client, ClientVO.class);
     }
 }

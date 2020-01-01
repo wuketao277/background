@@ -38,7 +38,7 @@ public class ClientVO {
     private LocalDateTime createTime;
 
     /**
-     * 创建人id
+     * 创建人
      */
-    private String createUserId;
+    private String createUserName;
 }

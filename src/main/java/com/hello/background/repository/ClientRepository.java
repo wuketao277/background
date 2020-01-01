@@ -16,7 +16,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Integer> {
 
-    Page<Client> findByEnglishNameLikeOrAndChineseNameLike(String englishName, String chineseName, Pageable pageable);
+    Page<Client> findByEnglishNameLikeOrChineseNameLike(String englishName, String chineseName, Pageable pageable);
 
     int countByEnglishNameLikeOrChineseNameLike(String englishName, String chineseName);
+
+    Client queryById(Integer id);
 }

@@ -53,5 +53,5 @@ public class Client {
      * 创建人id
      */
     @Column(length = 50)
-    private String createUserId;
+    private String createUserName;
 }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 客户联系人仓库
  *
@@ -19,4 +21,6 @@ public interface ClientLinkManRepository extends JpaRepository<ClientLinkMan, In
     Page<ClientLinkMan> findByEnglishNameLikeOrChineseNameLike(String englishName, String chineseName, Pageable pageable);
 
     int countByEnglishNameLikeOrChineseNameLike(String englishName, String chineseName);
+
+    List<ClientLinkMan> queryByClientId(Integer clientId);
 }

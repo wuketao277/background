@@ -1,14 +1,15 @@
 package com.hello.background.controller;
 
+import com.hello.background.domain.User;
 import com.hello.background.service.ClientLinkManService;
 import com.hello.background.vo.ClientLinkManVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author wuketao
@@ -30,20 +31,20 @@ public class ClientLinkManController {
      * @return
      */
     @PostMapping("save")
-    public ClientLinkManVO save(ClientLinkManVO vo) {
+    public ClientLinkManVO save(@RequestBody ClientLinkManVO vo, HttpSession session) {
+        vo.setCreateTime(LocalDateTime.now());
+        User user = (User) session.getAttribute("user");
+        vo.setCreateUserId(user.getUsername());
         return clientLinkManService.save(vo);
     }
 
     /**
-     * 查询分页
-     *
-     * @param search      搜索关键字
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
-     * @return
+     * 通过 客户id 查询所有联系人
+     * @param clientId 客户id
+     * @return 所有联系人
      */
-    @GetMapping("queryPage")
-    public Page<ClientLinkManVO> queryPage(String search, Integer currentPage, Integer pageSize) {
-        return clientLinkManService.queryPage(search, currentPage, pageSize);
+    @GetMapping("queryByClientId")
+    public List<ClientLinkManVO> queryByClientId(Integer clientId) {
+        return clientLinkManService.queryByClientId(clientId);
     }
 }
