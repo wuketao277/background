@@ -103,6 +103,6 @@ public class MyNewsDomainService {
      */
     public List<MyNewsVO> findAll() {
         List<MyNews> all = myNewsRepository.findAll();
-        return all.stream().map(x -> (MyNewsVO) TransferUtil.transferTo(x, MyNewsVO.class)).collect(Collectors.toList());
+        return all.stream().map(x -> TransferUtil.transferTo(x, MyNewsVO.class)).collect(Collectors.toList());
     }
 }

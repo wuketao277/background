@@ -30,9 +30,9 @@ public class CaseService {
      * @return
      */
     public CaseVO save(CaseVO vo) {
-        Case c = (Case) TransferUtil.transferTo(vo, Case.class);
+        Case c = TransferUtil.transferTo(vo, Case.class);
         c = caseRepository.save(c);
-        return (CaseVO) TransferUtil.transferTo(c, Case.class);
+        return TransferUtil.transferTo(c, CaseVO.class);
     }
 
     /**
@@ -54,7 +54,7 @@ public class CaseService {
             casePage = caseRepository.findByTitleLike(search, pageable);
             total = caseRepository.countByTitleLike(search);
         }
-        Page<CaseVO> map = casePage.map(x -> (CaseVO) TransferUtil.transferTo(x, CaseVO.class));
+        Page<CaseVO> map = casePage.map(x -> TransferUtil.transferTo(x, CaseVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);

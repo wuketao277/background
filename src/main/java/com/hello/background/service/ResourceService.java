@@ -59,14 +59,14 @@ public class ResourceService {
      * @return
      */
     private ResourceVO fromDO(Resource resource) {
-        ResourceVO vo = (ResourceVO) TransferUtil.transferTo(resource, ResourceVO.class);
+        ResourceVO vo = TransferUtil.transferTo(resource, ResourceVO.class);
         vo.setRoleVOList(new ArrayList<>());
         if (!Strings.isNullOrEmpty(resource.getRoles())) {
             List<String> roleNameList = Arrays.asList(resource.getRoles().split(","));
             roleNameList.forEach(roleName -> {
                 Role role = roleRepository.findByRoleName(roleName);
                 if (null != role) {
-                    RoleVO roleVO = (RoleVO) TransferUtil.transferTo(role, RoleVO.class);
+                    RoleVO roleVO = TransferUtil.transferTo(role, RoleVO.class);
                     vo.getRoleVOList().add(roleVO);
                 }
             });
@@ -81,7 +81,7 @@ public class ResourceService {
      * @return
      */
     private Resource fromVO(ResourceVO vo) {
-        Resource resource = (Resource) TransferUtil.transferTo(vo, Resource.class);
+        Resource resource = TransferUtil.transferTo(vo, Resource.class);
         resource.setRoles("");
         if (null != vo.getRoleVOList()) {
             vo.getRoleVOList().forEach(roleVO -> {

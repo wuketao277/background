@@ -30,9 +30,9 @@ public class RoleService {
      * @return
      */
     public RoleVO saveRole(RoleVO vo) {
-        Role role = (Role) TransferUtil.transferTo(vo, Role.class);
+        Role role = TransferUtil.transferTo(vo, Role.class);
         role = roleRepository.save(role);
-        return (RoleVO) TransferUtil.transferTo(role, RoleVO.class);
+        return TransferUtil.transferTo(role, RoleVO.class);
     }
 
     /**
@@ -51,7 +51,7 @@ public class RoleService {
         } else {
             rolePage = roleRepository.findByRoleNameLikeOrRoleDescLike(search, search, pageable);
         }
-        Page<RoleVO> map = rolePage.map(role -> (RoleVO) TransferUtil.transferTo(role, RoleVO.class));
+        Page<RoleVO> map = rolePage.map(role -> TransferUtil.transferTo(role, RoleVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber() + 1, map.getPageable().getPageSize()),
                 map.getTotalElements());

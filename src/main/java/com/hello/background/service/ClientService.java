@@ -24,9 +24,9 @@ public class ClientService {
     private ClientRepository clientRepository;
 
     public ClientVO save(ClientVO vo) {
-        Client client = (Client) TransferUtil.transferTo(vo, Client.class);
+        Client client = TransferUtil.transferTo(vo, Client.class);
         client = clientRepository.save(client);
-        return (ClientVO) TransferUtil.transferTo(client, ClientVO.class);
+        return TransferUtil.transferTo(client, ClientVO.class);
     }
 
     /**
@@ -48,7 +48,7 @@ public class ClientService {
             page = clientRepository.findByEnglishNameLikeOrChineseNameLike(search, search, pageable);
             total = clientRepository.countByEnglishNameLikeOrChineseNameLike(search, search);
         }
-        Page<ClientVO> map = page.map(x -> (ClientVO) TransferUtil.transferTo(x, ClientVO.class));
+        Page<ClientVO> map = page.map(x -> TransferUtil.transferTo(x, ClientVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
@@ -63,6 +63,6 @@ public class ClientService {
      */
     public ClientVO queryById(Integer id) {
         Client client = clientRepository.queryById(id);
-        return (ClientVO) TransferUtil.transferTo(client, ClientVO.class);
+        return TransferUtil.transferTo(client, ClientVO.class);
     }
 }

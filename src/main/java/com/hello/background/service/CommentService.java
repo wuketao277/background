@@ -22,13 +22,13 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     public CommentVO save(CommentVO vo) {
-        Comment comment = (Comment) TransferUtil.transferTo(vo, Comment.class);
+        Comment comment = TransferUtil.transferTo(vo, Comment.class);
         Comment resultComment = commentRepository.save(comment);
-        return (CommentVO) TransferUtil.transferTo(resultComment, CommentVO.class);
+        return TransferUtil.transferTo(resultComment, CommentVO.class);
     }
 
     public List<CommentVO> findAllByCandidateId(Integer candidateId) {
         List<Comment> allByCandidateId = commentRepository.findAllByCandidateId(candidateId);
-        return allByCandidateId.stream().map(comment -> (CommentVO) TransferUtil.transferTo(comment, CommentVO.class)).collect(Collectors.toList());
+        return allByCandidateId.stream().map(comment -> TransferUtil.transferTo(comment, CommentVO.class)).collect(Collectors.toList());
     }
 }

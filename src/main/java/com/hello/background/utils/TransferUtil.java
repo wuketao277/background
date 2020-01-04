@@ -59,10 +59,10 @@ public class TransferUtil {
      * @param <T>    目标类
      * @return 目标类实例
      */
-    public static <T> Object transferTo(Object source, T t) {
-        Object o = null;
+    public static <T> T transferTo(Object source, Class<T> t) {
+        T o = null;
         try {
-            o = ((Class) t).newInstance();
+            o = t.newInstance();
             transfer(source, o);
         } catch (Exception ex) {
             log.error("{}", ex);

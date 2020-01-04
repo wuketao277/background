@@ -26,9 +26,9 @@ public class ClientLinkManService {
     private ClientLinkManRepository clientLinkManRepository;
 
     public ClientLinkManVO save(ClientLinkManVO vo) {
-        ClientLinkMan clm = (ClientLinkMan) TransferUtil.transferTo(vo, ClientLinkMan.class);
+        ClientLinkMan clm = TransferUtil.transferTo(vo, ClientLinkMan.class);
         clm = clientLinkManRepository.save(clm);
-        return (ClientLinkManVO) TransferUtil.transferTo(clm, ClientLinkManVO.class);
+        return TransferUtil.transferTo(clm, ClientLinkManVO.class);
     }
 
     /**
@@ -39,7 +39,7 @@ public class ClientLinkManService {
      */
     public List<ClientLinkManVO> queryByClientId(Integer clientId) {
         List<ClientLinkMan> list = clientLinkManRepository.queryByClientId(clientId);
-        return list.stream().map(man -> (ClientLinkManVO) TransferUtil.transferTo(man, ClientLinkManVO.class)).collect(Collectors.toList());
+        return list.stream().map(man -> TransferUtil.transferTo(man, ClientLinkManVO.class)).collect(Collectors.toList());
     }
 
     /**
@@ -61,7 +61,7 @@ public class ClientLinkManService {
             casePage = clientLinkManRepository.findByEnglishNameLikeOrChineseNameLike(search, search, pageable);
             total = clientLinkManRepository.countByEnglishNameLikeOrChineseNameLike(search, search);
         }
-        Page<ClientLinkManVO> map = casePage.map(x -> (ClientLinkManVO) TransferUtil.transferTo(x, ClientLinkManVO.class));
+        Page<ClientLinkManVO> map = casePage.map(x -> TransferUtil.transferTo(x, ClientLinkManVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);

@@ -47,8 +47,8 @@ public class CandidateService {
      * @return
      */
     public CandidateVO save(CandidateVO vo) {
-        Candidate candidate = (Candidate) TransferUtil.transferTo(vo, Candidate.class);
-        return (CandidateVO) TransferUtil.transferTo(candidateRepository.save(candidate), CandidateVO.class);
+        Candidate candidate = TransferUtil.transferTo(vo, Candidate.class);
+        return TransferUtil.transferTo(candidateRepository.save(candidate), CandidateVO.class);
     }
 
 
@@ -80,7 +80,7 @@ public class CandidateService {
             cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(search, search, search, pageable);
             total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(search, search, search);
         }
-        Page<CandidateVO> map = cadidatePage.map(x -> (CandidateVO) TransferUtil.transferTo(x, CandidateVO.class));
+        Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(x, CandidateVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
@@ -94,7 +94,7 @@ public class CandidateService {
      */
     public List<CandidateVO> findAll() {
         List<Candidate> all = candidateRepository.findAll();
-        return all.stream().map(x -> (CandidateVO) TransferUtil.transferTo(x, CandidateVO.class)).collect(Collectors.toList());
+        return all.stream().map(x -> TransferUtil.transferTo(x, CandidateVO.class)).collect(Collectors.toList());
     }
 
     public JSONObject analysisUploadFile(HttpServletRequest request) {
