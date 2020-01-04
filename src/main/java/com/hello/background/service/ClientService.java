@@ -12,6 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author wuketao
  * @date 2019/12/29
@@ -64,5 +67,15 @@ public class ClientService {
     public ClientVO queryById(Integer id) {
         Client client = clientRepository.queryById(id);
         return TransferUtil.transferTo(client, ClientVO.class);
+    }
+
+    /**
+     * 获取全部客户信息
+     *
+     * @return
+     */
+    public List<ClientVO> findAll() {
+        List<Client> all = clientRepository.findAll();
+        return all.stream().map(c -> TransferUtil.transferTo(c, ClientVO.class)).collect(Collectors.toList());
     }
 }

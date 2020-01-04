@@ -1,8 +1,8 @@
 package com.hello.background.controller;
 
-import com.hello.background.domain.User;
 import com.hello.background.service.CommentService;
 import com.hello.background.vo.CommentVO;
+import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,7 @@ public class CommentController {
 
     @RequestMapping("save")
     public CommentVO save(@RequestBody CommentVO vo, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        UserVO user = (UserVO) session.getAttribute("user");
         vo.setInputTime(LocalDateTime.now());
         vo.setInputUserName(user.getRealname());
         return commentService.save(vo);

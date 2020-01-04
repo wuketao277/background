@@ -1,8 +1,8 @@
 package com.hello.background.controller;
 
-import com.hello.background.domain.User;
 import com.hello.background.service.ClientLinkManService;
 import com.hello.background.vo.ClientLinkManVO;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class ClientLinkManController {
     @PostMapping("save")
     public ClientLinkManVO save(@RequestBody ClientLinkManVO vo, HttpSession session) {
         vo.setCreateTime(LocalDateTime.now());
-        User user = (User) session.getAttribute("user");
+        UserVO user = (UserVO) session.getAttribute("user");
         vo.setCreateUserId(user.getUsername());
         return clientLinkManService.save(vo);
     }

@@ -1,8 +1,8 @@
 package com.hello.background.controller;
 
-import com.hello.background.domain.User;
 import com.hello.background.service.ClientService;
 import com.hello.background.vo.ClientVO;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author wuketao
@@ -31,7 +32,7 @@ public class ClientController {
      */
     @PostMapping("save")
     public ClientVO save(@RequestBody ClientVO vo, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        UserVO user = (UserVO) session.getAttribute("user");
         vo.setCreateTime(LocalDateTime.now());
         vo.setCreateUserName(user.getUsername());
         return clientService.save(vo);
@@ -59,5 +60,15 @@ public class ClientController {
     @GetMapping("queryById")
     public ClientVO queryById(Integer id) {
         return clientService.queryById(id);
+    }
+
+    /**
+     * 获取全部
+     *
+     * @return
+     */
+    @GetMapping("findAll")
+    public List<ClientVO> findAll() {
+        return clientService.findAll();
     }
 }

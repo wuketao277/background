@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.hello.background.domain.User;
 import com.hello.background.repository.UserRepository;
 import com.hello.background.security.ResourceService;
+import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.LoginUser;
+import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +41,10 @@ public class SecurityController {
         JSONObject jo = new JSONObject();
         User user = userRepository.findByUsernameAndPasswordAndEnabled(vo.getLoginName(), vo.getPassword(), true);
         if (null != user) {
+            UserVO userVO = TransferUtil.transferTo(user, UserVO.class);
             jo.put("status", true);
-            jo.put("data", user);
-            session.setAttribute("user", user);
+            jo.put("data", userVO);
+            session.setAttribute("user", userVO);
         } else {
             jo.put("status", false);
         }
