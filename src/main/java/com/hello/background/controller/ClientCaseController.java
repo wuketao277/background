@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @RestController
 @RequestMapping("case")
-public class CaseController {
+public class ClientCaseController {
     @Autowired
     private CaseService caseService;
 

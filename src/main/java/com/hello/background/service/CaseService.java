@@ -1,8 +1,10 @@
 package com.hello.background.service;
 
 import com.google.common.base.Strings;
+import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.CaseRepository;
+import com.hello.background.repository.ClientRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ClientCaseVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author wuketao
@@ -22,6 +26,17 @@ public class CaseService {
 
     @Autowired
     private CaseRepository caseRepository;
+    @Autowired
+    private ClientRepository clientRepository;
+
+    private ClientCaseVO fromDoToVo(ClientCase clientCase) {
+        ClientCaseVO vo = TransferUtil.transferTo(clientCase, ClientCaseVO.class);
+        Optional<Client> clientOptional = clientRepository.findById(clientCase.getClientId());
+        if (clientOptional.isPresent()) {
+            vo.setClientName(clientOptional.get().getChineseName());
+        }
+        return vo;
+    }
 
     /**
      * 保存
@@ -32,7 +47,7 @@ public class CaseService {
     public ClientCaseVO save(ClientCaseVO vo) {
         ClientCase c = TransferUtil.transferTo(vo, ClientCase.class);
         c = caseRepository.save(c);
-        return TransferUtil.transferTo(c, ClientCaseVO.class);
+        return fromDoToVo(c);
     }
 
     /**
@@ -54,7 +69,7 @@ public class CaseService {
             casePage = caseRepository.findByTitleLike(search, pageable);
             total = caseRepository.countByTitleLike(search);
         }
-        Page<ClientCaseVO> map = casePage.map(x -> TransferUtil.transferTo(x, ClientCaseVO.class));
+        Page<ClientCaseVO> map = casePage.map(x -> fromDoToVo(x));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);

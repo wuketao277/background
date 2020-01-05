@@ -29,6 +29,11 @@ public class ClientCaseVO {
     private Integer clientId;
 
     /**
+     * 客户名称
+     */
+    private String clientName;
+
+    /**
      * 职位名称
      */
     private String title;

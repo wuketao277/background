@@ -26,6 +26,11 @@ public class ClientLinkManVO {
     private Integer clientId;
 
     /**
+     * 客户姓名
+     */
+    private String clientName;
+
+    /**
      * 联系人中文名
      */
     private String chineseName;
