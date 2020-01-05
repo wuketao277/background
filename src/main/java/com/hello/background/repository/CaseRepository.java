@@ -1,6 +1,6 @@
 package com.hello.background.repository;
 
-import com.hello.background.domain.Case;
+import com.hello.background.domain.ClientCase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
  * @Description
  */
 @Repository
-public interface CaseRepository extends JpaRepository<Case, Integer> {
+public interface CaseRepository extends JpaRepository<ClientCase, Integer> {
 
-    Page<Case> findByTitleLike(String title, Pageable pageable);
+    Page<ClientCase> findByTitleLike(String title, Pageable pageable);
 
     int countByTitleLike(String title);
 }

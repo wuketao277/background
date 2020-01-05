@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Case {
+public class ClientCase {
     /**
      * 新闻主键id
      */

@@ -1,14 +1,15 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.CaseService;
-import com.hello.background.vo.CaseVO;
+import com.hello.background.vo.ClientCaseVO;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 
 /**
  * @author wuketao
@@ -23,7 +24,10 @@ public class CaseController {
     private CaseService caseService;
 
     @PostMapping("save")
-    public CaseVO save(CaseVO vo) {
+    public ClientCaseVO save(@RequestBody ClientCaseVO vo, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        vo.setCreateUserId(userVO.getUsername());
+        vo.setCreateTime(LocalDateTime.now());
         return caseService.save(vo);
     }
 
@@ -36,7 +40,7 @@ public class CaseController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<CaseVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+    public Page<ClientCaseVO> queryPage(String search, Integer currentPage, Integer pageSize) {
         return caseService.queryPage(search, currentPage, pageSize);
     }
 }

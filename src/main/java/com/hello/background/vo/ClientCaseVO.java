@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CaseVO {
+public class ClientCaseVO {
     /**
      * 新闻主键id
      */
