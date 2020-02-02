@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +40,21 @@ public class CandidateService {
 
     @Autowired
     private CandidateRepository candidateRepository;
+
+    /**
+     * 通过id，查询候选人信息
+     *
+     * @param id 候选人主键
+     * @return
+     */
+    public CandidateVO findById(Integer id) {
+        Optional<Candidate> candidateOptional = candidateRepository.findById(id);
+        if (candidateOptional.isPresent()) {
+            Candidate candidate = candidateOptional.get();
+            return TransferUtil.transferTo(candidate, CandidateVO.class);
+        }
+        return null;
+    }
 
     /**
      * 保存候选人
