@@ -37,9 +37,14 @@ public class MyTaskVO {
     private String taskTitle;
 
     /**
-     * 任务的执行人ID
+     * 任务的执行人登录名
      */
-    private String executeUserId;
+    private String executeUserName;
+
+    /**
+     * 任务的执行人真实姓名
+     */
+    private String executeRealName;
 
     /**
      * 任务的执行日期
@@ -52,9 +57,14 @@ public class MyTaskVO {
     private String taskContent;
 
     /**
-     * 任务的创建人ID
+     * 任务的创建人登录姓名
      */
-    private String createUserId;
+    private String createUserName;
+
+    /**
+     * 任务的创建人真实姓名
+     */
+    private String createRealName;
 
     /**
      * 任务的时间

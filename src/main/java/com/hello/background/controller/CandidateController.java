@@ -28,9 +28,26 @@ public class CandidateController {
         return candidateService.analysisUploadFile(request);
     }
 
+    /**
+     * 保存候选人信息
+     *
+     * @param vo
+     * @return
+     */
     @PostMapping("save")
     public CandidateVO save(@RequestBody CandidateVO vo) {
         return candidateService.save(vo);
+    }
+
+    /**
+     * 通过主键查找候选人信息
+     *
+     * @param id 主键
+     * @return 候选人信息
+     */
+    @GetMapping("findById")
+    public CandidateVO findById(@RequestParam Integer id) {
+        return candidateService.findById(id);
     }
 
     @GetMapping("deleteById")

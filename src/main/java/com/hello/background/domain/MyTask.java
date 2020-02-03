@@ -46,10 +46,16 @@ public class MyTask {
     private String taskTitle;
 
     /**
-     * 任务的执行人ID
+     * 任务的执行人登录名
      */
     @Column(length = 50, nullable = false)
-    private String executeUserId;
+    private String executeUserName;
+
+    /**
+     * 任务的执行人真实姓名
+     */
+    @Column(length = 50, nullable = false)
+    private String executeRealName;
 
     /**
      * 任务的执行日期
@@ -64,13 +70,19 @@ public class MyTask {
     private String taskContent;
 
     /**
-     * 任务的创建人ID
+     * 任务的创建人登录名
      */
     @Column(length = 50, nullable = false)
-    private String createUserId;
+    private String createUserName;
 
     /**
-     * 任务的时间
+     * 任务的创建人真实姓名
+     */
+    @Column(length = 50, nullable = false)
+    private String createRealName;
+
+    /**
+     * 任务的创建时间
      */
     @Column(nullable = false)
     private LocalDateTime createDateTime;
