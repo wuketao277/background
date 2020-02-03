@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Repository
 public interface MyTaskRepository extends JpaRepository<MyTask, Integer> {
+
     /**
      * 通过后续人id查询
      * @param relativeCandidateId

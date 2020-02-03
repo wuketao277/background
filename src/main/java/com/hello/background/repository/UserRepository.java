@@ -4,6 +4,8 @@ import com.hello.background.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author wuketao
  * @date 2019/12/6
@@ -20,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByUsername(String userName);
 
     User findByUsernameAndPasswordAndEnabled(String userName, String password, boolean enabled);
+
+    List<User> findByEnabled(boolean enabled);
 }

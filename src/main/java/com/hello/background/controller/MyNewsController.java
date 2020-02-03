@@ -59,6 +59,7 @@ public class MyNewsController {
      */
     @GetMapping("queryNewsPage")
     public Page<MyNewsVO> queryNewsPage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
         return myNewsDomainService.queryNewsPage(search, currentPage, pageSize);
     }
 }

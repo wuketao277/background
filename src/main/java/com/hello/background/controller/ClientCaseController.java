@@ -41,6 +41,7 @@ public class ClientCaseController {
      */
     @GetMapping("queryPage")
     public Page<ClientCaseVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
         return caseService.queryPage(search, currentPage, pageSize);
     }
 }

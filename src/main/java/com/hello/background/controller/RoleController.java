@@ -42,6 +42,7 @@ public class RoleController {
      */
     @GetMapping("queryRolePage")
     public Page<RoleVO> queryRolePage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
         return roleService.queryRoleVOPage(search, currentPage, pageSize);
     }
 

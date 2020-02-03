@@ -97,6 +97,7 @@ public class MyTaskController {
      */
     @GetMapping("queryMyTaskPage")
     public Page<MyTaskVO> queryMyTaskPage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
         return myTaskService.queryMyTaskPage(search, currentPage, pageSize);
     }
 }

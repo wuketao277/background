@@ -56,6 +56,7 @@ public class ResourceController {
      */
     @GetMapping("queryResourcePage")
     public Page<ResourceVO> queryResourcePage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
         return resourceService.queryResourceVOPage(search, currentPage, pageSize);
     }
 }

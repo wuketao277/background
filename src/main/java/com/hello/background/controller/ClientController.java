@@ -48,6 +48,7 @@ public class ClientController {
      */
     @GetMapping("queryPage")
     public Page<ClientVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
         return clientService.queryPage(search, currentPage, pageSize);
     }
 
