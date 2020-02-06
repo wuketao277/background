@@ -23,6 +23,12 @@ public class CandidateController {
     @Autowired
     private CandidateService candidateService;
 
+    /**
+     * 上传文件
+     *
+     * @param request
+     * @return
+     */
     @PostMapping("uploadFile")
     public JSONObject uploadFile(HttpServletRequest request) {
         return candidateService.analysisUploadFile(request);
