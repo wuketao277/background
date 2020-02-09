@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @Description
  */
 @Service
-public class MyNewsDomainService {
+public class MyNewsService {
 
     @Autowired
     private MyNewsRepository myNewsRepository;
@@ -104,5 +104,15 @@ public class MyNewsDomainService {
     public List<MyNewsVO> findAll() {
         List<MyNews> all = myNewsRepository.findAll();
         return all.stream().map(x -> TransferUtil.transferTo(x, MyNewsVO.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取最后发布的新闻
+     *
+     * @return
+     */
+    public List<MyNewsVO> findTop10ByPublishOrderByCreateTimeDesc() {
+        List<MyNews> list = myNewsRepository.findTop10ByPublishOrderByCreateTimeDesc(true);
+        return list.stream().map(news -> TransferUtil.transferTo(news, MyNewsVO.class)).collect(Collectors.toList());
     }
 }

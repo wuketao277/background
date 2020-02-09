@@ -69,4 +69,20 @@ public class SecurityController {
         resourceService.updateResourceMap();
         return true;
     }
+
+    /**
+     * 检查是否登录
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping("checkLogin")
+    public Boolean checkLogin(HttpSession session) {
+        Object objUser = session.getAttribute("user");
+        if (null != objUser) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

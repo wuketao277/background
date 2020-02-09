@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 新闻领域对象 仓库
  *
@@ -34,4 +36,12 @@ public interface MyNewsRepository extends JpaRepository<MyNews, Integer> {
      * @return
      */
     long countByTitleLikeOrContentLike(String title, String content);
+
+    /**
+     * 获取最后发布的10条新闻
+     *
+     * @param publish
+     * @return
+     */
+    List<MyNews> findTop10ByPublishOrderByCreateTimeDesc(Boolean publish);
 }

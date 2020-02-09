@@ -1,6 +1,6 @@
 package com.hello.background.controller;
 
-import com.hello.background.service.MyNewsDomainService;
+import com.hello.background.service.MyNewsService;
 import com.hello.background.vo.MyNewsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("mynews")
 public class MyNewsController {
     @Autowired
-    private MyNewsDomainService myNewsDomainService;
+    private MyNewsService myNewsDomainService;
 
     /**
      * 获取所有新闻
@@ -61,5 +61,15 @@ public class MyNewsController {
     public Page<MyNewsVO> queryNewsPage(String search, Integer currentPage, Integer pageSize) {
         search = "%" + search + "%";
         return myNewsDomainService.queryNewsPage(search, currentPage, pageSize);
+    }
+
+    /**
+     * 获取前10条
+     *
+     * @return
+     */
+    @GetMapping("findTop10")
+    public List<MyNewsVO> findTop10() {
+        return myNewsDomainService.findTop10ByPublishOrderByCreateTimeDesc();
     }
 }
