@@ -48,7 +48,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @param pageable
      * @return
      */
-    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNo(String chineseName, String englishName, String companyName, String phoneNo, Pageable pageable);
+    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(String chineseName, String englishName, String companyName, String phoneNo, Pageable pageable);
 
     /**
      * 计算符合条件的总记录数
@@ -57,6 +57,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @param englishName
      * @return
      */
-    long countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(String chineseName, String englishName, String companyName);
+    long countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(String chineseName, String englishName, String companyName, String phoneNo);
 
 }

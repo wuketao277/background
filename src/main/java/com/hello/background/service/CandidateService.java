@@ -93,8 +93,8 @@ public class CandidateService {
             cadidatePage = candidateRepository.findAll(pageable);
             total = candidateRepository.count();
         } else {
-            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNo(search, search, search, search, pageable);
-            total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(search, search, search);
+            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(search, search, search, search, pageable);
+            total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(search, search, search, search);
         }
         Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(x, CandidateVO.class));
         map = new PageImpl<>(map.getContent(),
