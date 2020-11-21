@@ -93,7 +93,7 @@ public class CandidateService {
             cadidatePage = candidateRepository.findAll(pageable);
             total = candidateRepository.count();
         } else {
-            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(search, search, search, pageable);
+            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNo(search, search, search, search, pageable);
             total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(search, search, search);
         }
         Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(x, CandidateVO.class));

@@ -41,6 +41,16 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
     Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLike(String chineseName, String englishName, String companyName, Pageable pageable);
 
     /**
+     * 获取符合条件的分页记录
+     *
+     * @param chineseName
+     * @param englishName
+     * @param pageable
+     * @return
+     */
+    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNo(String chineseName, String englishName, String companyName, String phoneNo, Pageable pageable);
+
+    /**
      * 计算符合条件的总记录数
      *
      * @param chineseName
