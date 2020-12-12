@@ -142,16 +142,23 @@ public class CandidateService {
                             result.put("msg", "Excel文件中的列与目标对象的属性不一致");
                         } else {
                             Candidate candidate = new Candidate();
-                            candidate.setChineseName(object.get(0));//中文名
-                            candidate.setEnglishName(object.get(1));// 英文名
-                            if (!StringUtils.isEmpty(object.get(2))) { // 年龄
-                                candidate.setAge(Integer.parseInt(object.get(2)));
+                            candidate.setDate(object.get(0));//日期
+                            candidate.setChineseName(object.get(1));//中文名字
+                            candidate.setEnglishName(object.get(2));//英文名字
+                            if (!StringUtils.isEmpty(object.get(3))) { // 年龄
+                                candidate.setAge(Integer.parseInt(object.get(3)));
                             }
-                            candidate.setPhoneNo(object.get(3)); // 电话
-                            candidate.setEmail(object.get(4)); // 邮箱
-                            candidate.setCompanyName(object.get(5)); // 公司
-                            candidate.setDepartment(object.get(6));// 部门
-                            candidate.setTitle(object.get(7));// 职位
+                            candidate.setPhoneNo(object.get(4)); // 电话
+                            candidate.setEmail(object.get(5)); // 邮箱
+                            candidate.setCompanyName(object.get(6)); // 公司
+                            candidate.setDepartment(object.get(7));// 部门
+                            candidate.setTitle(object.get(8));// 职位
+                            candidate.setSchoolName(object.get(9));// 学校名称
+                            candidate.setCurrentAddress(object.get(10));// 现地址
+                            candidate.setFutureAddress(object.get(11));// 期望地址
+                            candidate.setCurrentMoney(object.get(12));// 现薪资
+                            candidate.setFutureMoney(object.get(13));// 期望薪资
+                            candidate.setRemark(object.get(14));// 备注
                             candidateRepository.save(candidate);
                         }
                     }

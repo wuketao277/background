@@ -28,6 +28,12 @@ public class Candidate {
     private Integer id;
 
     /**
+     * 日期
+     */
+    @Column(length = 20)
+    private String date;
+
+    /**
      * 中文名字
      */
     @Column(length = 50)
@@ -74,5 +80,41 @@ public class Candidate {
      */
     @Column(length = 200)
     private String title;
+
+    /**
+     * 学校名称
+     */
+    @Column(length = 100)
+    private String schoolName;
+
+    /**
+     * 现地址
+     */
+    @Column(length = 100)
+    private String currentAddress;
+
+    /**
+     * 期望地址
+     */
+    @Column(length = 100)
+    private String futureAddress;
+
+    /**
+     * 现薪资
+     */
+    @Column(length = 100)
+    private String currentMoney;
+
+    /**
+     * 期望薪资
+     */
+    @Column(length = 100)
+    private String futureMoney;
+
+    /**
+     * 备注
+     */
+    @Column(length = 2000)
+    private String remark;
 
 }

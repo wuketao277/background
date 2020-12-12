@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+
 /**
  * 候选人
  *
@@ -21,14 +24,19 @@ public class CandidateVO {
     private Integer id;
 
     /**
-     * 英文名字
+     * 日期
      */
-    private String englishName;
+    private String date;
 
     /**
      * 中文名字
      */
     private String chineseName;
+
+    /**
+     * 英文名字
+     */
+    private String englishName;
 
     /**
      * 年龄
@@ -59,4 +67,34 @@ public class CandidateVO {
      * 职位名称
      */
     private String title;
+
+    /**
+     * 学校名称
+     */
+    private String schoolName;
+
+    /**
+     * 现地址
+     */
+    private String currentAddress;
+
+    /**
+     * 期望地址
+     */
+    private String futureAddress;
+
+    /**
+     * 现薪资
+     */
+    private String currentMoney;
+
+    /**
+     * 期望薪资
+     */
+    private String futureMoney;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }
