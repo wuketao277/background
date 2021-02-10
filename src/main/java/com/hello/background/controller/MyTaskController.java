@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,6 +85,9 @@ public class MyTaskController {
     @GetMapping("queryTodayTaskForMe")
     public List<MyTaskVO> queryTodayTaskForMe(HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
+        if (null == userVO) {
+            return Collections.emptyList();
+        }
         return myTaskService.findByExecuteUserNameAndExecuteDate(userVO.getUsername(), LocalDate.now());
     }
 
