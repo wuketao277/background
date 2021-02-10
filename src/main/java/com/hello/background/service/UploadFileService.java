@@ -55,9 +55,11 @@ public class UploadFileService {
             Integer tableId = new Integer(parameterMap.get("tableId")[0]);
             String tableName = parameterMap.get("tableName")[0];
             Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+            log.info("fileStorePath:" + fileStorePath);
             if (!fileMap.isEmpty() && !StringUtils.isNullOrEmpty(fileStorePath)) {
                 for (Map.Entry<String, MultipartFile> entry : fileMap.entrySet()) {
                     String originalFileName = entry.getValue().getOriginalFilename();
+                    log.info("originalFileName:" + originalFileName);
                     String fileSuffix = originalFileName.lastIndexOf(".") > -1 ? originalFileName.substring(originalFileName.lastIndexOf(".")) : "";
                     //获取item中的上传文件的输入流
                     try (InputStream inputStream = entry.getValue().getInputStream()) {
@@ -85,6 +87,8 @@ public class UploadFileService {
                         uploadFile.setRelativeTableName(tableName);
                         UploadFile saved = uploadFileRepository.save(uploadFile);
                         list.add(TransferUtil.transferTo(saved, UploadFileVO.class));
+                    } catch (Exception ex) {
+                        log.error("{}", ex);
                     }
                 }
             }
