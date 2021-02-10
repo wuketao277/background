@@ -5,8 +5,10 @@ import com.hello.background.repository.UploadFileRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.UploadFileVO;
 import com.hello.background.vo.UserVO;
+import com.mysql.jdbc.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
@@ -36,7 +38,8 @@ public class UploadFileService {
     /**
      * 文件仓库路径
      */
-    private final String fileStorePath = "/Users/wuketao/Public/upload_file/";
+    @Value("${file_store_path}")
+    private String fileStorePath = null;
 
     /**
      * 上传文件
@@ -52,13 +55,16 @@ public class UploadFileService {
             Integer tableId = new Integer(parameterMap.get("tableId")[0]);
             String tableName = parameterMap.get("tableName")[0];
             Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-            if (!fileMap.isEmpty()) {
+            if (!fileMap.isEmpty() && !StringUtils.isNullOrEmpty(fileStorePath)) {
                 for (Map.Entry<String, MultipartFile> entry : fileMap.entrySet()) {
                     String originalFileName = entry.getValue().getOriginalFilename();
                     String fileSuffix = originalFileName.lastIndexOf(".") > -1 ? originalFileName.substring(originalFileName.lastIndexOf(".")) : "";
                     //获取item中的上传文件的输入流
                     try (InputStream inputStream = entry.getValue().getInputStream()) {
                         String uuid = UUID.randomUUID().toString();
+                        if (!fileStorePath.endsWith("/")) {
+                            fileStorePath += "/";
+                        }
                         OutputStream outputStream = new FileOutputStream(fileStorePath + uuid + fileSuffix);
                         int bytesWritten = 0;
                         int byteCount = 0;
@@ -100,10 +106,13 @@ public class UploadFileService {
             BufferedOutputStream bos = null;
 
             UploadFile uploadFile = uploadFileRepository.findByUuid(uuid);
-            if (null != uploadFile) {
+            if (null != uploadFile && !StringUtils.isNullOrEmpty(fileStorePath)) {
                 String originalFileName = uploadFile.getOriginalFileName();
                 String fileSuffix = originalFileName.lastIndexOf(".") > -1 ? originalFileName.substring(originalFileName.lastIndexOf(".")) : "";
                 //获取下载文件路径
+                if (!fileStorePath.endsWith("/")) {
+                    fileStorePath += "/";
+                }
                 String downLoadPath = fileStorePath + uuid + fileSuffix;
                 //获取文件的长度
                 long fileLength = new File(downLoadPath).length();
