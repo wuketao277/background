@@ -33,6 +33,11 @@ public class CommentVO {
     private String inputUserName;
 
     /**
+     * 阶段
+     */
+    private String phase;
+
+    /**
      * 内容
      */
     private String content;

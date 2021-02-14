@@ -43,6 +43,12 @@ public class Comment {
     private String inputUserName;
 
     /**
+     * 阶段
+     */
+    @Column(length = 20)
+    private String phase;
+
+    /**
      * 内容
      */
     @Column(length = 2000)
