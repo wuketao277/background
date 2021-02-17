@@ -6,6 +6,7 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * @date 2020/2/3
  * @Description
  */
+@Transactional
 @Service
 public class UserService {
 

@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import java.util.Optional;
  * @date 2019/12/29
  * @Description
  */
+@Transactional
 @Service
 public class CaseService {
 
@@ -66,8 +68,8 @@ public class CaseService {
             casePage = caseRepository.findAll(pageable);
             total = caseRepository.count();
         } else {
-            casePage = caseRepository.findByTitleLike(search, pageable);
-            total = caseRepository.countByTitleLike(search);
+            casePage = caseRepository.findByTitleLikeOrDescriptionLike(search, search, pageable);
+            total = caseRepository.countByTitleLikeOrDescriptionLike(search, search);
         }
         Page<ClientCaseVO> map = casePage.map(x -> fromDoToVo(x));
         map = new PageImpl<>(map.getContent(),

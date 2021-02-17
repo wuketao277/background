@@ -17,6 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -27,6 +29,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -34,12 +37,17 @@ import java.util.stream.Collectors;
  * @date 2019/12/14
  * @Description
  */
+@Transactional
 @Slf4j
 @Service
 public class CandidateService {
 
     @Autowired
     private CandidateRepository candidateRepository;
+    @Autowired
+    private ResumeService resumeService;
+    @Autowired
+    private CommentService commentService;
 
     /**
      * 通过id，查询候选人信息
@@ -93,14 +101,51 @@ public class CandidateService {
             cadidatePage = candidateRepository.findAll(pageable);
             total = candidateRepository.count();
         } else {
-            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(search, search, search, search, pageable);
-            total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(search, search, search, search);
+            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search, pageable);
+            total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search);
         }
         Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(x, CandidateVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 查询分页
+     *
+     * @param search 搜索关键字
+     * @return
+     */
+    public List<CandidateVO> queryCandidate(String search) {
+        // 首先搜索候选人信息
+        List<Candidate> candidateList = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search);
+        List<Integer> candidateIdList = candidateList.stream().map(x -> x.getId()).collect(Collectors.toList());
+        // 在简历中搜索关键字
+        Set<Integer> resumeCandidateIdSet = resumeService.findByContentLikeOrderByCandidateIdAscIdAsc(search).stream().map(x -> x.getCandidateId()).collect(Collectors.toSet());
+        // 删除重复的候选人信息
+        resumeCandidateIdSet.removeIf(x -> candidateIdList.contains(x));
+        // 添加新的候选人信息
+        candidateIdList.addAll(resumeCandidateIdSet);
+        for (Integer id : resumeCandidateIdSet) {
+            Optional<Candidate> candidateOptional = candidateRepository.findById(id);
+            if (candidateOptional.isPresent()) {
+                candidateList.add(candidateOptional.get());
+            }
+        }
+        // 在评论中搜索关键字
+        Set<Integer> commentCandidateIdSet = commentService.findByContentLikeOrderByCandidateIdAscIdAsc(search).stream().map(x -> x.getCandidateId()).collect(Collectors.toSet());
+        // 删除重复的候选人信息
+        commentCandidateIdSet.removeIf(x -> candidateIdList.contains(x));
+        // 添加新的候选人信息
+        candidateIdList.addAll(commentCandidateIdSet);
+        for (Integer id : commentCandidateIdSet) {
+            Optional<Candidate> candidateOptional = candidateRepository.findById(id);
+            if (candidateOptional.isPresent()) {
+                candidateList.add(candidateOptional.get());
+            }
+        }
+        return candidateList.stream().map(x -> TransferUtil.transferTo(x, CandidateVO.class)).collect(Collectors.toList());
     }
 
     /**
@@ -141,25 +186,29 @@ public class CandidateService {
                             result.put("flag", false);
                             result.put("msg", "Excel文件中的列与目标对象的属性不一致");
                         } else {
-                            Candidate candidate = new Candidate();
-                            candidate.setDate(object.get(0));//日期
-                            candidate.setChineseName(object.get(1));//中文名字
-                            candidate.setEnglishName(object.get(2));//英文名字
-                            if (!StringUtils.isEmpty(object.get(3))) { // 年龄
-                                candidate.setAge(Integer.parseInt(object.get(3)));
+                            // 相同手机号的不能导入
+                            List<Candidate> oldCandidateList = candidateRepository.findByPhoneNo(object.get(4));// 电话
+                            if (CollectionUtils.isEmpty(oldCandidateList)) {
+                                Candidate candidate = new Candidate();
+                                candidate.setDate(object.get(0));//日期
+                                candidate.setChineseName(object.get(1));//中文名字
+                                candidate.setEnglishName(object.get(2));//英文名字
+                                if (!StringUtils.isEmpty(object.get(3))) { // 年龄
+                                    candidate.setAge(Integer.parseInt(object.get(3)));
+                                }
+                                candidate.setPhoneNo(object.get(4)); // 电话
+                                candidate.setEmail(object.get(5)); // 邮箱
+                                candidate.setCompanyName(object.get(6)); // 公司
+                                candidate.setDepartment(object.get(7));// 部门
+                                candidate.setTitle(object.get(8));// 职位
+                                candidate.setSchoolName(object.get(9));// 学校名称
+                                candidate.setCurrentAddress(object.get(10));// 现地址
+                                candidate.setFutureAddress(object.get(11));// 期望地址
+                                candidate.setCurrentMoney(object.get(12));// 现薪资
+                                candidate.setFutureMoney(object.get(13));// 期望薪资
+                                candidate.setRemark(object.get(14));// 备注
+                                candidateRepository.save(candidate);
                             }
-                            candidate.setPhoneNo(object.get(4)); // 电话
-                            candidate.setEmail(object.get(5)); // 邮箱
-                            candidate.setCompanyName(object.get(6)); // 公司
-                            candidate.setDepartment(object.get(7));// 部门
-                            candidate.setTitle(object.get(8));// 职位
-                            candidate.setSchoolName(object.get(9));// 学校名称
-                            candidate.setCurrentAddress(object.get(10));// 现地址
-                            candidate.setFutureAddress(object.get(11));// 期望地址
-                            candidate.setCurrentMoney(object.get(12));// 现薪资
-                            candidate.setFutureMoney(object.get(13));// 期望薪资
-                            candidate.setRemark(object.get(14));// 备注
-                            candidateRepository.save(candidate);
                         }
                     }
 

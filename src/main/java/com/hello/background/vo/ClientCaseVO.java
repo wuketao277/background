@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ClientCaseVO {
     /**
-     * 新闻主键id
+     * 职位主键id
      */
     private Integer id;
 

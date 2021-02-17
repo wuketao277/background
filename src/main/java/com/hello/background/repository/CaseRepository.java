@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CaseRepository extends JpaRepository<ClientCase, Integer> {
 
-    Page<ClientCase> findByTitleLike(String title, Pageable pageable);
+    Page<ClientCase> findByTitleLikeOrDescriptionLike(String title, String description, Pageable pageable);
 
-    int countByTitleLike(String title);
+    int countByTitleLikeOrDescriptionLike(String title, String description);
 }

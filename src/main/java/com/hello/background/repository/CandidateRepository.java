@@ -22,6 +22,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @return
      */
     List<Candidate> findByEnglishName(String englishName);
+
     /**
      * 通过中文名称查找候选人
      *
@@ -48,7 +49,16 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @param pageable
      * @return
      */
-    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(String chineseName, String englishName, String companyName, String phoneNo, Pageable pageable);
+    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(String chineseName, String englishName, String phoneNo, String email, String companyName, String department, String title, String schoolName, String currentAddress, String futureAddress, String remark, Pageable pageable);
+
+    /**
+     * 通过条件模糊匹配
+     *
+     * @return
+     */
+    List<Candidate> findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(
+            String chineseName, String englishName, String phoneNo, String email, String companyName, String department, String title, String schoolName, String currentAddress, String futureAddress, String remark
+    );
 
     /**
      * 计算符合条件的总记录数
@@ -57,6 +67,15 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @param englishName
      * @return
      */
-    long countByChineseNameLikeOrEnglishNameLikeOrCompanyNameLikeOrPhoneNoLike(String chineseName, String englishName, String companyName, String phoneNo);
+    long countByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(
+            String chineseName, String englishName, String phoneNo, String email, String companyName, String department, String title, String schoolName, String currentAddress, String futureAddress, String remark
+    );
 
+    /**
+     * 通过手机号查询
+     *
+     * @param phoneNo
+     * @return
+     */
+    List<Candidate> findByPhoneNo(String phoneNo);
 }
