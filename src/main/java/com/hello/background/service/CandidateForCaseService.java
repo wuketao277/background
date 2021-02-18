@@ -4,6 +4,7 @@ import com.hello.background.domain.CandidateForCase;
 import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateForCaseVO;
+import com.hello.background.vo.ClientVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class CandidateForCaseService {
 
     @Autowired
     private CandidateForCaseRepository candidateForCaseRepository;
+    @Autowired
+    private ClientService clientService;
 
     /**
      * 保存候选人
@@ -76,6 +79,41 @@ public class CandidateForCaseService {
      */
     public List<CandidateForCaseVO> findByCaseId(Integer caseId) {
         List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(caseId);
-        return candidateForCaseList.stream().map(x -> TransferUtil.transferTo(x, CandidateForCaseVO.class)).collect(Collectors.toList());
+        return convertToVOList(candidateForCaseList);
+    }
+
+    /**
+     * 通过候选人id获取所有职位推荐候选人信息
+     *
+     * @param candidateId
+     * @return
+     */
+    public List<CandidateForCaseVO> findByCandidateId(Integer candidateId) {
+        List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCandidateId(candidateId);
+        return convertToVOList(candidateForCaseList);
+    }
+
+    private List<CandidateForCaseVO> convertToVOList(List<CandidateForCase> candidateForCaseList) {
+        List<CandidateForCaseVO> candidateForCaseVOList = candidateForCaseList.stream().map(x -> TransferUtil.transferTo(x, CandidateForCaseVO.class)).collect(Collectors.toList());
+        List<ClientVO> clientVOList = clientService.findAll();
+        candidateForCaseVOList.forEach(cc -> {
+            Optional<ClientVO> firstClientVOOptional = clientVOList.stream().filter(clientVO -> clientVO.getId().equals(cc.getClientId())).findFirst();
+            if (firstClientVOOptional.isPresent()) {
+                cc.setClientName(firstClientVOOptional.get().getChineseName());
+            }
+        });
+        return candidateForCaseVOList;
+    }
+
+
+    /**
+     * 通过候选人id、职位id查询
+     *
+     * @param candidateId
+     * @param caseId
+     * @return
+     */
+    public List<CandidateForCase> findByCandidateIdAndCaseId(Integer candidateId, Integer caseId) {
+        return candidateForCaseRepository.findByCandidateIdAndCaseId(candidateId, caseId);
     }
 }

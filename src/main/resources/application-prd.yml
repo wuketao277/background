@@ -4,8 +4,8 @@ spring:
   # 配置写数据库信息
   datasource:
     url: jdbc:mysql://rm-uf6rr8230awt5kuku.mysql.rds.aliyuncs.com:3306/hello?characterEncoding=utf8&useSSL=false
-    username:
-    password:
+    username: helloadmin
+    password: Lawosi123223
     driver-class-name: com.mysql.jdbc.Driver
     # 配置Druid
     type: com.alibaba.druid.pool.DruidDataSource

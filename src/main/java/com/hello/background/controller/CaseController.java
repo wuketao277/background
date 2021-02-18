@@ -1,7 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.CaseService;
-import com.hello.background.vo.ClientCaseVO;
+import com.hello.background.vo.CaseVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author wuketao
@@ -24,7 +26,7 @@ public class CaseController {
     private CaseService caseService;
 
     @PostMapping("save")
-    public ClientCaseVO save(@RequestBody ClientCaseVO vo, HttpSession session) {
+    public CaseVO save(@RequestBody CaseVO vo, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         vo.setCreateUserId(userVO.getUsername());
         vo.setCreateTime(LocalDateTime.now());
@@ -40,8 +42,31 @@ public class CaseController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<ClientCaseVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+    public Page<CaseVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize) {
         search = "%" + search + "%";
         return caseService.queryPage(search, currentPage, pageSize);
+    }
+
+    /**
+     * 查询
+     *
+     * @param search 搜索关键字
+     * @return
+     */
+    @GetMapping("query")
+    public List<CaseVO> query(@NotEmpty String search) {
+        search = "%" + search + "%";
+        return caseService.query(search);
+    }
+
+    /**
+     * 通过职位id查找
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("queryById")
+    public CaseVO queryById(Integer id) {
+        return caseService.findById(id);
     }
 }

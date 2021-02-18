@@ -28,21 +28,6 @@ public class CandidateForCaseVO {
     private Integer candidateId;
 
     /**
-     * 职位id
-     */
-    private Integer caseId;
-
-    /**
-     * 客户id
-     */
-    private Integer clientId;
-
-    /**
-     * 职位名称
-     */
-    private String title;
-
-    /**
      * 中文名字
      */
     private String chineseName;
@@ -51,6 +36,26 @@ public class CandidateForCaseVO {
      * 英文名字
      */
     private String englishName;
+
+    /**
+     * 职位id
+     */
+    private Integer caseId;
+
+    /**
+     * 职位名称
+     */
+    private String title;
+
+    /**
+     * 客户id
+     */
+    private Integer clientId;
+
+    /**
+     * 客户姓名
+     */
+    private String clientName;
 
     /**
      * 状态

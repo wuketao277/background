@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * 案件
+ * 职位
  *
  * @author wuketao
  * @date 2019/11/30
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientCaseVO {
+public class CaseVO {
     /**
      * 职位主键id
      */

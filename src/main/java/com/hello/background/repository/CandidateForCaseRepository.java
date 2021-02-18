@@ -22,4 +22,21 @@ public interface CandidateForCaseRepository extends JpaRepository<CandidateForCa
      * @return 职位推荐候选人信息
      */
     List<CandidateForCase> findByCaseId(Integer caseId);
+
+    /**
+     * 通过候选人id、职位id查询
+     *
+     * @param candidateId
+     * @param caseId
+     * @return
+     */
+    List<CandidateForCase> findByCandidateIdAndCaseId(Integer candidateId, Integer caseId);
+
+    /**
+     * 通过候选人id查询
+     *
+     * @param candidateId
+     * @return
+     */
+    List<CandidateForCase> findByCandidateId(Integer candidateId);
 }
