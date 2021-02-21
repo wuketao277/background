@@ -70,6 +70,18 @@ public class MyTask {
     private String taskContent;
 
     /**
+     * 是否完成
+     */
+    @Column
+    private Boolean finished;
+
+    /**
+     * 执行结果
+     */
+    @Column(length = 2000)
+    private String executeResult;
+
+    /**
      * 任务的创建人登录名
      */
     @Column(length = 50, nullable = false)

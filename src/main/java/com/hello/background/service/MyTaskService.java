@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.hello.background.domain.MyTask;
 import com.hello.background.repository.MyTaskRepository;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.MyTaskUpdateVO;
 import com.hello.background.vo.MyTaskVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +42,25 @@ public class MyTaskService {
     }
 
     /**
+     * 更新任务
+     *
+     * @param vo
+     * @return
+     */
+    public boolean update(MyTaskUpdateVO vo) {
+        Optional<MyTask> optionalMyTask = myTaskRepository.findById(vo.getId());
+        if (optionalMyTask.isPresent()) {
+            MyTask myTask = optionalMyTask.get();
+            myTask.setFinished(vo.getFinished());
+            myTask.setExecuteResult(vo.getExecuteResult());
+            myTaskRepository.save(myTask);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 通过后续人id查询
      *
      * @param relativeCandidateId
@@ -57,8 +78,8 @@ public class MyTaskService {
      * @param executeDate     执行日期
      * @return 任务集合
      */
-    public List<MyTaskVO> findByExecuteUserNameAndExecuteDate(String executeUserName, LocalDate executeDate) {
-        List<MyTask> myTaskList = myTaskRepository.findByExecuteUserNameAndExecuteDate(executeUserName, executeDate);
+    public List<MyTaskVO> findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(String executeUserName, Boolean finished, LocalDate executeDate) {
+        List<MyTask> myTaskList = myTaskRepository.findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(executeUserName, finished, executeDate);
         return myTaskList.stream().map(task -> TransferUtil.transferTo(task, MyTaskVO.class)).collect(Collectors.toList());
     }
 

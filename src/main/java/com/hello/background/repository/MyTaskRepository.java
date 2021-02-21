@@ -19,6 +19,7 @@ public interface MyTaskRepository extends JpaRepository<MyTask, Integer> {
 
     /**
      * 通过后续人id查询
+     *
      * @param relativeCandidateId
      * @return
      */
@@ -31,7 +32,7 @@ public interface MyTaskRepository extends JpaRepository<MyTask, Integer> {
      * @param executeDate     执行日期
      * @return 任务集合
      */
-    List<MyTask> findByExecuteUserNameAndExecuteDate(String executeUserName, LocalDate executeDate);
+    List<MyTask> findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(String executeUserName, Boolean finished, LocalDate executeDate);
 
     /**
      * 通过 任务名称 执行人 创建人 模糊匹配

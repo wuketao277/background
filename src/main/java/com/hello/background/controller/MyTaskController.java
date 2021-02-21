@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.MyTaskService;
+import com.hello.background.vo.MyTaskUpdateVO;
 import com.hello.background.vo.MyTaskVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,17 @@ public class MyTaskController {
     }
 
     /**
+     * 更新任务
+     *
+     * @param vo
+     * @return
+     */
+    @PostMapping("update")
+    public boolean update(@RequestBody MyTaskUpdateVO vo) {
+        return myTaskService.update(vo);
+    }
+
+    /**
      * 保存任务给创建人自己
      *
      * @param vo
@@ -88,7 +100,7 @@ public class MyTaskController {
         if (null == userVO) {
             return Collections.emptyList();
         }
-        return myTaskService.findByExecuteUserNameAndExecuteDate(userVO.getUsername(), LocalDate.now());
+        return myTaskService.findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(userVO.getUsername(), false, LocalDate.now());
     }
 
     /**

@@ -57,6 +57,16 @@ public class MyTaskVO {
     private String taskContent;
 
     /**
+     * 是否完成
+     */
+    private Boolean finished = false;
+
+    /**
+     * 执行结果
+     */
+    private String executeResult;
+
+    /**
      * 任务的创建人登录姓名
      */
     private String createUserName;
