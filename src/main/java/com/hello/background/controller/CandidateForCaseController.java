@@ -66,6 +66,17 @@ public class CandidateForCaseController {
      * @param vo
      * @return
      */
+    @PostMapping("copyFromOldCase")
+    public void copyFromOldCase(@RequestBody CopyFromOldCaseVO vo) {
+        candidateForCaseService.copyFromOldCase(vo);
+    }
+
+    /**
+     * 保存 候选人与职位关联 信息
+     *
+     * @param vo
+     * @return
+     */
     @PostMapping("saveSimple")
     public boolean saveSimple(@RequestBody CandidateForCaseSimpleVO vo, HttpSession session) {
         List<CandidateForCase> oldRecordList = candidateForCaseService.findByCandidateIdAndCaseId(vo.getCandidateId(), vo.getCaseId());

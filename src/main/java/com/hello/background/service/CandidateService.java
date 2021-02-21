@@ -12,10 +12,7 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -94,14 +91,14 @@ public class CandidateService {
      * @return
      */
     public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize) {
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
         Page<Candidate> cadidatePage = null;
         long total = 0;
         if (Strings.isNullOrEmpty(search)) {
             cadidatePage = candidateRepository.findAll(pageable);
             total = candidateRepository.count();
         } else {
-            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search, pageable);
+            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(search, search, search, search, search, search, search, search, search, search, search, pageable);
             total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search);
         }
         Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(x, CandidateVO.class));
@@ -119,7 +116,7 @@ public class CandidateService {
      */
     public List<CandidateVO> queryCandidate(String search) {
         // 首先搜索候选人信息
-        List<Candidate> candidateList = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search);
+        List<Candidate> candidateList = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(search, search, search, search, search, search, search, search, search, search, search);
         List<Integer> candidateIdList = candidateList.stream().map(x -> x.getId()).collect(Collectors.toList());
         // 在简历中搜索关键字
         Set<Integer> resumeCandidateIdSet = resumeService.findByContentLikeOrderByCandidateIdAscIdAsc(search).stream().map(x -> x.getCandidateId()).collect(Collectors.toSet());

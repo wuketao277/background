@@ -49,14 +49,14 @@ public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
      * @param pageable
      * @return
      */
-    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(String chineseName, String englishName, String phoneNo, String email, String companyName, String department, String title, String schoolName, String currentAddress, String futureAddress, String remark, Pageable pageable);
+    Page<Candidate> findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(String chineseName, String englishName, String phoneNo, String email, String companyName, String department, String title, String schoolName, String currentAddress, String futureAddress, String remark, Pageable pageable);
 
     /**
      * 通过条件模糊匹配
      *
      * @return
      */
-    List<Candidate> findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(
+    List<Candidate> findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(
             String chineseName, String englishName, String phoneNo, String email, String companyName, String department, String title, String schoolName, String currentAddress, String futureAddress, String remark
     );
 

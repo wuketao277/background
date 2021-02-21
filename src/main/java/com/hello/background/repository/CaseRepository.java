@@ -18,7 +18,7 @@ public interface CaseRepository extends JpaRepository<ClientCase, Integer> {
 
     Page<ClientCase> findByTitleLikeOrDescriptionLike(String title, String description, Pageable pageable);
 
-    List<ClientCase> findByTitleLikeOrDescriptionLike(String title, String description);
+    List<ClientCase> findByTitleLikeOrDescriptionLikeOrderByIdDesc(String title, String description);
 
     int countByTitleLikeOrDescriptionLike(String title, String description);
 }

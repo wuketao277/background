@@ -5,11 +5,14 @@ import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateForCaseVO;
 import com.hello.background.vo.ClientVO;
+import com.hello.background.vo.CopyFromOldCaseVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +43,26 @@ public class CandidateForCaseService {
     public CandidateForCaseVO save(CandidateForCaseVO vo) {
         CandidateForCase candidateForCase = TransferUtil.transferTo(vo, CandidateForCase.class);
         return TransferUtil.transferTo(candidateForCaseRepository.save(candidateForCase), CandidateForCaseVO.class);
+    }
+
+    /**
+     * 从旧职位拷贝候选人到新职位
+     *
+     * @param vo
+     */
+    public void copyFromOldCase(CopyFromOldCaseVO vo) {
+        List<CandidateForCase> oldCaseCandidateList = candidateForCaseRepository.findByCaseId(vo.getOldCaseId());
+        List<CandidateForCase> curCaseCandidateList = candidateForCaseRepository.findByCaseId(vo.getCurCaseId());
+        for (CandidateForCase old : oldCaseCandidateList) {
+            if (curCaseCandidateList.stream().filter(x -> old.getCandidateId().equals(x.getCandidateId())).count() == 0) {
+                CandidateForCase record = new CandidateForCase();
+                BeanUtils.copyProperties(old, record);
+                record.setId(null);
+                record.setCaseId(vo.getCurCaseId());
+                record.setCreateTime(LocalDateTime.now());
+                candidateForCaseRepository.save(record);
+            }
+        }
     }
 
 
