@@ -34,13 +34,13 @@ public class UploadFile {
     /**
      * 关联表名称
      */
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String relativeTableName;
 
     /**
      * 关联表id
      */
-    @Column(nullable = false)
+    @Column()
     private Integer relativeTableId;
 
     /**

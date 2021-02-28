@@ -1,6 +1,8 @@
 package com.hello.background.repository;
 
 import com.hello.background.domain.UploadFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -37,4 +39,22 @@ public interface UploadFileRepository extends JpaRepository<UploadFile, Integer>
      * @param uuid
      */
     void deleteByUuid(String uuid);
+
+    /**
+     * 获取符合条件的分页记录
+     *
+     * @param originalFileName
+     * @param pageable
+     * @return
+     */
+    Page<UploadFile> findByOriginalFileNameLike(String originalFileName, Pageable pageable);
+
+    /**
+     * 获取符合条件的数量
+     *
+     * @param originalFileName
+     * @return
+     */
+    long countByOriginalFileNameLike(String originalFileName);
+
 }

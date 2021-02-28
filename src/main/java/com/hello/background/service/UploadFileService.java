@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.google.common.base.Strings;
 import com.hello.background.domain.UploadFile;
 import com.hello.background.repository.UploadFileRepository;
 import com.hello.background.utils.TransferUtil;
@@ -9,6 +10,7 @@ import com.mysql.jdbc.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,8 +56,14 @@ public class UploadFileService {
         try {
             StandardMultipartHttpServletRequest multipartRequest = (StandardMultipartHttpServletRequest) request;
             Map<String, String[]> parameterMap = multipartRequest.getParameterMap();
-            Integer tableId = new Integer(parameterMap.get("tableId")[0]);
-            String tableName = parameterMap.get("tableName")[0];
+            Integer tableId = null;
+            if (parameterMap.containsKey("tableId")) {
+                tableId = new Integer(parameterMap.get("tableId")[0]);
+            }
+            String tableName = null;
+            if (parameterMap.containsKey("tableName")) {
+                tableName = parameterMap.get("tableName")[0];
+            }
             Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
             log.info("fileStorePath:" + fileStorePath);
             if (!fileMap.isEmpty() && !StringUtils.isNullOrEmpty(fileStorePath)) {
@@ -85,8 +93,12 @@ public class UploadFileService {
                         uploadFile.setCreateRealName(userVO.getRealname());
                         uploadFile.setUuid(uuid);
                         uploadFile.setOriginalFileName(originalFileName);
-                        uploadFile.setRelativeTableId(tableId);
-                        uploadFile.setRelativeTableName(tableName);
+                        if (null != tableId) {
+                            uploadFile.setRelativeTableId(tableId);
+                        }
+                        if (null != tableName) {
+                            uploadFile.setRelativeTableName(tableName);
+                        }
                         UploadFile saved = uploadFileRepository.save(uploadFile);
                         list.add(TransferUtil.transferTo(saved, UploadFileVO.class));
                     } catch (Exception ex) {
@@ -176,5 +188,31 @@ public class UploadFileService {
      */
     public void deleteById(Integer Id) {
         uploadFileRepository.deleteById(Id);
+    }
+
+    /**
+     * 搜索
+     *
+     * @param search
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    public Page<UploadFileVO> findByOriginalFileName(String search, Integer currentPage, Integer pageSize) {
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
+        Page<UploadFile> uploadFilePage = null;
+        long total = 0;
+        if (Strings.isNullOrEmpty(search)) {
+            uploadFilePage = uploadFileRepository.findAll(pageable);
+            total = uploadFileRepository.count();
+        } else {
+            uploadFilePage = uploadFileRepository.findByOriginalFileNameLike(search, pageable);
+            total = uploadFileRepository.countByOriginalFileNameLike(search);
+        }
+        Page<UploadFileVO> map = uploadFilePage.map(x -> TransferUtil.transferTo(x, UploadFileVO.class));
+        map = new PageImpl<>(map.getContent(),
+                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
+                total);
+        return map;
     }
 }

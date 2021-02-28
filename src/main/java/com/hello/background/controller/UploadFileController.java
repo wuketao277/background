@@ -5,6 +5,7 @@ import com.hello.background.vo.UploadFileVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,5 +69,19 @@ public class UploadFileController {
     @GetMapping("deleteById")
     public void deleteById(@RequestParam Integer Id) {
         uploadFileService.deleteById(Id);
+    }
+
+    /**
+     * 查询分页
+     *
+     * @param search      搜索关键字
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("findByOriginalFileName")
+    public Page<UploadFileVO> findByOriginalFileName(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
+        return uploadFileService.findByOriginalFileName(search, currentPage, pageSize);
     }
 }
