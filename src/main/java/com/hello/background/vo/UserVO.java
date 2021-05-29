@@ -62,5 +62,5 @@ public class UserVO implements Serializable {
     /**
      * 角色集合
      */
-    private List<RoleVO> roleVOList;
+    private List<String> roleList;
 }

@@ -2,7 +2,9 @@ package com.hello.background.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.domain.User;
+import com.hello.background.domain.UserRole;
 import com.hello.background.repository.UserRepository;
+import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.security.ResourceService;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.LoginUser;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wuketao
@@ -29,6 +33,9 @@ public class SecurityController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
     /**
      * 登录
      *
@@ -42,6 +49,9 @@ public class SecurityController {
         User user = userRepository.findByUsernameAndPasswordAndEnabled(vo.getLoginName(), vo.getPassword(), true);
         if (null != user) {
             UserVO userVO = TransferUtil.transferTo(user, UserVO.class);
+            List<UserRole> userRoleList = userRoleRepository.findByUserName(userVO.getUsername());
+            List<String> roleIdList = userRoleList.stream().map(x -> x.getRoleName()).collect(Collectors.toList());
+            userVO.setRoleList(roleIdList);
             jo.put("status", true);
             jo.put("data", userVO);
             session.setAttribute("user", userVO);
@@ -65,7 +75,7 @@ public class SecurityController {
      * 更新资源映射表
      */
     @RequestMapping("updateResourceMap")
-    public Boolean updateResourceMap(){
+    public Boolean updateResourceMap() {
         resourceService.updateResourceMap();
         return true;
     }
