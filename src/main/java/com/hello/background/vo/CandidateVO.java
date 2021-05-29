@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-
 /**
  * 候选人
  *
@@ -42,6 +39,11 @@ public class CandidateVO {
      * 年龄
      */
     private Integer age;
+
+    /**
+     * 生日
+     */
+    private String birthDay;
 
     /**
      * 电话

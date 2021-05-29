@@ -52,6 +52,12 @@ public class Candidate {
     private Integer age;
 
     /**
+     * 生日
+     */
+    @Column(length = 20)
+    private String birthDay;
+
+    /**
      * 电话
      */
     @Column(length = 20)

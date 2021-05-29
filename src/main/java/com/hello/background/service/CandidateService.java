@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hello.background.domain.Candidate;
 import com.hello.background.repository.CandidateRepository;
+import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateVO;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +49,29 @@ public class CandidateService {
     private CommentService commentService;
 
     /**
+     * 计算年龄
+     *
+     * @param candidate
+     * @return
+     */
+    private Candidate calcAge(Candidate candidate) {
+        if (!StringUtils.isEmpty(candidate.getBirthDay())) {
+            try {
+                LocalDate ld = DateTimeUtil.convertToLocalDate(candidate.getBirthDay());
+                if (null == ld) {
+                    return candidate;
+                }
+                LocalDate now = LocalDate.now();
+                int year = now.getYear() - ld.getYear();
+                int month = now.getMonthValue() - ld.getMonthValue();
+                candidate.setAge(month > 0 ? year + 1 : year);
+            } catch (Exception ex) {
+            }
+        }
+        return candidate;
+    }
+
+    /**
      * 通过id，查询候选人信息
      *
      * @param id 候选人主键
@@ -56,7 +81,7 @@ public class CandidateService {
         Optional<Candidate> candidateOptional = candidateRepository.findById(id);
         if (candidateOptional.isPresent()) {
             Candidate candidate = candidateOptional.get();
-            return TransferUtil.transferTo(candidate, CandidateVO.class);
+            return TransferUtil.transferTo(calcAge(candidate), CandidateVO.class);
         }
         return null;
     }
@@ -101,7 +126,7 @@ public class CandidateService {
             cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(search, search, search, search, search, search, search, search, search, search, search, pageable);
             total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search);
         }
-        Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(x, CandidateVO.class));
+        Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(calcAge(x), CandidateVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
@@ -142,7 +167,7 @@ public class CandidateService {
                 candidateList.add(candidateOptional.get());
             }
         }
-        return candidateList.stream().map(x -> TransferUtil.transferTo(x, CandidateVO.class)).collect(Collectors.toList());
+        return candidateList.stream().map(x -> TransferUtil.transferTo(calcAge(x), CandidateVO.class)).collect(Collectors.toList());
     }
 
     /**
@@ -152,9 +177,15 @@ public class CandidateService {
      */
     public List<CandidateVO> findAll() {
         List<Candidate> all = candidateRepository.findAll();
-        return all.stream().map(x -> TransferUtil.transferTo(x, CandidateVO.class)).collect(Collectors.toList());
+        return all.stream().map(x -> TransferUtil.transferTo(calcAge(x), CandidateVO.class)).collect(Collectors.toList());
     }
 
+    /**
+     * 分析上传文件
+     *
+     * @param request
+     * @return
+     */
     public JSONObject analysisUploadFile(HttpServletRequest request) {
         JSONObject result = new JSONObject();
         result.put("flag", true);
@@ -179,7 +210,7 @@ public class CandidateService {
                     @Override
                     public void invoke(List<String> object, AnalysisContext context) {
                         Field[] declaredFields = Candidate.class.getDeclaredFields();
-                        if (declaredFields.length - 1 != object.size()) {
+                        if (declaredFields.length - 2 != object.size()) {
                             result.put("flag", false);
                             result.put("msg", "Excel文件中的列与目标对象的属性不一致");
                         } else {
@@ -190,8 +221,8 @@ public class CandidateService {
                                 candidate.setDate(object.get(0));//日期
                                 candidate.setChineseName(object.get(1));//中文名字
                                 candidate.setEnglishName(object.get(2));//英文名字
-                                if (!StringUtils.isEmpty(object.get(3))) { // 年龄
-                                    candidate.setAge(Integer.parseInt(object.get(3)));
+                                if (!StringUtils.isEmpty(object.get(3))) { // 生日
+                                    candidate.setBirthDay(object.get(3));
                                 }
                                 candidate.setPhoneNo(object.get(4)); // 电话
                                 candidate.setEmail(object.get(5)); // 邮箱
