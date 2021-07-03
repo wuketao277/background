@@ -37,10 +37,16 @@ public class Comment {
     private Integer candidateId;
 
     /**
-     * 录入人名称
+     * 登录名
      */
-    @Column(length = 100)
-    private String inputUserName;
+    @Column(length = 50)
+    private String username;
+
+    /**
+     * 本名
+     */
+    @Column(length = 50)
+    private String realname;
 
     /**
      * 阶段

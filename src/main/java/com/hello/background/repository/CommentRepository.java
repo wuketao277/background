@@ -4,6 +4,7 @@ import com.hello.background.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -16,4 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findAllByCandidateId(Integer candidateId);
 
     List<Comment> findByContentLikeOrderByCandidateIdAscIdAsc(String content);
+
+    List<Comment> findByInputTimeBetween(LocalDateTime begin, LocalDateTime end);
 }

@@ -30,7 +30,12 @@ public class CommentVO {
     /**
      * 录入人名称
      */
-    private String inputUserName;
+    private String username;
+
+    /**
+     * 真实姓名
+     */
+    private String realname;
 
     /**
      * 阶段
