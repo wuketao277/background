@@ -48,6 +48,8 @@ public class CandidateService {
     @Autowired
     private CommentService commentService;
 
+    private ThreadLocal<Integer> tlRowNumber = new ThreadLocal<>();
+
     /**
      * 计算年龄
      *
@@ -191,6 +193,8 @@ public class CandidateService {
         result.put("flag", true);
         result.put("msg", "");
         try {
+            // 设置行号从2开始
+            tlRowNumber.set(2);
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
             if (fileMap.isEmpty()) {
@@ -209,34 +213,10 @@ public class CandidateService {
                 ExcelReader reader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, new AnalysisEventListener<List<String>>() {
                     @Override
                     public void invoke(List<String> object, AnalysisContext context) {
-                        Field[] declaredFields = Candidate.class.getDeclaredFields();
-                        if (declaredFields.length - 2 != object.size()) {
-                            result.put("flag", false);
-                            result.put("msg", "Excel文件中的列与目标对象的属性不一致");
-                        } else {
-                            // 相同手机号的不能导入
-                            List<Candidate> oldCandidateList = candidateRepository.findByPhoneNo(object.get(4));// 电话
-                            if (CollectionUtils.isEmpty(oldCandidateList)) {
-                                Candidate candidate = new Candidate();
-                                candidate.setDate(object.get(0));//日期
-                                candidate.setChineseName(object.get(1));//中文名字
-                                candidate.setEnglishName(object.get(2));//英文名字
-                                if (!StringUtils.isEmpty(object.get(3))) { // 生日
-                                    candidate.setBirthDay(object.get(3));
-                                }
-                                candidate.setPhoneNo(object.get(4)); // 电话
-                                candidate.setEmail(object.get(5)); // 邮箱
-                                candidate.setCompanyName(object.get(6)); // 公司
-                                candidate.setDepartment(object.get(7));// 部门
-                                candidate.setTitle(object.get(8));// 职位
-                                candidate.setSchoolName(object.get(9));// 学校名称
-                                candidate.setCurrentAddress(object.get(10));// 现地址
-                                candidate.setFutureAddress(object.get(11));// 期望地址
-                                candidate.setCurrentMoney(object.get(12));// 现薪资
-                                candidate.setFutureMoney(object.get(13));// 期望薪资
-                                candidate.setRemark(object.get(14));// 备注
-                                candidateRepository.save(candidate);
-                            }
+                        if ((boolean) result.get("flag")) {
+                            saveCandidate(object, result);
+                            // 行号+1
+                            tlRowNumber.set(tlRowNumber.get() + 1);
                         }
                     }
 
@@ -247,10 +227,139 @@ public class CandidateService {
                 reader.read();
                 // 关闭流文件
                 in.close();
+                break;
             }
         } catch (Exception ex) {
             log.error("{}", ex);
+        } finally {
+            if ((boolean) result.get("flag")) {
+                result.put("msg", result.get("msg") + "之后的数据都没能成功导入。");
+            }
+            // 删除ThreadLocal中的行号
+            tlRowNumber.remove();
         }
         return result;
+    }
+
+    /**
+     * 获取候选人对象
+     *
+     * @param object
+     * @param result
+     * @return
+     */
+    private void saveCandidate(List<String> object, JSONObject result) {
+        Field[] declaredFields = Candidate.class.getDeclaredFields();
+        if (declaredFields.length - 2 != object.size()) {
+            result.put("flag", false);
+            result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行列数量错误。");
+        } else {
+            // 相同手机号的不能导入
+            // 电话
+            List<Candidate> oldCandidateList = candidateRepository.findByPhoneNo(object.get(4));
+            if (CollectionUtils.isEmpty(oldCandidateList)) {
+                Candidate candidate = new Candidate();
+                boolean tempFlag = true;
+                if (object.get(0).length() > 20) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'日期'列内容超长。");
+                } else if (object.get(1).length() > 25) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'名字'列内容超长。");
+                } else if (object.get(2).length() > 50) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'英文名'列内容超长。");
+                } else if (object.get(3).length() > 20) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'生日'列内容超长。");
+                } else if (object.get(4).length() > 20) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'手机号'列内容超长。");
+                } else if (object.get(5).length() > 200) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'邮箱'列内容超长。");
+                } else if (object.get(6).length() > 200) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'公司'列内容超长。");
+                } else if (object.get(7).length() > 200) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'部门'列内容超长。");
+                } else if (object.get(8).length() > 200) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'职位'列内容超长。");
+                } else if (object.get(9).length() > 100) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'学校'列内容超长。");
+                } else if (object.get(10).length() > 100) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'现地'列内容超长。");
+                } else if (object.get(11).length() > 100) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'期地'列内容超长。");
+                } else if (object.get(12).length() > 100) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'薪资'列内容超长。");
+                } else if (object.get(13).length() > 100) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'期薪'列内容超长。");
+                } else if (object.get(14).length() > 1000) {
+                    tempFlag = false;
+                    result.put("flag", false);
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'备注'列内容超长。");
+                }
+                if (tempFlag) {
+                    //日期
+                    candidate.setDate(object.get(0));
+                    //中文名字
+                    candidate.setChineseName(object.get(1));
+                    //英文名字
+                    candidate.setEnglishName(object.get(2));
+                    // 生日
+                    if (!StringUtils.isEmpty(object.get(3))) {
+                        candidate.setBirthDay(object.get(3));
+                    }
+                    // 电话
+                    candidate.setPhoneNo(object.get(4));
+                    // 邮箱
+                    candidate.setEmail(object.get(5));
+                    // 公司
+                    candidate.setCompanyName(object.get(6));
+                    // 部门
+                    candidate.setDepartment(object.get(7));
+                    // 职位
+                    candidate.setTitle(object.get(8));
+                    // 学校名称
+                    candidate.setSchoolName(object.get(9));
+                    // 现地址
+                    candidate.setCurrentAddress(object.get(10));
+                    // 期望地址
+                    candidate.setFutureAddress(object.get(11));
+                    // 现薪资
+                    candidate.setCurrentMoney(object.get(12));
+                    // 期望薪资
+                    candidate.setFutureMoney(object.get(13));
+                    // 备注
+                    candidate.setRemark(object.get(14));
+                    candidateRepository.save(candidate);
+                }
+            } else {
+                result.put("flag", false);
+                result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行对应的电话号码已存在。");
+            }
+        }
     }
 }
