@@ -232,7 +232,7 @@ public class CandidateService {
         } catch (Exception ex) {
             log.error("{}", ex);
         } finally {
-            if ((boolean) result.get("flag")) {
+            if (!(boolean) result.get("flag")) {
                 result.put("msg", result.get("msg") + "之后的数据都没能成功导入。");
             }
             // 删除ThreadLocal中的行号
@@ -267,59 +267,59 @@ public class CandidateService {
                 } else if (object.get(1).length() > 25) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'名字'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'名字'列内容超长。");
                 } else if (object.get(2).length() > 50) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'英文名'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'英文名'列内容超长。");
                 } else if (object.get(3).length() > 20) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'生日'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'生日'列内容超长。");
                 } else if (object.get(4).length() > 20) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'手机号'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'手机号'列内容超长。");
                 } else if (object.get(5).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'邮箱'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'邮箱'列内容超长。");
                 } else if (object.get(6).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'公司'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'公司'列内容超长。");
                 } else if (object.get(7).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'部门'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'部门'列内容超长。");
                 } else if (object.get(8).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'职位'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'职位'列内容超长。");
                 } else if (object.get(9).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'学校'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'学校'列内容超长。");
                 } else if (object.get(10).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'现地'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'现地'列内容超长。");
                 } else if (object.get(11).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'期地'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'期地'列内容超长。");
                 } else if (object.get(12).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'薪资'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'薪资'列内容超长。");
                 } else if (object.get(13).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'期薪'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'期薪'列内容超长。");
                 } else if (object.get(14).length() > 1000) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'备注'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'备注'列内容超长。");
                 }
                 if (tempFlag) {
                     //日期
@@ -358,7 +358,7 @@ public class CandidateService {
                 }
             } else {
                 result.put("flag", false);
-                result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行对应的电话号码已存在。");
+                result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的电话号码已存在。");
             }
         }
     }
