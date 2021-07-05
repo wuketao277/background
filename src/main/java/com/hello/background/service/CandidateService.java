@@ -195,7 +195,7 @@ public class CandidateService {
             Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
             if (fileMap.isEmpty()) {
                 result.put("flag", false);
-                result.put("msg", "上传文件未空");
+                result.put("msg", "上传文件为空");
                 return result;
             }
             for (Map.Entry<String, MultipartFile> entry : fileMap.entrySet()) {
