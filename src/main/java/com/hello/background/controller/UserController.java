@@ -3,10 +3,11 @@ package com.hello.background.controller;
 import com.hello.background.service.UserService;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,6 +22,18 @@ public class UserController {
     private UserService userService;
 
     /**
+     * 保存
+     *
+     * @param vo
+     * @return
+     */
+    @PostMapping("save")
+    public UserVO save(@RequestBody UserVO vo, HttpSession session) {
+        vo.setCreateDate(new Date());
+        return userService.save(vo);
+    }
+
+    /**
      * 获取所有正常状态的用户
      *
      * @return
@@ -28,5 +41,19 @@ public class UserController {
     @GetMapping("findAllEnabled")
     public List<UserVO> findAllEnabled() {
         return userService.findByEnabled(true);
+    }
+
+    /**
+     * 查询分页
+     *
+     * @param search      搜索关键字
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("queryPage")
+    public Page<UserVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+        search = "%" + search + "%";
+        return userService.queryPage(search, currentPage, pageSize);
     }
 }

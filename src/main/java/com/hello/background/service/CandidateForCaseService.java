@@ -5,14 +5,17 @@ import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateForCaseVO;
 import com.hello.background.vo.ClientVO;
+import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.CopyFromOldCaseVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +36,8 @@ public class CandidateForCaseService {
     private CandidateForCaseRepository candidateForCaseRepository;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private CommentService commentService;
 
     /**
      * 保存候选人
@@ -123,6 +128,14 @@ public class CandidateForCaseService {
             Optional<ClientVO> firstClientVOOptional = clientVOList.stream().filter(clientVO -> clientVO.getId().equals(cc.getClientId())).findFirst();
             if (firstClientVOOptional.isPresent()) {
                 cc.setClientName(firstClientVOOptional.get().getChineseName());
+            }
+            // 将候选人最后的评论信息添加到返回数据中
+            List<CommentVO> commentVOList = commentService.findAllByCandidateId(cc.getCandidateId());
+            if (!CollectionUtils.isEmpty(commentVOList)) {
+                commentVOList.sort(Comparator.comparing(CommentVO::getId).reversed());
+                cc.setLatestCommentContent(commentVOList.get(0).getContent());
+                cc.setLatestCommentInputtime(commentVOList.get(0).getInputTime());
+                cc.setLatestCommentUsername(commentVOList.get(0).getRealname());
             }
         });
         return candidateForCaseVOList;

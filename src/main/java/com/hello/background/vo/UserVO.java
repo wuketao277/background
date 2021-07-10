@@ -44,9 +44,13 @@ public class UserVO implements Serializable {
      */
     private Date lastLoginTime;
     /**
-     * 是否可用
+     * 是否启用
      */
     private boolean enabled;
+    /**
+     * 是否启用
+     */
+    private String enabledName;
     /**
      * 是否过期
      */

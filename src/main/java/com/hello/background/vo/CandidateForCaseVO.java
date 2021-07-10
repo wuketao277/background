@@ -72,4 +72,19 @@ public class CandidateForCaseVO {
      */
     private String createUserName;
 
+    /**
+     * 最后评论人
+     */
+    private String latestCommentUsername;
+
+    /**
+     * 最后评论内容
+     */
+    private String latestCommentContent;
+
+    /**
+     * 最后评论时间
+     */
+    private LocalDateTime latestCommentInputtime;
+
 }

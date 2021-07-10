@@ -97,11 +97,14 @@ public class CommentService {
                     kpiPerson.setIoi(kpiPerson.getIoi() + 1);
                     kpiPerson.setViioi(kpiPerson.getViioi() + 1);
                     break;
-                case "Ist Interview":
+                case "CVO":
+                    kpiPerson.setCvo(kpiPerson.getCvo() + 1);
+                    break;
+                case "1st Interview":
                     kpiPerson.setInterview1st(kpiPerson.getInterview1st() + 1);
                     break;
                 case "Offer Signed":
-                    kpiPerson.setOfferSigned(kpiPerson.getOfferSigned());
+                    kpiPerson.setOfferSigned(kpiPerson.getOfferSigned() + 1);
                     break;
                 case "On Board":
                     kpiPerson.setOnBoard(kpiPerson.getOnBoard() + 1);
