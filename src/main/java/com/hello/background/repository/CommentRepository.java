@@ -19,4 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByContentLikeOrderByCandidateIdAscIdAsc(String content);
 
     List<Comment> findByInputTimeBetween(LocalDateTime begin, LocalDateTime end);
+
+    List<Comment> findByInputTimeBetweenAndUsername(LocalDateTime begin, LocalDateTime end, String username);
 }

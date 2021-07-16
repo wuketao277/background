@@ -9,7 +9,8 @@ import lombok.Data;
  */
 @Data
 public class KPIPerson {
-    private String name;
+    private String userName;
+    private String realName;
     private Integer ti;
     private Integer vi;
     private Integer ioi;

@@ -23,9 +23,14 @@ public class CommentVO {
     private Integer id;
 
     /**
-     * 后续人id
+     * 候选人id
      */
     private Integer candidateId;
+
+    /**
+     * 候选人姓名
+     */
+    private String chineseName;
 
     /**
      * 录入人名称

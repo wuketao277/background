@@ -32,7 +32,7 @@ public class Comment {
     private Integer id;
 
     /**
-     * 后续人id
+     * 候选人id
      */
     private Integer candidateId;
 

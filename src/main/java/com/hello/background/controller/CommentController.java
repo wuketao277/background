@@ -6,10 +6,7 @@ import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.KPIPerson;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
@@ -43,5 +40,18 @@ public class CommentController {
     @PostMapping("calcKPI")
     public List<KPIPerson> calcKPI(@RequestBody CalcKPIRequest request) {
         return commentService.calcKPI(request);
+    }
+
+    /**
+     * 通过开始时间、结束时间、录入人 查找评论
+     *
+     * @param beginDate
+     * @param endDate
+     * @param userName
+     * @return
+     */
+    @GetMapping("findCommentsByTimeAndUsername")
+    public List<CommentVO> findCommentsByTimeAndUsername(@RequestParam("beginDate") String beginDate, @RequestParam("endDate") String endDate, @RequestParam("userName") String userName) {
+        return commentService.findCommentsByTimeAndUsername(beginDate, endDate, userName);
     }
 }
