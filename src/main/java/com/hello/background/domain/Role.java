@@ -32,7 +32,7 @@ public class Role {
     /**
      * 角色名称
      */
-    @Column(length = 200,nullable = false)
+    @Column(length = 200, nullable = false)
     private String roleName;
     /**
      * 角色描述

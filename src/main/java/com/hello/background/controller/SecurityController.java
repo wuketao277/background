@@ -50,8 +50,8 @@ public class SecurityController {
         if (null != user) {
             UserVO userVO = TransferUtil.transferTo(user, UserVO.class);
             List<UserRole> userRoleList = userRoleRepository.findByUserName(userVO.getUsername());
-            List<String> roleIdList = userRoleList.stream().map(x -> x.getRoleName()).collect(Collectors.toList());
-            userVO.setRoleList(roleIdList);
+            List<String> roleNameList = userRoleList.stream().map(x -> x.getRoleName()).collect(Collectors.toList());
+            userVO.setRoleList(roleNameList);
             jo.put("status", true);
             jo.put("data", userVO);
             session.setAttribute("user", userVO);
