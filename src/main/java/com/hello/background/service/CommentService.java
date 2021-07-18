@@ -1,11 +1,13 @@
 package com.hello.background.service;
 
+import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.Comment;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CommentRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CalcKPIRequest;
+import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.KPIPerson;
 import org.springframework.beans.BeanUtils;
@@ -187,5 +189,24 @@ public class CommentService {
                 break;
         }
         return result;
+    }
+
+    /**
+     * 通过评论查询候选人 查询分页
+     *
+     * @param search 搜索关键字
+     * @return
+     */
+    public List<CandidateVO> queryCandidateByCommentLimit100(String search) {
+        List<Comment> commentList = commentRepository.findByContentLikeOrderByIdDesc(search);
+        return commentList.stream()
+                .map(a -> a.getCandidateId()).distinct().sorted(new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer o1, Integer o2) {
+                        return 0 - o1.compareTo(o2);
+                    }
+                }).limit(100)
+                .map(x -> candidateRepository.findById(x))
+                .map(y -> TransferUtil.transferTo(CommonUtils.calcAge(y.get()), CandidateVO.class)).collect(Collectors.toList());
     }
 }

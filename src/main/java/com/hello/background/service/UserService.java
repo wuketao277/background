@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +31,11 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserVO save(UserVO vo) {
+        if (null == vo.getId()){
+            // 没有id表示新建用户。
+            // 设置默认密码是1
+            vo.setPassword("1");
+        }
         User user = new User();
         BeanUtils.copyProperties(vo, user);
         User returnUser = userRepository.save(user);
@@ -83,5 +89,26 @@ public class UserService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 更新密码
+     *
+     * @param oldPassword
+     * @param newPassword
+     * @param userId
+     */
+    public boolean updatePassword(String oldPassword, String newPassword, Integer userId) {
+        boolean result = false;
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (oldPassword.equals(user.getPassword())) {
+                user.setPassword(newPassword);
+                userRepository.save(user);
+                result = true;
+            }
+        }
+        return result;
     }
 }

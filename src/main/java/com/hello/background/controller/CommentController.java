@@ -1,10 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.CommentService;
-import com.hello.background.vo.CalcKPIRequest;
-import com.hello.background.vo.CommentVO;
-import com.hello.background.vo.KPIPerson;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,5 +50,17 @@ public class CommentController {
     @GetMapping("findCommentsByTimeAndUsername")
     public List<CommentVO> findCommentsByTimeAndUsername(@RequestParam("beginDate") String beginDate, @RequestParam("endDate") String endDate, @RequestParam("userName") String userName) {
         return commentService.findCommentsByTimeAndUsername(beginDate, endDate, userName);
+    }
+
+    /**
+     * 通过评论查询候选人 最多返回100条
+     *
+     * @param search      搜索关键字
+     * @return
+     */
+    @GetMapping("queryCandidateByCommentLimit100")
+    public List<CandidateVO> queryCandidateByCommentLimit100(@RequestParam("search") String search) {
+        search = "%" + search + "%";
+        return commentService.queryCandidateByCommentLimit100(search);
     }
 }

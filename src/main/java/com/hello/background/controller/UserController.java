@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.UserService;
+import com.hello.background.vo.UpdatePassword;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,5 +56,17 @@ public class UserController {
     public Page<UserVO> queryPage(String search, Integer currentPage, Integer pageSize) {
         search = "%" + search + "%";
         return userService.queryPage(search, currentPage, pageSize);
+    }
+
+    /**
+     * 更新用户密码
+     *
+     * @param updatePassword
+     * @param session
+     */
+    @PostMapping("updatePassword")
+    public boolean updatePassword(@RequestBody UpdatePassword updatePassword, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        return userService.updatePassword(updatePassword.getOldPassword(), updatePassword.getNewPassword(), user.getId());
     }
 }
