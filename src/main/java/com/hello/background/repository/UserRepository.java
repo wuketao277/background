@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Page<User> findByRealnameLikeOrUsernameLike(String englishName, String chineseName, Pageable pageable);
 
     int countByRealnameLikeOrUsernameLike(String englishName, String chineseName);
+
+    List<User> findByRealnameLikeOrUsernameLike(String englishName, String chineseName);
 }

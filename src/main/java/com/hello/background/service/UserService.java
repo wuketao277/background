@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserVO save(UserVO vo) {
-        if (null == vo.getId()){
+        if (null == vo.getId()) {
             // 没有id表示新建用户。
             // 设置默认密码是1
             vo.setPassword("1");
@@ -89,6 +90,23 @@ public class UserService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+
+    /**
+     * 查询
+     *
+     * @param search 搜索关键字
+     * @return
+     */
+    public List<UserVO> query(String search) {
+        List<User> userList = userRepository.findByRealnameLikeOrUsernameLike(search, search);
+        List<UserVO> userVOList = new ArrayList<>();
+        return userList.stream().map(pojo -> {
+            UserVO vo = new UserVO();
+            BeanUtils.copyProperties(pojo, vo);
+            return vo;
+        }).collect(Collectors.toList());
     }
 
     /**

@@ -2,7 +2,9 @@ package com.hello.background.utils;
 
 import org.apache.logging.log4j.util.Strings;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -39,4 +41,13 @@ public class DateTimeUtil {
         return LocalDate.parse(content);
     }
 
+    /**
+     * 获取当前时间字符串
+     *
+     * @return
+     */
+    public static String getTimeStr() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 24HH:mm:ss");
+        return simpleDateFormat.format(new Date());
+    }
 }
