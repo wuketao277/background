@@ -77,7 +77,12 @@ public class SuccessfulPerm {
      * 顾问真实姓名
      */
     @Column(length = 50)
-    private String cansultantRealName;
+    private String consultantRealName;
+    /**
+     * 顾问提成比例
+     */
+    @Column
+    private Integer consultantCommissionPercent;
     /**
      * CWid
      */
@@ -94,6 +99,11 @@ public class SuccessfulPerm {
     @Column(length = 50)
     private String cwRealName;
     /**
+     * CW提成比例
+     */
+    @Column
+    private Integer cwCommissionPercent;
+    /**
      * BDid
      */
     @Column
@@ -108,6 +118,11 @@ public class SuccessfulPerm {
      */
     @Column(length = 50)
     private String bdRealName;
+    /**
+     * BD提成比例
+     */
+    @Column
+    private Integer bdCommissionPercent;
     /**
      * 地点
      */

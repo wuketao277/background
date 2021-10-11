@@ -1,29 +1,29 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.ClientService;
-import com.hello.background.service.SuccessfulPermService;
-import com.hello.background.vo.SuccessfulPermVO;
+import com.hello.background.service.SalarySpecialItemService;
+import com.hello.background.vo.SalarySpecialItemVO;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
-import java.util.Optional;
 
 /**
+ * 工资特殊项目控制器
+ *
  * @author wuketao
  * @date 2020/2/3
  * @Description
  */
 @RestController
-@RequestMapping("successfulPerm")
-public class SuccessfulPermController {
+@RequestMapping("salarySpecialItem")
+public class SalarySpecialItemController {
     @Autowired
-    private SuccessfulPermService successfulPermService;
+    private SalarySpecialItemService salarySpecialItemService;
     @Autowired
     private ClientService clientService;
 
@@ -34,14 +34,11 @@ public class SuccessfulPermController {
      * @return
      */
     @PostMapping("save")
-    public SuccessfulPermVO save(@RequestBody SuccessfulPermVO vo, HttpSession session) {
+    public SalarySpecialItemVO save(@RequestBody SalarySpecialItemVO vo, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         vo.setUpdateTime(new Date());
         vo.setUpdateUserName(user.getUsername());
-        if (!StringUtils.isEmpty(vo.getClientId())) {
-            vo.setClientName(Optional.ofNullable(clientService.queryById(vo.getClientId())).map(x -> x.getChineseName()).orElse(""));
-        }
-        return successfulPermService.save(vo);
+        return salarySpecialItemService.save(vo);
     }
 
     /**
@@ -53,8 +50,8 @@ public class SuccessfulPermController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<SuccessfulPermVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize) {
+    public Page<SalarySpecialItemVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize) {
         search = "%" + search + "%";
-        return successfulPermService.queryPage(search, currentPage, pageSize);
+        return salarySpecialItemService.queryPage(search, currentPage, pageSize);
     }
 }

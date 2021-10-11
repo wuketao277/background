@@ -1,0 +1,59 @@
+package com.hello.background.vo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 工资特殊项视图
+ *
+ * @author wuketao
+ * @date 2019/12/7
+ * @Description
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class SalarySpecialItemVO implements Serializable {
+    /**
+     * 用户ID
+     */
+    private Integer id;
+    /**
+     * 顾问id
+     */
+    private Integer consultantId;
+    /**
+     * 顾问登录名
+     */
+    private String consultantUserName;
+    /**
+     * 顾问真实姓名
+     */
+    private String consultantRealName;
+    /**
+     * 特殊项所属月份
+     */
+    private String month;
+    /**
+     * 金额
+     */
+    @Column
+    private Integer sum;
+    /**
+     * 地点
+     */
+    private String description;
+    /**
+     * 更新日期
+     */
+    private Date updateTime;
+    /**
+     * 更新人
+     */
+    private String updateUserName;
+}

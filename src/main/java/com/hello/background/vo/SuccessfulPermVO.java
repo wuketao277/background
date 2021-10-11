@@ -59,7 +59,11 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 顾问真实姓名
      */
-    private String cansultantRealName;
+    private String consultantRealName;
+    /**
+     * 顾问提成比例
+     */
+    private Integer consultantCommissionPercent;
     /**
      * CWid
      */
@@ -73,6 +77,10 @@ public class SuccessfulPermVO implements Serializable {
      */
     private String cwRealName;
     /**
+     * CW提成比例
+     */
+    private Integer cwCommissionPercent;
+    /**
      * BDid
      */
     private Integer bdId;
@@ -84,6 +92,10 @@ public class SuccessfulPermVO implements Serializable {
      * BD真实姓名
      */
     private String bdRealName;
+    /**
+     * BD提成比例
+     */
+    private Integer bdCommissionPercent;
     /**
      * 地点
      */
