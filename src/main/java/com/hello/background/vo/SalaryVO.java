@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Date;
 
 /**
- * 工资特殊项视图
- *
+ * 工资
  * @author wuketao
  * @date 2019/12/7
  * @Description
@@ -17,9 +18,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SalarySpecialItemVO implements Serializable {
+public class SalaryVO {
     /**
-     * 用户ID
+     * 工资ID
      */
     private Integer id;
     /**
@@ -35,7 +36,7 @@ public class SalarySpecialItemVO implements Serializable {
      */
     private String consultantRealName;
     /**
-     * 特殊项所属月份
+     * 所属月份
      */
     private String month;
     /**
@@ -43,9 +44,9 @@ public class SalarySpecialItemVO implements Serializable {
      */
     private Integer sum;
     /**
-     * 地点
+     * 历史负债
      */
-    private String description;
+    private Integer historyDebt;
     /**
      * 更新日期
      */

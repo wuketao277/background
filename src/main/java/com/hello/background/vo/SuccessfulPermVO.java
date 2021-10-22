@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,6 +30,10 @@ public class SuccessfulPermVO implements Serializable {
      */
     private String clientName;
     /**
+     * 审批状态 applied表示申请状态，approved表示审批通过，denied表示否决状态。
+     */
+    private String approveStatus;
+    /**
      * 职位id
      */
     private Integer caseId;
@@ -48,22 +53,6 @@ public class SuccessfulPermVO implements Serializable {
      * 候选人中文名字
      */
     private String candidateChineseName;
-    /**
-     * 顾问id
-     */
-    private Integer consultantId;
-    /**
-     * 顾问登录名
-     */
-    private String consultantUserName;
-    /**
-     * 顾问真实姓名
-     */
-    private String consultantRealName;
-    /**
-     * 顾问提成比例
-     */
-    private Integer consultantCommissionPercent;
     /**
      * CWid
      */
@@ -96,6 +85,86 @@ public class SuccessfulPermVO implements Serializable {
      * BD提成比例
      */
     private Integer bdCommissionPercent;
+    /**
+     * 顾问id
+     */
+    private Integer consultantId;
+    /**
+     * 顾问登录名
+     */
+    private String consultantUserName;
+    /**
+     * 顾问真实姓名
+     */
+    private String consultantRealName;
+    /**
+     * 顾问提成比例
+     */
+    private Integer consultantCommissionPercent;
+    /**
+     * 顾问id2
+     */
+    private Integer consultantId2;
+    /**
+     * 顾问登录名2
+     */
+    private String consultantUserName2;
+    /**
+     * 顾问真实姓名2
+     */
+    private String consultantRealName2;
+    /**
+     * 顾问提成比例2
+     */
+    private Integer consultantCommissionPercent2;
+    /**
+     * 顾问id3
+     */
+    private Integer consultantId3;
+    /**
+     * 顾问登录名3
+     */
+    private String consultantUserName3;
+    /**
+     * 顾问真实姓名3
+     */
+    private String consultantRealName3;
+    /**
+     * 顾问提成比例3
+     */
+    private Integer consultantCommissionPercent3;
+    /**
+     * 顾问id4
+     */
+    private Integer consultantId4;
+    /**
+     * 顾问登录名4
+     */
+    private String consultantUserName4;
+    /**
+     * 顾问真实姓名4
+     */
+    private String consultantRealName4;
+    /**
+     * 顾问提成比例4
+     */
+    private Integer consultantCommissionPercent4;
+    /**
+     * 顾问id5
+     */
+    private Integer consultantId5;
+    /**
+     * 顾问登录名5
+     */
+    private String consultantUserName5;
+    /**
+     * 顾问真实姓名5
+     */
+    private String consultantRealName5;
+    /**
+     * 顾问提成比例5
+     */
+    private Integer consultantCommissionPercent5;
     /**
      * 地点
      */

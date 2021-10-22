@@ -44,6 +44,16 @@ public class User {
     @Column(length = 50, nullable = false)
     private String password;
     /**
+     * 底薪
+     */
+    @Column
+    private Integer salarybase;
+    /**
+     * 是否cover base
+     */
+    @Column
+    private Boolean coverbase;
+    /**
      * 创建日期
      */
     @Column(length = 50, nullable = false)
@@ -57,7 +67,7 @@ public class User {
      * 是否可用
      */
     @Column
-    private boolean enabled;
+    private Boolean enabled;
     /**
      * 是否过期
      */

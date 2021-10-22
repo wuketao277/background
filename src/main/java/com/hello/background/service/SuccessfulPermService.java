@@ -48,8 +48,8 @@ public class SuccessfulPermService {
             successfulPermVOPage = successfulPermRepository.findAll(pageable);
             total = successfulPermRepository.count();
         } else {
-            successfulPermVOPage = successfulPermRepository.findByClientNameLikeOrCandidateChineseNameLikeOrConsultantRealNameLikeOrConsultantUserNameLike(search, search, search, search, pageable);
-            total = successfulPermRepository.countByClientNameLikeOrCandidateChineseNameLikeOrConsultantRealNameLikeOrConsultantUserNameLike(search, search, search, search);
+            successfulPermVOPage = successfulPermRepository.findByClientNameLikeOrCandidateChineseNameLikeOrConsultantRealNameLikeOrConsultantUserNameLikeOrConsultantRealName2LikeOrConsultantUserName2LikeOrConsultantRealName3LikeOrConsultantUserName3LikeOrConsultantRealName4LikeOrConsultantUserName4LikeOrConsultantRealName5LikeOrConsultantUserName5Like(search, search, search, search, search, search, search, search, search, search, search, search, pageable);
+            total = successfulPermRepository.countByClientNameLikeOrCandidateChineseNameLikeOrConsultantRealNameLikeOrConsultantUserNameLikeOrConsultantRealName2LikeOrConsultantUserName2LikeOrConsultantRealName3LikeOrConsultantUserName3LikeOrConsultantRealName4LikeOrConsultantUserName4LikeOrConsultantRealName5LikeOrConsultantUserName5Like(search, search, search, search, search, search, search, search, search, search, search, search);
         }
         Page<SuccessfulPermVO> map = successfulPermVOPage.map(x -> TransferUtil.transferTo(x, SuccessfulPermVO.class));
         map = new PageImpl<>(map.getContent(),

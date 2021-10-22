@@ -4,6 +4,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -49,5 +50,19 @@ public class DateTimeUtil {
     public static String getTimeStr() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 24HH:mm:ss");
         return simpleDateFormat.format(new Date());
+    }
+
+    public static Date localDate2Date(LocalDate ld) {
+        if (null == ld) {
+            return null;
+        }
+        return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static LocalDate date2LocalDate(Date date) {
+        if (null != date) {
+            return null;
+        }
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

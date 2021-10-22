@@ -50,8 +50,7 @@ public class SalarySpecialItemController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<SalarySpecialItemVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize) {
-        search = "%" + search + "%";
-        return salarySpecialItemService.queryPage(search, currentPage, pageSize);
+    public Page<SalarySpecialItemVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize, HttpSession session) {
+        return salarySpecialItemService.queryPage(session, search, currentPage, pageSize);
     }
 }

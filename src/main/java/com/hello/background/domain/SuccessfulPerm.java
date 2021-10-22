@@ -34,6 +34,11 @@ public class SuccessfulPerm {
     @Column
     private Integer clientId;
     /**
+     * 审批状态 applied表示申请状态，approved表示审批通过，denied表示否决状态。
+     */
+    @Column(length = 20)
+    private String approveStatus;
+    /**
      * 客户名称
      */
     @Column(length = 100)
@@ -63,26 +68,6 @@ public class SuccessfulPerm {
      */
     @Column(length = 50)
     private String candidateChineseName;
-    /**
-     * 顾问id
-     */
-    @Column
-    private Integer consultantId;
-    /**
-     * 顾问登录名
-     */
-    @Column(length = 50)
-    private String consultantUserName;
-    /**
-     * 顾问真实姓名
-     */
-    @Column(length = 50)
-    private String consultantRealName;
-    /**
-     * 顾问提成比例
-     */
-    @Column
-    private Integer consultantCommissionPercent;
     /**
      * CWid
      */
@@ -123,6 +108,106 @@ public class SuccessfulPerm {
      */
     @Column
     private Integer bdCommissionPercent;
+    /**
+     * 顾问id
+     */
+    @Column
+    private Integer consultantId;
+    /**
+     * 顾问登录名
+     */
+    @Column(length = 50)
+    private String consultantUserName;
+    /**
+     * 顾问真实姓名
+     */
+    @Column(length = 50)
+    private String consultantRealName;
+    /**
+     * 顾问提成比例
+     */
+    @Column
+    private Integer consultantCommissionPercent;
+    /**
+     * 顾问id2
+     */
+    @Column
+    private Integer consultantId2;
+    /**
+     * 顾问登录名2
+     */
+    @Column(length = 50)
+    private String consultantUserName2;
+    /**
+     * 顾问真实姓名2
+     */
+    @Column(length = 50)
+    private String consultantRealName2;
+    /**
+     * 顾问提成比例2
+     */
+    @Column
+    private Integer consultantCommissionPercent2;
+    /**
+     * 顾问id3
+     */
+    @Column
+    private Integer consultantId3;
+    /**
+     * 顾问登录名3
+     */
+    @Column(length = 50)
+    private String consultantUserName3;
+    /**
+     * 顾问真实姓名3
+     */
+    @Column(length = 50)
+    private String consultantRealName3;
+    /**
+     * 顾问提成比例3
+     */
+    @Column
+    private Integer consultantCommissionPercent3;
+    /**
+     * 顾问id4
+     */
+    @Column
+    private Integer consultantId4;
+    /**
+     * 顾问登录名4
+     */
+    @Column(length = 50)
+    private String consultantUserName4;
+    /**
+     * 顾问真实姓名4
+     */
+    @Column(length = 50)
+    private String consultantRealName4;
+    /**
+     * 顾问提成比例4
+     */
+    @Column
+    private Integer consultantCommissionPercent4;
+    /**
+     * 顾问id5
+     */
+    @Column
+    private Integer consultantId5;
+    /**
+     * 顾问登录名5
+     */
+    @Column(length = 50)
+    private String consultantUserName5;
+    /**
+     * 顾问真实姓名5
+     */
+    @Column(length = 50)
+    private String consultantRealName5;
+    /**
+     * 顾问提成比例5
+     */
+    @Column
+    private Integer consultantCommissionPercent5;
     /**
      * 地点
      */

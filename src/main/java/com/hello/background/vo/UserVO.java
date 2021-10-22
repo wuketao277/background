@@ -36,6 +36,14 @@ public class UserVO implements Serializable {
      */
     private String password;
     /**
+     * 底薪
+     */
+    private Integer salarybase;
+    /**
+     * 是否cover base
+     */
+    private Boolean coverbase;
+    /**
      * 创建日期
      */
     private Date createDate;
