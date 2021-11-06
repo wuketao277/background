@@ -5,5 +5,6 @@
 
 前端项目打包：rm -rf dist      npm run build
 上传前台应用：put -r /Users/wuketao/Public/study/github/hello/front/hello/dist/* /opt/front/
-最后要重启nginx nginx -s reload
+最后要重启nginx：/usr/sbin/nginx -s reload
+nginx的配置文件：/etc/nginx/nginx.conf
 浏览器删除缓存
