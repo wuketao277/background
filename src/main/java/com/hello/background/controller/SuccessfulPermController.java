@@ -3,14 +3,17 @@ package com.hello.background.controller;
 import com.hello.background.service.ClientService;
 import com.hello.background.service.SuccessfulPermService;
 import com.hello.background.vo.SuccessfulPermVO;
+import com.hello.background.vo.SuccessfulPermVOPageRequest;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.Optional;
 
@@ -47,14 +50,10 @@ public class SuccessfulPermController {
     /**
      * 查询分页
      *
-     * @param search      搜索关键字
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
      * @return
      */
-    @GetMapping("queryPage")
-    public Page<SuccessfulPermVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize) {
-        search = "%" + search + "%";
-        return successfulPermService.queryPage(search, currentPage, pageSize);
+    @PostMapping("queryPage")
+    public Page<SuccessfulPermVO> queryPage(@RequestBody SuccessfulPermVOPageRequest request) {
+        return successfulPermService.queryPage(request);
     }
 }

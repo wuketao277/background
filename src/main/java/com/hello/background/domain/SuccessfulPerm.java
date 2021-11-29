@@ -267,12 +267,12 @@ public class SuccessfulPerm {
      * 实际收款日期
      */
     @Column
-    private Date actualAcceptDate;
+    private Date actualPaymentDate;
     /**
      * 奖金发放日期
      */
     @Column
-    private Date bonusPaymentDate;
+    private Date commissionDate;
     /**
      * 更新日期
      */

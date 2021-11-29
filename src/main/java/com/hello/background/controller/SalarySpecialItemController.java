@@ -1,6 +1,5 @@
 package com.hello.background.controller;
 
-import com.hello.background.service.ClientService;
 import com.hello.background.service.SalarySpecialItemService;
 import com.hello.background.vo.SalarySpecialItemVO;
 import com.hello.background.vo.UserVO;
@@ -24,8 +23,6 @@ import java.util.Date;
 public class SalarySpecialItemController {
     @Autowired
     private SalarySpecialItemService salarySpecialItemService;
-    @Autowired
-    private ClientService clientService;
 
     /**
      * 保存

@@ -50,10 +50,30 @@ public class Salary {
     @Column(length = 10)
     private String month;
     /**
-     * 金额
+     * 税前工资
      */
     @Column
     private Integer sum;
+    /**
+     * 个税
+     */
+    @Column
+    private Integer personalTax;
+    /**
+     * 保险
+     */
+    @Column
+    private Integer insurance;
+    /**
+     * 公积金
+     */
+    @Column
+    private Integer gongjijin;
+    /**
+     * 税后工资
+     */
+    @Column
+    private Integer finalSum;
     /**
      * 历史负债
      */

@@ -45,6 +45,17 @@ public class SalaryController {
     }
 
     /**
+     * 更新工资
+     *
+     * @return
+     */
+    @PostMapping("update")
+    public boolean update(@RequestBody SalaryVO vo, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        return salaryService.update(vo, user);
+    }
+
+    /**
      * 查询分页
      *
      * @param search      搜索关键字

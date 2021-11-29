@@ -17,6 +17,14 @@ public class DateTimeUtil {
     private static final String sf1 = "\\d{4}[.]{1}\\d{1,2}[.]{1}\\d{1,2}";
     private static final String sf2 = "\\d{4}-\\d{1,2}-\\d{1,2}";
     private static final String sf3 = "\\d{4}/\\d{1,2}/\\d{1,2}";
+    /**
+     * 开始日期
+     */
+    public static final Date startDate = localDate2Date(LocalDate.of(1949, 10, 1));
+    /**
+     * 结束日期
+     */
+    public static final Date endDate = localDate2Date(LocalDate.of(9999, 12, 31));
 
     /**
      * 转换为日期

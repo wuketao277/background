@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.util.Date;
 
 /**
@@ -40,9 +38,25 @@ public class SalaryVO {
      */
     private String month;
     /**
-     * 金额
+     * 税前工资
      */
     private Integer sum;
+    /**
+     * 个税
+     */
+    private Integer personalTax;
+    /**
+     * 保险
+     */
+    private Integer insurance;
+    /**
+     * 公积金
+     */
+    private Integer gongjijin;
+    /**
+     * 税后工资
+     */
+    private Integer finalSum;
     /**
      * 历史负债
      */

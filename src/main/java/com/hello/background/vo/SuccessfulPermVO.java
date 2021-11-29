@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -212,11 +211,11 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 实际收款日期
      */
-    private Date actualAcceptDate;
+    private Date actualPaymentDate;
     /**
      * 奖金发放日期
      */
-    private Date bonusPaymentDate;
+    private Date commissionDate;
     /**
      * 更新日期
      */

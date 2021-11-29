@@ -45,6 +45,35 @@ public class SalaryService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    public boolean update(SalaryVO vo,UserVO user) {
+        Optional<Salary> optional = salaryRepository.findById(vo.getId());
+        if (!optional.isPresent()) {
+            return false;
+        }
+        Salary salary = optional.get();
+        Integer finalSum = 0;
+        if (null != salary.getSum() && salary.getSum() > 0) {
+            finalSum = salary.getSum();
+            if (null != vo.getPersonalTax() && vo.getPersonalTax() > 0) {
+                finalSum -= vo.getPersonalTax();
+            }
+            if (null != vo.getInsurance() && vo.getInsurance() > 0) {
+                finalSum -= vo.getInsurance();
+            }
+            if (null != vo.getGongjijin() && vo.getGongjijin() > 0) {
+                finalSum -= vo.getGongjijin();
+            }
+        }
+        salary.setFinalSum(finalSum);
+        salary.setInsurance(vo.getInsurance());
+        salary.setPersonalTax(vo.getPersonalTax());
+        salary.setGongjijin(vo.getGongjijin());
+        salary.setUpdateUserName(user.getUsername());
+        salary.setUpdateTime(new Date());
+        salaryRepository.save(salary);
+        return true;
+    }
+
     /**
      * 生成工资
      *
@@ -58,7 +87,7 @@ public class SalaryService {
         LocalDate ldEndMonth = ldStartMonth.plusMonths(1);
         Date end = DateTimeUtil.localDate2Date(ldEndMonth);
         // 查询当月收款情况
-        List<SuccessfulPerm> successfulPermList = successfulPermRepository.findByApproveStatusAndActualAcceptDateBetween("approved", start, end);
+        List<SuccessfulPerm> successfulPermList = successfulPermRepository.findByApproveStatusAndCommissionDateBetween("approved", start, end);
         // 查找所有当月工资特殊项
         List<SalarySpecialItem> salarySpecialItemList = salarySpecialItemRepository.findByMonth(month);
         // 查找开启状态的所有人
