@@ -1,7 +1,15 @@
 package com.hello.background.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.hello.background.service.ReimbursementServise;
+import com.hello.background.vo.ReimbursementItemVO;
+import com.hello.background.vo.ReimbursementSummaryVO;
+import com.hello.background.vo.UserVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 /**
  * @author wuketao
@@ -12,5 +20,38 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("reimbursement")
 public class ReimbursementController {
 
-    public
+    @Autowired
+    private ReimbursementServise reimbursementServise;
+
+    @PostMapping("save")
+    public ReimbursementItemVO save(@RequestBody ReimbursementItemVO vo, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        vo.setUpdateTime(new Date());
+        vo.setUpdateUserName(user.getUsername());
+        return reimbursementServise.save(vo);
+    }
+
+    /**
+     * 查询分页
+     *
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("queryPage")
+    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, HttpSession session) {
+        return reimbursementServise.queryPage(currentPage, pageSize, session);
+    }
+
+    /**
+     * 查询分页
+     *
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("querySummaryPage")
+    public Page<ReimbursementSummaryVO> querySummaryPage(Integer currentPage, Integer pageSize, HttpSession session) {
+        return reimbursementServise.querySummaryPage(currentPage, pageSize, session);
+    }
 }

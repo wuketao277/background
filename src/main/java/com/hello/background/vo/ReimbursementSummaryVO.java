@@ -3,7 +3,6 @@ package com.hello.background.vo;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @author wuketao
@@ -11,7 +10,7 @@ import java.util.Date;
  * @Description
  */
 @Data
-public class ReimbursementItemVO {
+public class ReimbursementSummaryVO {
     /**
      * 主键
      */
@@ -29,35 +28,11 @@ public class ReimbursementItemVO {
      */
     private String realName;
     /**
-     * 报销类型
-     */
-    private String type;
-    /**
-     * 发生日期
-     */
-    private String happenDate;
-    /**
      * 报销金额
      */
     private BigDecimal sum;
     /**
-     * 说明
-     */
-    private String description;
-    /**
      * 报销发放月份
      */
     private String paymentMonth;
-    /**
-     * 审批状态
-     */
-    private String approveStatus;
-    /**
-     * 更新日期
-     */
-    private Date updateTime;
-    /**
-     * 更新人
-     */
-    private String updateUserName;
 }

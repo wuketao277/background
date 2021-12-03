@@ -1,11 +1,15 @@
 package com.hello.background.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author wuketao
@@ -13,6 +17,9 @@ import java.math.BigDecimal;
  * @Description
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class ReimbursementItem {
     /**
      * 主键
@@ -65,4 +72,14 @@ public class ReimbursementItem {
      */
     @Column(length = 20)
     private String approveStatus;
+    /**
+     * 更新日期
+     */
+    @Column
+    private Date updateTime;
+    /**
+     * 更新人
+     */
+    @Column(length = 20)
+    private String updateUserName;
 }
