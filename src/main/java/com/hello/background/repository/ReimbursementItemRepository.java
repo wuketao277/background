@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author wuketao
  * @date 2021/11/28
@@ -38,4 +40,13 @@ public interface ReimbursementItemRepository extends PagingAndSortingRepository<
      * @return
      */
     Page<ReimbursementItem> findByUpdateTimeIsNotNullOrderByUpdateTimeDesc(Pageable pageable);
+
+    /**
+     * 通过支付月份和审批状态查询
+     *
+     * @param payment
+     * @param approveStatus
+     * @return
+     */
+    List<ReimbursementItem> findByPaymentMonthAndApproveStatus(String payment, String approveStatus);
 }

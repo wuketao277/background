@@ -19,7 +19,7 @@ public class ReimbursementItemVO {
     /**
      * 报销人id
      */
-    private String userId;
+    private Integer userId;
     /**
      * 报销人登录名
      */

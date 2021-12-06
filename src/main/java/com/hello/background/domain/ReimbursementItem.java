@@ -31,7 +31,7 @@ public class ReimbursementItem {
      * 报销人id
      */
     @Column
-    private String userId;
+    private Integer userId;
     /**
      * 报销人登录名
      */

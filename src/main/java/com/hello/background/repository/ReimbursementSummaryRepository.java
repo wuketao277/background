@@ -38,4 +38,11 @@ public interface ReimbursementSummaryRepository extends PagingAndSortingReposito
      * @return
      */
     int countByUserName(String userName);
+
+    /**
+     * 通过支付月份删除
+     *
+     * @param paymentMonth
+     */
+    void deleteByPaymentMonth(String paymentMonth);
 }

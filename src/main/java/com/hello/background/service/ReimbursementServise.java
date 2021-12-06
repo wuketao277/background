@@ -1,10 +1,13 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.ApproveStatusEnum;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
+import com.hello.background.domain.User;
 import com.hello.background.domain.UserRole;
 import com.hello.background.repository.ReimbursementItemRepository;
 import com.hello.background.repository.ReimbursementSummaryRepository;
+import com.hello.background.repository.UserRepository;
 import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ReimbursementItemVO;
@@ -21,7 +24,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wuketao
@@ -39,6 +48,8 @@ public class ReimbursementServise {
     private UserRoleRepository userRoleRepository;
     @Autowired
     private ReimbursementSummaryRepository reimbursementSummaryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 保存报销项目
@@ -109,5 +120,34 @@ public class ReimbursementServise {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 生成报销摘要
+     */
+    public void generateReimbursementSummary(UserVO curUser) {
+        // 删除旧数据
+        String monthStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        reimbursementSummaryRepository.deleteByPaymentMonth(monthStr);
+        // 查询当月审批通过的报销项
+        List<ReimbursementItem> approveList = reimbursementItemRepository.findByPaymentMonthAndApproveStatus(monthStr, ApproveStatusEnum.APPROVED.getCode());
+        Map<Integer, BigDecimal> map = new HashMap<>();
+        approveList.forEach(a -> {
+            BigDecimal bd = map.containsKey(a.getUserId()) ? map.get(a.getUserId()) : BigDecimal.ZERO;
+            bd = bd.add(null != a.getSum() ? a.getSum() : BigDecimal.ZERO);
+            map.put(a.getUserId(), bd);
+        });
+        for (Map.Entry<Integer, BigDecimal> entry : map.entrySet()) {
+            User user = userRepository.findById(entry.getKey()).get();
+            ReimbursementSummary summary = new ReimbursementSummary();
+            summary.setPaymentMonth(monthStr);
+            summary.setUserId(user.getId());
+            summary.setUserName(user.getUsername());
+            summary.setRealName(user.getRealname());
+            summary.setSum(entry.getValue());
+            summary.setUpdateTime(new Date());
+            summary.setUpdateUserName(curUser.getUsername());
+            reimbursementSummaryRepository.save(summary);
+        }
     }
 }

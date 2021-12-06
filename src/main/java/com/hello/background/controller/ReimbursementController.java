@@ -54,4 +54,13 @@ public class ReimbursementController {
     public Page<ReimbursementSummaryVO> querySummaryPage(Integer currentPage, Integer pageSize, HttpSession session) {
         return reimbursementServise.querySummaryPage(currentPage, pageSize, session);
     }
+
+    /**
+     * 生成报销摘要
+     */
+    @PostMapping("generateReimbursementSummary")
+    public void generateReimbursementSummary(HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        reimbursementServise.generateReimbursementSummary(user);
+    }
 }
