@@ -48,15 +48,20 @@ public class ReimbursementItem {
     @Column(length = 20)
     private String type;
     /**
-     * 发生日期
+     * 日期
      */
     @Column(length = 20)
-    private String happenDate;
+    private String date;
     /**
      * 报销金额
      */
     @Column
     private BigDecimal sum;
+    /**
+     * 发票号
+     */
+    @Column(length = 30)
+    private String invoiceNo;
     /**
      * 说明
      */

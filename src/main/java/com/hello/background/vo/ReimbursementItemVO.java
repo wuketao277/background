@@ -33,13 +33,17 @@ public class ReimbursementItemVO {
      */
     private String type;
     /**
-     * 发生日期
+     * 日期
      */
-    private String happenDate;
+    private String date;
     /**
      * 报销金额
      */
     private BigDecimal sum;
+    /**
+     * 发票号
+     */
+    private String invoiceNo;
     /**
      * 说明
      */
