@@ -92,7 +92,7 @@ public class UploadFileService {
                         uploadFile.setCreateUserName(userVO.getUsername());
                         uploadFile.setCreateRealName(userVO.getRealname());
                         uploadFile.setUuid(uuid);
-                        uploadFile.setOriginalFileName(uuid + originalFileName);
+                        uploadFile.setOriginalFileName(originalFileName);
                         if (null != tableId) {
                             uploadFile.setRelativeTableId(tableId);
                         }
@@ -131,13 +131,13 @@ public class UploadFileService {
                 if (!fileStorePath.endsWith("/")) {
                     fileStorePath += "/";
                 }
-                String downLoadPath = fileStorePath + originalFileName + fileSuffix;
+                String downLoadPath = fileStorePath + uuid + originalFileName + fileSuffix;
                 //获取文件的长度
                 long fileLength = new File(downLoadPath).length();
                 //设置文件输出类型
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-disposition", "attachment; filename="
-                        + new String(originalFileName.replace(uuid, "").getBytes("utf-8"), "ISO8859-1"));
+                        + new String(originalFileName.getBytes("utf-8"), "ISO8859-1"));
                 //设置输出长度
                 response.setHeader("Content-Length", String.valueOf(fileLength));
                 //获取输入流
