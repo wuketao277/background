@@ -70,14 +70,13 @@ public class UploadFileService {
                 for (Map.Entry<String, MultipartFile> entry : fileMap.entrySet()) {
                     String originalFileName = entry.getValue().getOriginalFilename();
                     log.info("originalFileName:" + originalFileName);
-                    String fileSuffix = originalFileName.lastIndexOf(".") > -1 ? originalFileName.substring(originalFileName.lastIndexOf(".")) : "";
                     //获取item中的上传文件的输入流
                     try (InputStream inputStream = entry.getValue().getInputStream()) {
                         String uuid = UUID.randomUUID().toString();
                         if (!fileStorePath.endsWith("/")) {
                             fileStorePath += "/";
                         }
-                        OutputStream outputStream = new FileOutputStream(fileStorePath + uuid + originalFileName + fileSuffix);
+                        OutputStream outputStream = new FileOutputStream(fileStorePath + uuid + originalFileName);
                         int bytesWritten = 0;
                         int byteCount = 0;
                         byte[] bytes = new byte[1024 * 1024 * 100];
@@ -126,12 +125,11 @@ public class UploadFileService {
             UploadFile uploadFile = uploadFileRepository.findByUuid(uuid);
             if (null != uploadFile && !StringUtils.isNullOrEmpty(fileStorePath)) {
                 String originalFileName = uploadFile.getOriginalFileName();
-                String fileSuffix = originalFileName.lastIndexOf(".") > -1 ? originalFileName.substring(originalFileName.lastIndexOf(".")) : "";
                 //获取下载文件路径
                 if (!fileStorePath.endsWith("/")) {
                     fileStorePath += "/";
                 }
-                String downLoadPath = fileStorePath + uuid + originalFileName + fileSuffix;
+                String downLoadPath = fileStorePath + uuid + originalFileName;
                 //获取文件的长度
                 long fileLength = new File(downLoadPath).length();
                 //设置文件输出类型
