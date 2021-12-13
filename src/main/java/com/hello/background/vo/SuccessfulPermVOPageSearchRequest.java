@@ -83,4 +83,8 @@ public class SuccessfulPermVOPageSearchRequest {
      * 审批状态
      */
     private String approveStatus;
+    /**
+     * 候选人中文名
+     */
+    private String candidateChineseName;
 }

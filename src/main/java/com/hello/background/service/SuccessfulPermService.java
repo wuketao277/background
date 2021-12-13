@@ -92,6 +92,11 @@ public class SuccessfulPermService {
                     Predicate equal = criteriaBuilder.equal(path, search.getApproveStatus());
                     list.add(criteriaBuilder.and(equal));
                 }
+                if (!StringUtils.isEmpty(search.getCandidateChineseName())) {
+                    Path<String> path = root.get("candidateChineseName");
+                    Predicate equal = criteriaBuilder.equal(path, search.getCandidateChineseName());
+                    list.add(criteriaBuilder.and(equal));
+                }
                 if (null != search.getOnBoardDateStart() || null != search.getOnBoardDateEnd()) {
                     Date start = null != search.getOnBoardDateStart() ? search.getOnBoardDateStart() : DateTimeUtil.startDate;
                     Date end = null != search.getOnBoardDateEnd() ? search.getOnBoardDateEnd() : DateTimeUtil.endDate;
