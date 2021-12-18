@@ -42,9 +42,9 @@ public class CaseController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<CaseVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize) {
+    public Page<CaseVO> queryPage(@RequestParam("search") String search, @RequestParam("searchStatus") String searchStatus, @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
         search = "%" + search + "%";
-        return caseService.queryPage(search, currentPage, pageSize);
+        return caseService.queryPage(search, searchStatus, currentPage, pageSize);
     }
 
     /**

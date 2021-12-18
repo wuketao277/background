@@ -1,6 +1,6 @@
 package com.hello.background.service;
 
-import com.google.common.base.Strings;
+import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.CaseRepository;
@@ -9,9 +9,13 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CaseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,21 +77,34 @@ public class CaseService {
      * @param pageSize    页尺寸
      * @return
      */
-    public Page<CaseVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+    public Page<CaseVO> queryPage(String search, String searchStatus, Integer currentPage, Integer pageSize) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<ClientCase> casePage = null;
-        long total = 0;
-        if (Strings.isNullOrEmpty(search)) {
-            casePage = caseRepository.findAll(pageable);
-            total = caseRepository.count();
-        } else {
-            casePage = caseRepository.findByTitleLikeOrDescriptionLike(search, search, pageable);
-            total = caseRepository.countByTitleLikeOrDescriptionLike(search, search);
-        }
-        Page<CaseVO> map = casePage.map(x -> fromDoToVo(x));
+        Specification<ClientCase> specification = new Specification<ClientCase>() {
+            @Override
+            public Predicate toPredicate(Root<ClientCase> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (!StringUtils.isEmpty(search)) {
+                    Path<String> titlePath = root.get("title");
+                    Predicate titleLike = criteriaBuilder.like(titlePath, "%" + search + "%");
+                    Path<String> descriptionPath = root.get("description");
+                    Predicate descriptionLike = criteriaBuilder.like(descriptionPath, "%" + search + "%");
+                    list.add(criteriaBuilder.and(criteriaBuilder.or(titleLike, descriptionLike)));
+                }
+                if (!StringUtils.isEmpty(searchStatus) && !"ALL".equals(searchStatus)) {
+                    Path<String> path = root.get("status");
+                    CaseStatusEnum statusEnum = CaseStatusEnum.LOOP.get(searchStatus);
+                    Predicate like = criteriaBuilder.equal(path, statusEnum);
+                    list.add(criteriaBuilder.and(like));
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        Page<ClientCase> all = caseRepository.findAll(specification, pageable);
+        Page<CaseVO> map = all.map(x -> fromDoToVo(x));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                total);
+                all.getTotalElements());
         return map;
     }
 
