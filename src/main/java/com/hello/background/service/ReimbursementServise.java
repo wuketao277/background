@@ -109,10 +109,10 @@ public class ReimbursementServise {
         long total = 0;
         if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
             // 管理员
-            page = reimbursementSummaryRepository.findByPaymentMonthIsNotNullOrderByUpdateTimeDesc(pageable);
+            page = reimbursementSummaryRepository.findByPaymentMonthIsNotNullOrderByPaymentMonthDescSumDescIdDesc(pageable);
             total = reimbursementSummaryRepository.count();
         } else {
-            page = reimbursementSummaryRepository.findByUserNameOrderByUpdateTimeDesc(user.getUsername(), pageable);
+            page = reimbursementSummaryRepository.findByUserNameOrderByPaymentMonthDesc(user.getUsername(), pageable);
             total = reimbursementSummaryRepository.countByUserName(user.getUsername());
         }
         Page<ReimbursementSummaryVO> map = page.map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVO.class));

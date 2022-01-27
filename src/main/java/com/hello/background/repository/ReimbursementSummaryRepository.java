@@ -21,7 +21,7 @@ public interface ReimbursementSummaryRepository extends PagingAndSortingReposito
      * @param pageable
      * @return
      */
-    Page<ReimbursementSummary> findByPaymentMonthIsNotNullOrderByUpdateTimeDesc(Pageable pageable);
+    Page<ReimbursementSummary> findByPaymentMonthIsNotNullOrderByPaymentMonthDescSumDescIdDesc(Pageable pageable);
 
     /**
      * 通过名称查找分页
@@ -29,7 +29,7 @@ public interface ReimbursementSummaryRepository extends PagingAndSortingReposito
      * @param pageable
      * @return
      */
-    Page<ReimbursementSummary> findByUserNameOrderByUpdateTimeDesc(String userName, Pageable pageable);
+    Page<ReimbursementSummary> findByUserNameOrderByPaymentMonthDesc(String userName, Pageable pageable);
 
     /**
      * 通过名称计算总数
