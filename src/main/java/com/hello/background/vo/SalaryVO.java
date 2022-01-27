@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 /**
@@ -69,4 +68,8 @@ public class SalaryVO {
      * 更新人
      */
     private String updateUserName;
+    /**
+     * 描述
+     */
+    private String description;
 }

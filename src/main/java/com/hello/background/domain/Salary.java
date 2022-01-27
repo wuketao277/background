@@ -89,4 +89,9 @@ public class Salary {
      */
     @Column(length = 20)
     private String updateUserName;
+    /**
+     * 描述
+     */
+    @Column(length = 1000)
+    private String description;
 }
