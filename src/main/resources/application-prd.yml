@@ -1,5 +1,8 @@
 server:
   port: 8000
+  servlet:
+    session:
+      timeout: 600000
 spring:
   # 配置写数据库信息
   datasource:
