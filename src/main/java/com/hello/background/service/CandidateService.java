@@ -5,7 +5,6 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Strings;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
 import com.hello.background.repository.CandidateRepository;
@@ -14,6 +13,7 @@ import com.hello.background.vo.CandidateVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -21,13 +21,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -95,20 +93,50 @@ public class CandidateService {
      */
     public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<Candidate> cadidatePage = null;
-        long total = 0;
-        if (Strings.isNullOrEmpty(search)) {
-            cadidatePage = candidateRepository.findAll(pageable);
-            total = candidateRepository.count();
-        } else {
-            cadidatePage = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(search, search, search, search, search, search, search, search, search, search, search, pageable);
-            total = candidateRepository.countByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLike(search, search, search, search, search, search, search, search, search, search, search);
-        }
-        Page<CandidateVO> map = cadidatePage.map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class));
+        List<String> searchWordList = CommonUtils.splitSearchWord(search);
+        Specification<Candidate> specification = new Specification<Candidate>() {
+            @Override
+            public Predicate toPredicate(Root<Candidate> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                for (String searchWord : searchWordList) {
+                    list.add(criteriaBuilder.and(criteriaBuilder.or(
+                            getPredicate("chineseName", searchWord, root, criteriaBuilder)
+                            ,getPredicate("englishName", searchWord, root, criteriaBuilder)
+                            ,getPredicate("phoneNo", searchWord, root, criteriaBuilder)
+                            ,getPredicate("email", searchWord, root, criteriaBuilder)
+                            ,getPredicate("companyName", searchWord, root, criteriaBuilder)
+                            ,getPredicate("department", searchWord, root, criteriaBuilder)
+                            ,getPredicate("title", searchWord, root, criteriaBuilder)
+                            ,getPredicate("schoolName", searchWord, root, criteriaBuilder)
+                            ,getPredicate("currentAddress", searchWord, root, criteriaBuilder)
+                            ,getPredicate("futureAddress", searchWord, root, criteriaBuilder)
+                            ,getPredicate("remark", searchWord, root, criteriaBuilder)
+                    )));
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        Page<Candidate> all = candidateRepository.findAll(specification, pageable);
+        Page<CandidateVO> map = all.map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                total);
+                all.getTotalElements());
         return map;
+    }
+
+    /**
+     * 获取查询条件中的谓词
+     *
+     * @param key
+     * @param root
+     * @param criteriaBuilder
+     * @return
+     */
+    private Predicate getPredicate(String key, String value, Root<Candidate> root, CriteriaBuilder criteriaBuilder) {
+        Path<String> path = root.get(key);
+        Predicate predicate = criteriaBuilder.like(path, "%" + value + "%");
+        return predicate;
     }
 
     /**
@@ -149,12 +177,18 @@ public class CandidateService {
     }
 
     /**
-     * 获取所有新闻
+     * 获取所有候选人
      *
      * @return
      */
     public List<CandidateVO> findAll() {
-        List<Candidate> all = candidateRepository.findAll();
+        Specification<Candidate> specification = new Specification<Candidate>() {
+            @Override
+            public Predicate toPredicate(Root<Candidate> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                return null;
+            }
+        };
+        List<Candidate> all = candidateRepository.findAll(specification);
         return all.stream().map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
     }
 

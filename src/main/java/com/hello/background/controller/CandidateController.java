@@ -107,7 +107,6 @@ public class CandidateController {
      */
     @GetMapping("queryCandidatePage")
     public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize) {
-        search = "%" + search + "%";
         return candidateService.queryCandidatePage(search, currentPage, pageSize);
     }
 

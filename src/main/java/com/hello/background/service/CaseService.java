@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
@@ -79,15 +80,16 @@ public class CaseService {
      */
     public Page<CaseVO> queryPage(String search, String searchStatus, Integer currentPage, Integer pageSize) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
+        List<String> searchWordList = CommonUtils.splitSearchWord(search);
         Specification<ClientCase> specification = new Specification<ClientCase>() {
             @Override
             public Predicate toPredicate(Root<ClientCase> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                if (!StringUtils.isEmpty(search)) {
+                for (String searchWord : searchWordList) {
                     Path<String> titlePath = root.get("title");
-                    Predicate titleLike = criteriaBuilder.like(titlePath, "%" + search + "%");
+                    Predicate titleLike = criteriaBuilder.like(titlePath, "%" + searchWord + "%");
                     Path<String> descriptionPath = root.get("description");
-                    Predicate descriptionLike = criteriaBuilder.like(descriptionPath, "%" + search + "%");
+                    Predicate descriptionLike = criteriaBuilder.like(descriptionPath, "%" + searchWord + "%");
                     list.add(criteriaBuilder.and(criteriaBuilder.or(titleLike, descriptionLike)));
                 }
                 if (!StringUtils.isEmpty(searchStatus) && !"ALL".equals(searchStatus)) {
