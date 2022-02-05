@@ -101,16 +101,16 @@ public class CandidateService {
                 for (String searchWord : searchWordList) {
                     list.add(criteriaBuilder.and(criteriaBuilder.or(
                             getPredicate("chineseName", searchWord, root, criteriaBuilder)
-                            ,getPredicate("englishName", searchWord, root, criteriaBuilder)
-                            ,getPredicate("phoneNo", searchWord, root, criteriaBuilder)
-                            ,getPredicate("email", searchWord, root, criteriaBuilder)
-                            ,getPredicate("companyName", searchWord, root, criteriaBuilder)
-                            ,getPredicate("department", searchWord, root, criteriaBuilder)
-                            ,getPredicate("title", searchWord, root, criteriaBuilder)
-                            ,getPredicate("schoolName", searchWord, root, criteriaBuilder)
-                            ,getPredicate("currentAddress", searchWord, root, criteriaBuilder)
-                            ,getPredicate("futureAddress", searchWord, root, criteriaBuilder)
-                            ,getPredicate("remark", searchWord, root, criteriaBuilder)
+                            , getPredicate("englishName", searchWord, root, criteriaBuilder)
+                            , getPredicate("phoneNo", searchWord, root, criteriaBuilder)
+                            , getPredicate("email", searchWord, root, criteriaBuilder)
+                            , getPredicate("companyName", searchWord, root, criteriaBuilder)
+                            , getPredicate("department", searchWord, root, criteriaBuilder)
+                            , getPredicate("title", searchWord, root, criteriaBuilder)
+                            , getPredicate("schoolName", searchWord, root, criteriaBuilder)
+                            , getPredicate("currentAddress", searchWord, root, criteriaBuilder)
+                            , getPredicate("futureAddress", searchWord, root, criteriaBuilder)
+                            , getPredicate("remark", searchWord, root, criteriaBuilder)
                     )));
                 }
                 Predicate[] p = new Predicate[list.size()];
@@ -223,11 +223,9 @@ public class CandidateService {
                 ExcelReader reader = new ExcelReader(in, ExcelTypeEnum.XLSX, null, new AnalysisEventListener<List<String>>() {
                     @Override
                     public void invoke(List<String> object, AnalysisContext context) {
-                        if ((boolean) result.get("flag")) {
-                            saveCandidate(object, result);
-                            // 行号+1
-                            tlRowNumber.set(tlRowNumber.get() + 1);
-                        }
+                        saveCandidate(object, result);
+                        // 行号+1
+                        tlRowNumber.set(tlRowNumber.get() + 1);
                     }
 
                     @Override
@@ -242,9 +240,6 @@ public class CandidateService {
         } catch (Exception ex) {
             log.error("{}", ex);
         } finally {
-            if (!(boolean) result.get("flag")) {
-                result.put("msg", result.get("msg") + "之后的数据都没能成功导入。");
-            }
             // 删除ThreadLocal中的行号
             tlRowNumber.remove();
         }
@@ -262,7 +257,7 @@ public class CandidateService {
         Field[] declaredFields = Candidate.class.getDeclaredFields();
         if (declaredFields.length - 2 != object.size()) {
             result.put("flag", false);
-            result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行列数量错误。");
+            result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行列数量错误。\r\n");
         } else {
             // 相同手机号的不能导入
             // 电话
@@ -273,63 +268,63 @@ public class CandidateService {
                 if (object.get(0).length() > 20) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'日期'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行的'日期'列内容超长。\r\n");
                 } else if (object.get(1).length() > 25) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'名字'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'名字'列内容超长。\r\n");
                 } else if (object.get(2).length() > 50) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'英文名'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'英文名'列内容超长。\r\n");
                 } else if (object.get(3).length() > 20) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'生日'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'生日'列内容超长。\r\n");
                 } else if (object.get(4).length() > 20) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'手机号'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'手机号'列内容超长。\r\n");
                 } else if (object.get(5).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'邮箱'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'邮箱'列内容超长。\r\n");
                 } else if (object.get(6).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'公司'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'公司'列内容超长。\r\n");
                 } else if (object.get(7).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'部门'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'部门'列内容超长。\r\n");
                 } else if (object.get(8).length() > 200) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'职位'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'职位'列内容超长。\r\n");
                 } else if (object.get(9).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'学校'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'学校'列内容超长。\r\n");
                 } else if (object.get(10).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'现地'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'现地'列内容超长。\r\n");
                 } else if (object.get(11).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'期地'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'期地'列内容超长。\r\n");
                 } else if (object.get(12).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'薪资'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'薪资'列内容超长。\r\n");
                 } else if (object.get(13).length() > 100) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'期薪'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'期薪'列内容超长。\r\n");
                 } else if (object.get(14).length() > 1000) {
                     tempFlag = false;
                     result.put("flag", false);
-                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'备注'列内容超长。");
+                    result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的'备注'列内容超长。\r\n");
                 }
                 if (tempFlag) {
                     //日期
@@ -368,7 +363,7 @@ public class CandidateService {
                 }
             } else {
                 result.put("flag", false);
-                result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的电话号码已存在。");
+                result.put("msg", result.get("msg") + "第" + tlRowNumber.get() + "行" + object.get(1) + "的电话号码已存在。\r\n");
             }
         }
     }
