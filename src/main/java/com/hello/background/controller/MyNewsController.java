@@ -2,11 +2,13 @@ package com.hello.background.controller;
 
 import com.hello.background.service.MyNewsService;
 import com.hello.background.vo.MyNewsVO;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,9 +43,10 @@ public class MyNewsController {
      * @return
      */
     @PostMapping("saveNews")
-    public MyNewsVO saveNews(@RequestBody MyNewsVO vo) {
-        vo.setCreateUserId("1");
-        vo.setCreateUserName("wuketao");
+    public MyNewsVO saveNews(@RequestBody MyNewsVO vo, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        vo.setCreateUserId(String.valueOf(userVO.getId()));
+        vo.setCreateUserName(userVO.getUsername());
         vo.setCreateTime(LocalDateTime.now());
         MyNewsVO result = myNewsDomainService.saveNews(vo);
         return result;
