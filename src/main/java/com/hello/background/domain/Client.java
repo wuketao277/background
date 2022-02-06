@@ -44,6 +44,12 @@ public class Client {
     private String englishName;
 
     /**
+     * 英文名
+     */
+    @Column(length = 2000)
+    private String remark;
+
+    /**
      * 创建时间
      */
     @Column
