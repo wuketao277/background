@@ -36,10 +36,22 @@ public class ClientCase {
     private Integer clientId;
 
     /**
+     * 中文名
+     */
+    @Column(length = 200)
+    private String clientChineseName;
+
+    /**
      * 职位名称
      */
     @Column(length = 200)
     private String title;
+
+    /**
+     * 薪资范围
+     */
+    @Column(length = 50)
+    private String salaryScope;
 
     /**
      * 描述

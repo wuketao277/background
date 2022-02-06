@@ -31,12 +31,17 @@ public class CaseVO {
     /**
      * 客户名称
      */
-    private String clientName;
+    private String clientChineseName;
 
     /**
      * 职位名称
      */
     private String title;
+
+    /**
+     * 薪资范围
+     */
+    private String salaryScope;
 
     /**
      * 描述

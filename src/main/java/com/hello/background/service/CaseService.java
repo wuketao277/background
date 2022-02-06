@@ -51,10 +51,6 @@ public class CaseService {
 
     private CaseVO fromDoToVo(ClientCase clientCase) {
         CaseVO vo = TransferUtil.transferTo(clientCase, CaseVO.class);
-        Optional<Client> clientOptional = clientRepository.findById(clientCase.getClientId());
-        if (clientOptional.isPresent()) {
-            vo.setClientName(clientOptional.get().getChineseName());
-        }
         return vo;
     }
 
@@ -66,6 +62,8 @@ public class CaseService {
      */
     public CaseVO save(CaseVO vo) {
         ClientCase c = TransferUtil.transferTo(vo, ClientCase.class);
+        Optional<Client> clientOptional = clientRepository.findById(c.getClientId());
+        c.setClientChineseName(clientOptional.get().getChineseName());
         c = caseRepository.save(c);
         return fromDoToVo(c);
     }
@@ -90,7 +88,9 @@ public class CaseService {
                     Predicate titleLike = criteriaBuilder.like(titlePath, "%" + searchWord + "%");
                     Path<String> descriptionPath = root.get("description");
                     Predicate descriptionLike = criteriaBuilder.like(descriptionPath, "%" + searchWord + "%");
-                    list.add(criteriaBuilder.and(criteriaBuilder.or(titleLike, descriptionLike)));
+                    Path<String> clientChineseNamePath = root.get("clientChineseName");
+                    Predicate clientChineseNameLike = criteriaBuilder.like(clientChineseNamePath, "%" + searchWord + "%");
+                    list.add(criteriaBuilder.and(criteriaBuilder.or(titleLike, descriptionLike, clientChineseNameLike)));
                 }
                 if (!StringUtils.isEmpty(searchStatus) && !"ALL".equals(searchStatus)) {
                     Path<String> path = root.get("status");
