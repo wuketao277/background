@@ -48,6 +48,54 @@ public class ClientCase {
     private String title;
 
     /**
+     * 职级
+     */
+    @Column(length = 50)
+    private String level;
+
+    /**
+     * 部门
+     */
+    @Column(length = 50)
+    private String department;
+
+    /**
+     * 汇报对象
+     */
+    @Column(length = 50)
+    private String lineManager;
+
+    /**
+     * 是否带人
+     */
+    @Column(length = 50)
+    private String subordinates;
+
+    /**
+     * 英语要求
+     */
+    @Column(length = 50)
+    private String english;
+
+    /**
+     * 年龄要求
+     */
+    @Column(length = 50)
+    private String age;
+
+    /**
+     * 工作经验
+     */
+    @Column(length = 50)
+    private String experience;
+
+    /**
+     * 学历要求
+     */
+    @Column(length = 50)
+    private String school;
+
+    /**
      * 薪资范围
      */
     @Column(length = 50)

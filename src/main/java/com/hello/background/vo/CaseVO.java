@@ -39,6 +39,46 @@ public class CaseVO {
     private String title;
 
     /**
+     * 职级
+     */
+    private String level;
+
+    /**
+     * 部门
+     */
+    private String department;
+
+    /**
+     * 汇报对象
+     */
+    private String lineManager;
+
+    /**
+     * 是否带人
+     */
+    private String subordinates;
+
+    /**
+     * 英语要求
+     */
+    private String english;
+
+    /**
+     * 年龄要求
+     */
+    private String age;
+
+    /**
+     * 工作经验
+     */
+    private String experience;
+
+    /**
+     * 学历要求
+     */
+    private String school;
+
+    /**
      * 薪资范围
      */
     private String salaryScope;
