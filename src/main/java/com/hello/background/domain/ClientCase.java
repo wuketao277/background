@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * 案件
+ * 职位
  *
  * @author wuketao
  * @date 2019/11/30

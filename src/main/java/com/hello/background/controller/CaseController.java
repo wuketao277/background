@@ -1,7 +1,10 @@
 package com.hello.background.controller;
 
+import com.hello.background.service.CaseAttentionService;
 import com.hello.background.service.CaseService;
+import com.hello.background.vo.CaseAttention4ClientVO;
 import com.hello.background.vo.CaseVO;
+import com.hello.background.vo.UpdateCaseAttentionVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,8 @@ import java.util.List;
 public class CaseController {
     @Autowired
     private CaseService caseService;
+    @Autowired
+    private CaseAttentionService caseAttentionService;
 
     @PostMapping("save")
     public CaseVO save(@RequestBody CaseVO vo, HttpSession session) {
@@ -67,5 +72,46 @@ public class CaseController {
     @GetMapping("queryById")
     public CaseVO queryById(Integer id) {
         return caseService.findById(id);
+    }
+
+    /**
+     * 查询职位关注
+     *
+     * @param caseId
+     * @param session
+     * @return
+     */
+    @GetMapping("queryCaseAttentionByCaseId")
+    public boolean queryCaseAttentionByCaseId(Integer caseId, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return caseAttentionService.queryAttentionByCaseIdAndUserName(caseId, userVO.getUsername());
+    }
+
+    /**
+     * 查询当前用户所有职位关注
+     *
+     * @param session
+     * @return
+     */
+    @GetMapping("queryAllCaseAttention")
+    public List<CaseAttention4ClientVO> queryAllCaseAttention(HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return caseAttentionService.queryAllCaseAttention(userVO);
+    }
+
+    /**
+     * 更新关注职位
+     *
+     * @param vo
+     * @param session
+     */
+    @PostMapping("updateCaseAttention")
+    public void updateCaseAttention(@RequestBody UpdateCaseAttentionVO vo, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        if (vo.isAttention()) {
+            caseAttentionService.addAttention(vo.getCaseId(), userVO);
+        } else {
+            caseAttentionService.removeAttention(vo.getCaseId(), userVO.getUsername());
+        }
     }
 }
