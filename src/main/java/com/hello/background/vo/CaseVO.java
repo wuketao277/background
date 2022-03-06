@@ -84,6 +84,11 @@ public class CaseVO {
     private String salaryScope;
 
     /**
+     * 工作地点
+     */
+    private String location;
+
+    /**
      * 描述
      */
     private String description;

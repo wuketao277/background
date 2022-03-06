@@ -102,6 +102,12 @@ public class ClientCase {
     private String salaryScope;
 
     /**
+     * 工作地点
+     */
+    @Column(length = 200)
+    private String location;
+
+    /**
      * 描述
      */
     @Column(length = 2000)

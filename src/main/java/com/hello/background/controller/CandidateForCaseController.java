@@ -124,7 +124,8 @@ public class CandidateForCaseController {
      */
     @GetMapping("findByCaseId")
     public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId) {
-        return candidateForCaseService.findByCaseId(caseId);
+        List<CandidateForCaseVO> voList = candidateForCaseService.findByCaseId(caseId);
+        return voList;
     }
 
     /**
@@ -135,6 +136,19 @@ public class CandidateForCaseController {
      */
     @GetMapping("findByCandidateId")
     public List<CandidateForCaseVO> findByCandidateId(@RequestParam Integer candidateId) {
-        return candidateForCaseService.findByCandidateId(candidateId);
+        List<CandidateForCaseVO> voList = candidateForCaseService.findByCandidateId(candidateId);
+        return voList;
+    }
+
+    /**
+     * 通过id删除
+     *
+     * @param id 候选人与职位关联id
+     * @return
+     */
+    @GetMapping("deleteById")
+    public boolean deleteById(@RequestParam Integer id) {
+        candidateForCaseService.deleteById(id);
+        return true;
     }
 }
