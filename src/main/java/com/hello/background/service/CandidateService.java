@@ -70,7 +70,8 @@ public class CandidateService {
      */
     public CandidateVO save(CandidateVO vo) {
         Candidate candidate = TransferUtil.transferTo(vo, Candidate.class);
-        return TransferUtil.transferTo(candidateRepository.save(candidate), CandidateVO.class);
+        candidate = candidateRepository.save(candidate);
+        return TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
     }
 
 

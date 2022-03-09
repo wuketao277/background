@@ -99,4 +99,9 @@ public class CandidateVO {
      * 备注
      */
     private String remark;
+
+    /**
+     * 英语水平
+     */
+    private String englishLevel;
 }

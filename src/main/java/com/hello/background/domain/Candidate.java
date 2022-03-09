@@ -123,4 +123,10 @@ public class Candidate {
     @Column(length = 2000)
     private String remark;
 
+    /**
+     * 英文水平
+     */
+    @Column(length = 200)
+    private String englishLevel;
+
 }
