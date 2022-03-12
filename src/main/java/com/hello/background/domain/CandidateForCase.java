@@ -83,4 +83,10 @@ public class CandidateForCase {
     @Column(length = 50)
     private String createUserName;
 
+    /**
+     * 是否关注，默认是关注的。
+     */
+    @Column
+    private Boolean attention = true;
+
 }

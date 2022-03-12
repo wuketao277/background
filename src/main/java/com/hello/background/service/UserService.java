@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class UserService {
      */
     public List<UserVO> findByEnabled(boolean enabled) {
         List<User> userList = userRepository.findByEnabled(enabled);
-        return userList.stream().map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
+        return userList.stream().sorted(Comparator.comparing(User::getUsername)).map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
     }
 
 

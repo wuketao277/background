@@ -96,8 +96,8 @@ public class CaseAttentionService {
                     caseVO.setCaseTitle(caseAttention.getCaseTitle());
                     clientVO.getCaseList().add(caseVO);
                 }
-                // 获取候选人信息
-                List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(caseVO.getCaseId());
+                // 获取职位下的关注的候选人信息
+                List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseIdAndAttention(caseVO.getCaseId(), true);
                 for (CandidateForCase candidateForCase : candidateForCaseList) {
                     CaseAttention4CandidateVO candidateVO = new CaseAttention4CandidateVO();
                     candidateVO.setCandidateId(candidateForCase.getCandidateId());

@@ -87,4 +87,8 @@ public class CandidateForCaseVO {
      */
     private LocalDateTime latestCommentInputtime;
 
+    /**
+     * 是否关注
+     */
+    private Boolean attention = true;
 }

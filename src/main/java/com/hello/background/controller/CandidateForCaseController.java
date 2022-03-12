@@ -151,4 +151,15 @@ public class CandidateForCaseController {
         candidateForCaseService.deleteById(id);
         return true;
     }
+
+    /**
+     * 更新关注字段
+     *
+     * @return
+     */
+    @PostMapping("updateAttention")
+    public boolean updateAttention(@RequestBody UpdateCandidateForCaseAttentionVO request) {
+        candidateForCaseService.updateAttention(request.getId(), request.getAttention());
+        return true;
+    }
 }

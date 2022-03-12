@@ -47,6 +47,8 @@ public class CandidateForCaseService {
      */
     public CandidateForCaseVO save(CandidateForCaseVO vo) {
         CandidateForCase candidateForCase = TransferUtil.transferTo(vo, CandidateForCase.class);
+        // 新添加的推荐，默认候选人是关注的
+        candidateForCase.setAttention(true);
         return TransferUtil.transferTo(candidateForCaseRepository.save(candidateForCase), CandidateForCaseVO.class);
     }
 
@@ -151,5 +153,18 @@ public class CandidateForCaseService {
      */
     public List<CandidateForCase> findByCandidateIdAndCaseId(Integer candidateId, Integer caseId) {
         return candidateForCaseRepository.findByCandidateIdAndCaseId(candidateId, caseId);
+    }
+
+    /**
+     * 通过id更新attention字段
+     *
+     * @param id
+     * @param attention
+     * @return
+     */
+    public void updateAttention(Integer id, Boolean attention) {
+        CandidateForCase candidateForCase = candidateForCaseRepository.findById(id).get();
+        candidateForCase.setAttention(attention);
+        candidateForCaseRepository.save(candidateForCase);
     }
 }
