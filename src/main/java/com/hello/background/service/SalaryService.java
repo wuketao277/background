@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -120,43 +121,43 @@ public class SalaryService {
                     if (user.getUsername().equals(perm.getBdUserName()) && null != perm.getBdCommissionPercent()) {
                         int i = perm.getGp() * perm.getBdCommissionPercent() / 100;
                         sum += i;
-                        sb.append(String.format("%s BD:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getBdCommissionPercent(), i));
+                        sb.append(String.format("%s BD:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getBdCommissionPercent()).divide(new BigDecimal(100)), i));
                     }
                     // 计算CW
                     if (user.getUsername().equals(perm.getCwUserName()) && null != perm.getCwCommissionPercent()) {
                         int i = perm.getGp() * perm.getCwCommissionPercent() / 100;
                         sum += i;
-                        sb.append(String.format("%s CW:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getCwCommissionPercent(), i));
+                        sb.append(String.format("%s CW:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getCwCommissionPercent()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问1
                     if (user.getUsername().equals(perm.getConsultantUserName()) && null != perm.getConsultantCommissionPercent()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent() / 100;
                         sum += i;
-                        sb.append(String.format("%s Consultant:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getConsultantCommissionPercent(), i));
+                        sb.append(String.format("%s Consultant:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问2
                     if (user.getUsername().equals(perm.getConsultantUserName2()) && null != perm.getConsultantCommissionPercent2()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent2() / 100;
                         sum += i;
-                        sb.append(String.format("%s Consultant2:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getConsultantCommissionPercent2(), i));
+                        sb.append(String.format("%s Consultant2:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent2()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问3
                     if (user.getUsername().equals(perm.getConsultantUserName3()) && null != perm.getConsultantCommissionPercent3()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent3() / 100;
                         sum += i;
-                        sb.append(String.format("%s Consultant3:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getConsultantCommissionPercent3(), i));
+                        sb.append(String.format("%s Consultant3:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent3()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问4
                     if (user.getUsername().equals(perm.getConsultantUserName4()) && null != perm.getConsultantCommissionPercent4()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent4() / 100;
                         sum += i;
-                        sb.append(String.format("%s Consultant4:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getConsultantCommissionPercent4(), i));
+                        sb.append(String.format("%s Consultant4:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent4()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问5
                     if (user.getUsername().equals(perm.getConsultantUserName5()) && null != perm.getConsultantCommissionPercent5()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent5() / 100;
                         sum += i;
-                        sb.append(String.format("%s Consultant5:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), perm.getConsultantCommissionPercent5(), i));
+                        sb.append(String.format("%s Consultant5:%s*0.%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent5()).divide(BigDecimal.valueOf(100)), i));
                     }
                 }
                 // 减去最近一个月工资的历史负债
