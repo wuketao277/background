@@ -137,7 +137,7 @@ public class CandidateForCaseService {
                 commentVOList.sort(Comparator.comparing(CommentVO::getId).reversed());
                 cc.setLatestCommentContent(commentVOList.get(0).getContent());
                 cc.setLatestCommentInputtime(commentVOList.get(0).getInputTime());
-                cc.setLatestCommentUsername(commentVOList.get(0).getRealname());
+                cc.setLatestCommentUsername(commentVOList.get(0).getUsername());
             }
         });
         return candidateForCaseVOList;

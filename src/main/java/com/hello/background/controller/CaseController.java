@@ -100,6 +100,18 @@ public class CaseController {
     }
 
     /**
+     * 查询当前用户所有对接的职位
+     *
+     * @param session
+     * @return
+     */
+    @GetMapping("queryAllCWCase")
+    public List<CaseAttention4ClientVO> queryAllCWCase(HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return caseAttentionService.queryAllCWCase(userVO);
+    }
+
+    /**
      * 更新关注职位
      *
      * @param vo

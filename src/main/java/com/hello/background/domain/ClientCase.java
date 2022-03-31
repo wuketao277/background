@@ -130,4 +130,10 @@ public class ClientCase {
      */
     @Column(length = 50)
     private String createUserId;
+
+    /**
+     * CW登录名
+     */
+    @Column(length = 50)
+    private String cwUserName;
 }

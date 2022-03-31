@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.domain.CandidateForCase;
 import com.hello.background.domain.CaseAttention;
 import com.hello.background.domain.ClientCase;
@@ -75,6 +76,8 @@ public class CaseAttentionService {
             return Collections.EMPTY_LIST;
         } else {
             List<CaseAttention4ClientVO> clientVOList = new ArrayList<>();
+            // 所有关注的职位，按照职位id排序。
+            caseAttentionList = caseAttentionList.stream().sorted(Comparator.comparing(CaseAttention::getCaseId)).collect(Collectors.toList());
             // 遍历所有关注的职位
             for (CaseAttention caseAttention : caseAttentionList) {
                 // 首先获取职位所属客户
@@ -113,7 +116,58 @@ public class CaseAttentionService {
                     caseVO.getCandidateList().add(candidateVO);
                 }
             }
-            return clientVOList;
+            return clientVOList.stream().sorted(Comparator.comparing(CaseAttention4ClientVO::getClientId)).collect(Collectors.toList());
+        }
+    }
+
+
+    /**
+     * 查询当前用户所有对接的职位
+     *
+     * @param userVO
+     * @return
+     */
+    public List<CaseAttention4ClientVO> queryAllCWCase(UserVO userVO) {
+        List<ClientCase> caseList = caseRepository.findByCwUserNameAndStatus(userVO.getUsername(), CaseStatusEnum.DOING);
+        if (CollectionUtils.isEmpty(caseList)) {
+            return Collections.EMPTY_LIST;
+        } else {
+            List<CaseAttention4ClientVO> clientVOList = new ArrayList<>();
+            caseList = caseList.stream().sorted(Comparator.comparing(ClientCase::getId)).collect(Collectors.toList());
+            // 遍历所有对接的职位
+            for (ClientCase clientCase : caseList) {
+                // 首先获取职位所属客户
+                CaseAttention4ClientVO clientVO = new CaseAttention4ClientVO();
+                if (clientVOList.stream().anyMatch(c -> c.getClientId().equals(clientCase.getClientId()))) {
+                    clientVO = clientVOList.stream().filter(c -> c.getClientId().equals(clientCase.getClientId())).findFirst().get();
+                } else {
+                    clientVO.setClientId(clientCase.getClientId());
+                    clientVO.setClientChineseName(clientCase.getClientChineseName());
+                    clientVOList.add(clientVO);
+                }
+                // 获取职位信息
+                CaseAttention4CaseVO caseVO = new CaseAttention4CaseVO();
+                caseVO.setCaseId(clientCase.getId());
+                caseVO.setCaseTitle(clientCase.getTitle());
+                clientVO.getCaseList().add(caseVO);
+                // 获取职位下的关注的候选人信息
+                List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseIdAndAttention(caseVO.getCaseId(), true);
+                for (CandidateForCase candidateForCase : candidateForCaseList) {
+                    CaseAttention4CandidateVO candidateVO = new CaseAttention4CandidateVO();
+                    candidateVO.setCandidateId(candidateForCase.getCandidateId());
+                    candidateVO.setCandidateChineseName(candidateForCase.getChineseName());
+                    // 获取候选人最后评论信息
+                    List<Comment> commentList = commentRepository.findAllByCandidateId(candidateVO.getCandidateId()).stream().sorted(Comparator.comparing(Comment::getId).reversed()).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(commentList)) {
+                        Comment comment = commentList.get(0);
+                        candidateVO.setLatestCommentContent(comment.getContent());
+                        candidateVO.setLatestCommentInputtime(comment.getInputTime());
+                        candidateVO.setLatestCommentUsername(comment.getUsername());
+                    }
+                    caseVO.getCandidateList().add(candidateVO);
+                }
+            }
+            return clientVOList.stream().sorted(Comparator.comparing(CaseAttention4ClientVO::getClientId)).collect(Collectors.toList());
         }
     }
 

@@ -88,5 +88,4 @@ public class CandidateForCase {
      */
     @Column
     private Boolean attention = true;
-
 }

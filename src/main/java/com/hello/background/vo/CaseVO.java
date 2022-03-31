@@ -107,4 +107,9 @@ public class CaseVO {
      * 创建人id
      */
     private String createUserId;
+
+    /**
+     * CW登录名
+     */
+    private String cwUserName;
 }
