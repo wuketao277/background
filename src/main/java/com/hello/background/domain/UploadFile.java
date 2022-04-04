@@ -56,6 +56,12 @@ public class UploadFile {
     private String originalFileName;
 
     /**
+     * 是否包含敏感信息
+     */
+    @Column(length = 1)
+    private String hasSensitiveInfomation;
+
+    /**
      * 创建时间
      */
     @Column

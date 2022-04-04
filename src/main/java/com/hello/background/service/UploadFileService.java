@@ -2,7 +2,9 @@ package com.hello.background.service;
 
 import com.google.common.base.Strings;
 import com.hello.background.domain.UploadFile;
+import com.hello.background.domain.UserRole;
 import com.hello.background.repository.UploadFileRepository;
+import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.UploadFileVO;
 import com.hello.background.vo.UserVO;
@@ -20,10 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +38,9 @@ import java.util.stream.Collectors;
 public class UploadFileService {
     @Autowired
     private UploadFileRepository uploadFileRepository;
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
     /**
      * 文件仓库路径
      */
@@ -63,6 +65,10 @@ public class UploadFileService {
             String tableName = null;
             if (parameterMap.containsKey("tableName")) {
                 tableName = parameterMap.get("tableName")[0];
+            }
+            String hasSensitiveInfomation = null;
+            if (parameterMap.containsKey("hasSensitiveInfomation")) {
+                hasSensitiveInfomation = parameterMap.get("hasSensitiveInfomation")[0];
             }
             Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
             log.info("fileStorePath:" + fileStorePath);
@@ -98,6 +104,9 @@ public class UploadFileService {
                         if (null != tableName) {
                             uploadFile.setRelativeTableName(tableName);
                         }
+                        if (null != hasSensitiveInfomation) {
+                            uploadFile.setHasSensitiveInfomation(hasSensitiveInfomation);
+                        }
                         UploadFile saved = uploadFileRepository.save(uploadFile);
                         list.add(TransferUtil.transferTo(saved, UploadFileVO.class));
                     } catch (Exception ex) {
@@ -109,6 +118,33 @@ public class UploadFileService {
             log.error("{}", ex);
         }
         return list;
+    }
+
+    /**
+     * 文件下载前检查
+     *
+     * @param uuid
+     * @param userVO
+     * @return
+     */
+    public String downloadPreCheck(String uuid, UserVO userVO) {
+        UploadFile uploadFile = uploadFileRepository.findByUuid(uuid);
+        if (uploadFile == null) {
+            return "文件不存在！";
+        }
+        if ("Y".equals(uploadFile.getHasSensitiveInfomation())) {
+            // 包含敏感信息的文件，要进行下载检查
+            if (!userVO.getUsername().equals(uploadFile.getCreateUserName())) {
+                // 当前用户不是文件的上传人，需要检查是否是管理员。
+                List<UserRole> userRoleList = userRoleRepository.findByUserName(userVO.getUsername());
+                if (!userRoleList.stream().anyMatch(ur -> "admin".equals(ur.getRoleName()))) {
+                    // 也不是管理员
+                    return "包含敏感信息的文件，只有上传人或管理员可以下载！";
+                }
+            }
+        }
+        // 返回空表示可以下载
+        return "";
     }
 
     /**
@@ -182,10 +218,24 @@ public class UploadFileService {
     /**
      * 通过Id删除
      *
-     * @param Id
+     * @param id
      */
-    public void deleteById(Integer Id) {
-        uploadFileRepository.deleteById(Id);
+    public String deleteById(Integer id, UserVO userVO) {
+        Optional<UploadFile> optionalUploadFile = uploadFileRepository.findById(id);
+        if (!optionalUploadFile.isPresent()) {
+            return "文件不存在！";
+        }
+        UploadFile uploadFile = optionalUploadFile.get();
+        if (!userVO.getUsername().equals(uploadFile.getCreateUserName())) {
+            // 当前用户不是文件的上传人，需要检查是否是管理员。
+            List<UserRole> userRoleList = userRoleRepository.findByUserName(userVO.getUsername());
+            if (!userRoleList.stream().anyMatch(ur -> "admin".equals(ur.getRoleName()))) {
+                // 也不是管理员
+                return "文件只能被上传人或管理员删除！";
+            }
+        }
+        uploadFileRepository.deleteById(id);
+        return "";
     }
 
     /**

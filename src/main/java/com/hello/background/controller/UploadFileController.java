@@ -38,6 +38,17 @@ public class UploadFileController {
     }
 
     /**
+     * 下载前检查
+     *
+     * @param uuid
+     */
+    @GetMapping("downloadPreCheck")
+    public String downloadPreCheck(@RequestParam String uuid, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return uploadFileService.downloadPreCheck(uuid, userVO);
+    }
+
+    /**
      * 下载文件
      *
      * @param response
@@ -64,11 +75,12 @@ public class UploadFileController {
     /**
      * 通过uuid删除
      *
-     * @param Id
+     * @param id
      */
     @GetMapping("deleteById")
-    public void deleteById(@RequestParam Integer Id) {
-        uploadFileService.deleteById(Id);
+    public String deleteById(@RequestParam Integer id, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return uploadFileService.deleteById(id, userVO);
     }
 
     /**
