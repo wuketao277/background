@@ -2,7 +2,7 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * @author wuketao
@@ -11,6 +11,6 @@ import java.util.Date;
  */
 @Data
 public class QueryGeneralReportRequest {
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
