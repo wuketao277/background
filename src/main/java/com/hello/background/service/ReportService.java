@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.ApproveStatusEnum;
 import com.hello.background.domain.SuccessfulPerm;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.vo.QueryGeneralReportRequest;
@@ -36,19 +37,56 @@ public class ReportService {
             Date startDate = sdf.parse(String.format("%s-%s-%s %s:%s:%s", request.getStartDate().getYear(), request.getStartDate().getMonthValue(), request.getStartDate().getDayOfMonth(), 0, 0, 0));
             Date endDate = sdf.parse(String.format("%s-%s-%s %s:%s:%s", request.getEndDate().getYear(), request.getEndDate().getMonthValue(), request.getEndDate().getDayOfMonth(), 23, 59, 59));
             // offer signed 数据
-            Iterator<SuccessfulPerm> iterator = iterable.iterator();
-            while (iterator.hasNext()) {
-                SuccessfulPerm s = iterator.next();
-                if ("approved".equals(s.getApproveStatus()) && s.getOfferDate() != null
-                        && s.getOfferDate().compareTo(startDate) >= 0
-                        && endDate.compareTo(s.getOfferDate()) >= 0) {
-                    response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                    response.setOfferDateBilling(response.getOfferDateBilling() + s.getBilling());
-                }
-            }
+            generateOfferSignedData(iterable, startDate, endDate, response);
+            // payment date 数据
+            generatePaymentDateData(iterable, startDate, endDate, response);
 
         } catch (Exception ex) {
         }
         return response;
+    }
+
+    /**
+     * 生成payment date数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generatePaymentDateData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (ApproveStatusEnum.APPROVED.getCode().equals(s.getApproveStatus())
+                    && s.getPaymentDate() != null
+                    && s.getPaymentDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getPaymentDate()) >= 0) {
+                response.getPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                response.setPaymentDateBilling(response.getPaymentDateBilling() + s.getBilling());
+            }
+        }
+    }
+
+    /**
+     * 生成offer signed数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generateOfferSignedData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (ApproveStatusEnum.APPROVED.getCode().equals(s.getApproveStatus())
+                    && s.getOfferDate() != null
+                    && s.getOfferDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getOfferDate()) >= 0) {
+                response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                response.setOfferDateBilling(response.getOfferDateBilling() + s.getBilling());
+            }
+        }
     }
 }
