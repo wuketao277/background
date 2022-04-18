@@ -108,6 +108,12 @@ public class ClientCase {
     private String location;
 
     /**
+     * 面试流程
+     */
+    @Column(length = 200)
+    private String interviewProcess;
+
+    /**
      * 描述
      */
     @Column(length = 2000)

@@ -64,6 +64,15 @@ public class ReportService {
                     && endDate.compareTo(s.getPaymentDate()) >= 0) {
                 response.getPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
                 response.setPaymentDateBilling(response.getPaymentDateBilling() + s.getBilling());
+                if (null != s.getActualPaymentDate()) {
+                    // 已付款
+                    response.getActualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                    response.setActualPaymentDateBilling(response.getActualPaymentDateBilling() + s.getBilling());
+                } else {
+                    // 未付款
+                    response.getUnactualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                    response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling() + s.getBilling());
+                }
             }
         }
     }

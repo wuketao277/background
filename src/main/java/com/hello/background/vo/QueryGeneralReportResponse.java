@@ -14,6 +14,10 @@ import java.util.List;
 public class QueryGeneralReportResponse {
     private Integer offerDateBilling = 0;
     private Integer paymentDateBilling = 0;
+    private Integer actualPaymentDateBilling = 0;
+    private Integer unactualPaymentDateBilling = 0;
     private List<QueryGeneralReportResponseKeyValue> offerDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> paymentDateData = new ArrayList<>();
+    private List<QueryGeneralReportResponseKeyValue> actualPaymentDateData = new ArrayList<>();
+    private List<QueryGeneralReportResponseKeyValue> unactualPaymentDateData = new ArrayList<>();
 }

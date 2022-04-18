@@ -89,6 +89,11 @@ public class CaseVO {
     private String location;
 
     /**
+     * 面试流程
+     */
+    private String interviewProcess;
+
+    /**
      * 描述
      */
     private String description;
