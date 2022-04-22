@@ -2,6 +2,7 @@ package com.hello.background.controller;
 
 import com.hello.background.service.ClientService;
 import com.hello.background.service.SuccessfulPermService;
+import com.hello.background.vo.DeleteSuccessfulPermRequest;
 import com.hello.background.vo.SuccessfulPermVO;
 import com.hello.background.vo.SuccessfulPermVOPageRequest;
 import com.hello.background.vo.UserVO;
@@ -55,5 +56,16 @@ public class SuccessfulPermController {
     @PostMapping("queryPage")
     public Page<SuccessfulPermVO> queryPage(@RequestBody SuccessfulPermVOPageRequest request) {
         return successfulPermService.queryPage(request);
+    }
+
+    /**
+     * 通过主键删除
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("deleteById")
+    public String deleteById(@RequestBody DeleteSuccessfulPermRequest request) {
+        return successfulPermService.deleteById(request.getId());
     }
 }

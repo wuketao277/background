@@ -2,10 +2,7 @@ package com.hello.background.controller;
 
 import com.hello.background.service.CaseAttentionService;
 import com.hello.background.service.CaseService;
-import com.hello.background.vo.CaseAttention4ClientVO;
-import com.hello.background.vo.CaseVO;
-import com.hello.background.vo.UpdateCaseAttentionVO;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -125,5 +122,16 @@ public class CaseController {
         } else {
             caseAttentionService.removeAttention(vo.getCaseId(), userVO.getUsername());
         }
+    }
+
+    /**
+     * 通过主键删除
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("deleteById")
+    public String deleteById(@RequestBody DeleteCaseRequest request) {
+        return caseService.deleteById(request.getId());
     }
 }

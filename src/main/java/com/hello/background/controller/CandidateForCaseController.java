@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -125,6 +126,7 @@ public class CandidateForCaseController {
     @GetMapping("findByCaseId")
     public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId) {
         List<CandidateForCaseVO> voList = candidateForCaseService.findByCaseId(caseId);
+        voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
         return voList;
     }
 

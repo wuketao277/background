@@ -120,4 +120,20 @@ public class CaseService {
         List<ClientCase> caseList = caseRepository.findByTitleLikeOrDescriptionLikeOrderByIdDesc(search, search);
         return caseList.stream().map(x -> fromDoToVo(x)).collect(Collectors.toList());
     }
+
+    /**
+     * 通过id删除
+     *findByCaseId
+     * @param id
+     * @return
+     */
+    public String deleteById(Integer id) {
+        Optional<ClientCase> optional = caseRepository.findById(id);
+        if (optional.isPresent()) {
+            caseRepository.deleteById(id);
+            return "";
+        } else {
+            return "信息不存在！";
+        }
+    }
 }

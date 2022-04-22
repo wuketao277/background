@@ -19,6 +19,7 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author wuketao
@@ -167,5 +168,21 @@ public class SuccessfulPermService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;
+    }
+
+    /**
+     * 通过id删除
+     *
+     * @param id
+     * @return
+     */
+    public String deleteById(Integer id) {
+        Optional<SuccessfulPerm> optional = successfulPermRepository.findById(id);
+        if (optional.isPresent()) {
+            successfulPermRepository.deleteById(id);
+            return "";
+        } else {
+            return "信息不存在！";
+        }
     }
 }

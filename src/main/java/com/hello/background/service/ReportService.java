@@ -1,6 +1,5 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.ApproveStatusEnum;
 import com.hello.background.domain.SuccessfulPerm;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.vo.QueryGeneralReportRequest;
@@ -58,8 +57,7 @@ public class ReportService {
         Iterator<SuccessfulPerm> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             SuccessfulPerm s = iterator.next();
-            if (ApproveStatusEnum.APPROVED.getCode().equals(s.getApproveStatus())
-                    && s.getPaymentDate() != null
+            if (s.getPaymentDate() != null
                     && s.getPaymentDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getPaymentDate()) >= 0) {
                 response.getPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
@@ -89,8 +87,7 @@ public class ReportService {
         Iterator<SuccessfulPerm> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             SuccessfulPerm s = iterator.next();
-            if (ApproveStatusEnum.APPROVED.getCode().equals(s.getApproveStatus())
-                    && s.getOfferDate() != null
+            if (s.getOfferDate() != null
                     && s.getOfferDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getOfferDate()) >= 0) {
                 response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));

@@ -1,10 +1,7 @@
 package com.hello.background.service;
 
 import com.hello.background.constant.CaseStatusEnum;
-import com.hello.background.domain.CandidateForCase;
-import com.hello.background.domain.CaseAttention;
-import com.hello.background.domain.ClientCase;
-import com.hello.background.domain.Comment;
+import com.hello.background.domain.*;
 import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.repository.CaseAttentionRepository;
 import com.hello.background.repository.CaseRepository;
