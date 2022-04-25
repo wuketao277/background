@@ -224,4 +224,8 @@ public class SuccessfulPermVO implements Serializable {
      * 更新人
      */
     private String updateUserName;
+    /**
+     * 说明
+     */
+    private String comment;
 }

@@ -283,4 +283,9 @@ public class SuccessfulPerm {
      */
     @Column(length = 20)
     private String updateUserName;
+    /**
+     * 说明
+     */
+    @Column(length = 400)
+    private String comment;
 }
