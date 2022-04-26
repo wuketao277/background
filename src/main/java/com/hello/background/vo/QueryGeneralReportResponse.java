@@ -20,4 +20,5 @@ public class QueryGeneralReportResponse {
     private List<QueryGeneralReportResponseKeyValue> paymentDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> actualPaymentDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> unactualPaymentDateData = new ArrayList<>();
+    private List<QueryGeneralReportResponseKeyValue> personalOfferData = new ArrayList<>();
 }

@@ -6,13 +6,17 @@ import com.hello.background.vo.QueryGeneralReportRequest;
 import com.hello.background.vo.QueryGeneralReportResponse;
 import com.hello.background.vo.QueryGeneralReportResponseKeyValue;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 报告服务
@@ -39,6 +43,8 @@ public class ReportService {
             generateOfferSignedData(iterable, startDate, endDate, response);
             // payment date 数据
             generatePaymentDateData(iterable, startDate, endDate, response);
+            // 个人 gp数据
+            generatePersonalOfferData(iterable, startDate, endDate, response);
 
         } catch (Exception ex) {
         }
@@ -92,6 +98,57 @@ public class ReportService {
                     && endDate.compareTo(s.getOfferDate()) >= 0) {
                 response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
                 response.setOfferDateBilling(response.getOfferDateBilling() + s.getBilling());
+            }
+        }
+    }
+
+    /**
+     * 生成个人offer数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generatePersonalOfferData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        Map<String, Integer> personalGpMap = new HashMap<>();
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (s.getOfferDate() != null
+                    && s.getOfferDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getOfferDate()) >= 0) {
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName(), s.getConsultantCommissionPercent());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName2(), s.getConsultantCommissionPercent2());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName3(), s.getConsultantCommissionPercent3());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName4(), s.getConsultantCommissionPercent4());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName5(), s.getConsultantCommissionPercent5());
+            }
+        }
+        for (Map.Entry<String, Integer> entry : personalGpMap.entrySet()) {
+            response.getPersonalOfferData().add(new QueryGeneralReportResponseKeyValue(entry.getKey(), entry.getValue()));
+        }
+    }
+
+    /**
+     * 计算每个顾问在成功case中的gp
+     *
+     * @param personalGpMap
+     * @param s
+     * @param consultantName
+     * @param consultantCommissionPercent
+     */
+    private void calcPersonalGp(Map<String, Integer> personalGpMap, SuccessfulPerm s, String consultantName, Integer consultantCommissionPercent) {
+        if (Strings.isNotBlank(consultantName) && null != consultantCommissionPercent) {
+            Integer totalPercent = 0
+                    + (s.getConsultantCommissionPercent() != null ? s.getConsultantCommissionPercent() : 0)
+                    + (s.getConsultantCommissionPercent2() != null ? s.getConsultantCommissionPercent2() : 0)
+                    + (s.getConsultantCommissionPercent3() != null ? s.getConsultantCommissionPercent3() : 0)
+                    + (s.getConsultantCommissionPercent4() != null ? s.getConsultantCommissionPercent4() : 0)
+                    + (s.getConsultantCommissionPercent5() != null ? s.getConsultantCommissionPercent5() : 0);
+            if (totalPercent > 0) {
+                Integer personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 2, BigDecimal.ROUND_DOWN).multiply(BigDecimal.valueOf(s.getGp())).intValue();
+                personalGpMap.put(consultantName, personalGp + (personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : 0));
             }
         }
     }
