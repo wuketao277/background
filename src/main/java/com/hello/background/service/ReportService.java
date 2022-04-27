@@ -147,7 +147,7 @@ public class ReportService {
                     + (s.getConsultantCommissionPercent4() != null ? s.getConsultantCommissionPercent4() : 0)
                     + (s.getConsultantCommissionPercent5() != null ? s.getConsultantCommissionPercent5() : 0);
             if (totalPercent > 0) {
-                Integer personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 2, BigDecimal.ROUND_DOWN).multiply(BigDecimal.valueOf(s.getGp())).intValue();
+                Integer personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 10, BigDecimal.ROUND_DOWN).multiply(BigDecimal.valueOf(s.getGp())).intValue();
                 personalGpMap.put(consultantName, personalGp + (personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : 0));
             }
         }
