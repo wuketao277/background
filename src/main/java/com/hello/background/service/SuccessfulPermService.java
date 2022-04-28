@@ -48,7 +48,7 @@ public class SuccessfulPermService {
      * @return
      */
     public Page<SuccessfulPermVO> queryPage(SuccessfulPermVOPageRequest request) {
-        Sort sort = new Sort(Sort.Direction.DESC, "paymentDate", "actualPaymentDate");
+        Sort sort = new Sort(Sort.Direction.DESC, "offerDate", "onBoardDate", "paymentDate", "actualPaymentDate");
         Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), sort);
         Specification<SuccessfulPerm> specification = new Specification<SuccessfulPerm>() {
             @Override
