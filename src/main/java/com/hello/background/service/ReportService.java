@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 报告服务
@@ -45,6 +42,8 @@ public class ReportService {
             generatePaymentDateData(iterable, startDate, endDate, response);
             // 个人 gp数据
             generatePersonalOfferData(iterable, startDate, endDate, response);
+            // 个人 gp数据倒排序展示
+            response.getPersonalOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
 
         } catch (Exception ex) {
         }
