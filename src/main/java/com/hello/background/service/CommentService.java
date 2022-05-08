@@ -3,8 +3,10 @@ package com.hello.background.service;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.Comment;
+import com.hello.background.domain.User;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CommentRepository;
+import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CalcKPIRequest;
 import com.hello.background.vo.CandidateVO;
@@ -33,6 +35,8 @@ public class CommentService {
     private CommentRepository commentRepository;
     @Autowired
     private CandidateRepository candidateRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 保存评论信息
@@ -117,6 +121,14 @@ public class CommentService {
                     break;
             }
         }
+        List<User> userList = userRepository.findAll();
+        kpiPersonList.forEach(k -> {
+            Optional<User> optionalUser = userList.stream().filter(u -> u.getUsername().equals(k.getUserName())).findFirst();
+            if (optionalUser.isPresent()) {
+                k.setUserId(optionalUser.get().getId());
+            }
+        });
+        kpiPersonList.sort(Comparator.comparing(KPIPerson::getUserId));
         return kpiPersonList;
     }
 
