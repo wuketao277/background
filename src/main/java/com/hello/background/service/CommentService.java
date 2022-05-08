@@ -160,6 +160,8 @@ public class CommentService {
                 }
             }
         });
+        commentVOList.sort(Comparator.comparing(CommentVO::getInputTime));
+        commentVOList.sort(Comparator.comparing(CommentVO::getCandidateId));
         return commentVOList;
     }
 
