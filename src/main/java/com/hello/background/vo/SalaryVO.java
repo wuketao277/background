@@ -53,6 +53,10 @@ public class SalaryVO {
      */
     private Integer gongjijin;
     /**
+     * 工作日
+     */
+    private Double workingDays;
+    /**
      * 税后工资
      */
     private Integer finalSum;

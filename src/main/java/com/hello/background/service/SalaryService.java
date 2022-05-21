@@ -69,6 +69,7 @@ public class SalaryService {
         salary.setInsurance(vo.getInsurance());
         salary.setPersonalTax(vo.getPersonalTax());
         salary.setGongjijin(vo.getGongjijin());
+        salary.setWorkingDays(vo.getWorkingDays());
         salary.setUpdateUserName(user.getUsername());
         salary.setUpdateTime(new Date());
         salaryRepository.save(salary);

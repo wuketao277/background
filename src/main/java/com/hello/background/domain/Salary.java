@@ -13,6 +13,7 @@ import java.util.Date;
 
 /**
  * 工资
+ *
  * @author wuketao
  * @date 2019/12/7
  * @Description
@@ -69,6 +70,11 @@ public class Salary {
      */
     @Column
     private Integer gongjijin;
+    /**
+     * 工作日
+     */
+    @Column
+    private Double workingDays;
     /**
      * 税后工资
      */
