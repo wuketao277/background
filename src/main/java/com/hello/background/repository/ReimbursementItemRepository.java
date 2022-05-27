@@ -23,7 +23,7 @@ public interface ReimbursementItemRepository extends PagingAndSortingRepository<
      * @param pageable
      * @return
      */
-    Page<ReimbursementItem> findByUserNameOrderByUpdateTimeDesc(String userName, Pageable pageable);
+    Page<ReimbursementItem> findByUserName(String userName, Pageable pageable);
 
     /**
      * 通过报销人查询统计

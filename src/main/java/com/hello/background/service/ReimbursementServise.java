@@ -16,10 +16,7 @@ import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,15 +72,15 @@ public class ReimbursementServise {
     public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
-        Page<ReimbursementItem> page = null;
-        long total = 0;
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName", "date");
+        Page<ReimbursementItem> page;
+        long total;
         if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
             // 管理员
-            page = reimbursementItemRepository.findByUpdateTimeIsNotNullOrderByUpdateTimeDesc(pageable);
+            page = reimbursementItemRepository.findAll(pageable);
             total = reimbursementItemRepository.count();
         } else {
-            page = reimbursementItemRepository.findByUserNameOrderByUpdateTimeDesc(user.getUsername(), pageable);
+            page = reimbursementItemRepository.findByUserName(user.getUsername(), pageable);
             total = reimbursementItemRepository.countByUserName(user.getUsername());
         }
         Page<ReimbursementItemVO> map = page.map(x -> TransferUtil.transferTo(x, ReimbursementItemVO.class));
