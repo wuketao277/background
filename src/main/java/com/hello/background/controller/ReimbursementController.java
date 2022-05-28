@@ -39,8 +39,8 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, HttpSession session) {
-        return reimbursementServise.queryPage(currentPage, pageSize, session);
+    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
+        return reimbursementServise.queryPage(currentPage, pageSize, search, session);
     }
 
     /**

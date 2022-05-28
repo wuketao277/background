@@ -14,20 +14,20 @@ import com.hello.background.vo.ReimbursementItemVO;
 import com.hello.background.vo.ReimbursementSummaryVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author wuketao
@@ -62,6 +62,35 @@ public class ReimbursementServise {
     }
 
     /**
+     * 获取查询条件中的谓词
+     *
+     * @param key
+     * @param root
+     * @param criteriaBuilder
+     * @return
+     */
+    public Predicate getPredicateLike(String key, String value, Root<ReimbursementItem> root, CriteriaBuilder criteriaBuilder) {
+        Path<String> path = root.get(key);
+        Predicate predicate = criteriaBuilder.like(path, "%" + value + "%");
+        return predicate;
+    }
+
+    /**
+     * 获取查询条件中的谓词
+     *
+     * @param key
+     * @param root
+     * @param criteriaBuilder
+     * @return
+     */
+    public Predicate getPredicateEqual(String key, String value, Root<ReimbursementItem> root, CriteriaBuilder criteriaBuilder) {
+        Path<String> path = root.get(key);
+        Predicate predicate = criteriaBuilder.equal(path, value);
+        return predicate;
+    }
+
+
+    /**
      * 分页查询
      *
      * @param currentPage
@@ -69,24 +98,53 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, HttpSession session) {
+    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName", "date");
-        Page<ReimbursementItem> page;
-        long total;
+        Specification<ReimbursementItem> specification;
         if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
             // 管理员
-            page = reimbursementItemRepository.findAll(pageable);
-            total = reimbursementItemRepository.count();
+            specification = new Specification<ReimbursementItem>() {
+                @Override
+                public Predicate toPredicate(Root<ReimbursementItem> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    if (Strings.isNotBlank(search)) {
+                        list.add(criteriaBuilder.and(criteriaBuilder.or(
+                                getPredicateLike("userName", search, root, criteriaBuilder)
+                                , getPredicateLike("realName", search, root, criteriaBuilder)
+                                , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
+                        )));
+                    }
+                    Predicate[] p = new Predicate[list.size()];
+                    return criteriaBuilder.and(list.toArray(p));
+                }
+            };
         } else {
-            page = reimbursementItemRepository.findByUserName(user.getUsername(), pageable);
-            total = reimbursementItemRepository.countByUserName(user.getUsername());
+            // 普通用户
+            specification = new Specification<ReimbursementItem>() {
+                @Override
+                public Predicate toPredicate(Root<ReimbursementItem> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    if (Strings.isNotBlank(search)) {
+                        list.add(criteriaBuilder.and(criteriaBuilder.or(
+                                getPredicateLike("userName", search, root, criteriaBuilder)
+                                , getPredicateLike("realName", search, root, criteriaBuilder)
+                                , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
+                        )));
+                    }
+                    // 普通用户只能查询自己的信息
+                    list.add(getPredicateEqual("userName", user.getUsername(), root, criteriaBuilder));
+                    Predicate[] p = new Predicate[list.size()];
+                    return criteriaBuilder.and(list.toArray(p));
+                }
+            };
         }
-        Page<ReimbursementItemVO> map = page.map(x -> TransferUtil.transferTo(x, ReimbursementItemVO.class));
+        Page<ReimbursementItem> all = reimbursementItemRepository.findAll(specification, pageable);
+        Page<ReimbursementItemVO> map = all.map(x -> TransferUtil.transferTo(x, ReimbursementItemVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                total);
+                all.getTotalElements());
         return map;
     }
 
