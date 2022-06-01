@@ -53,7 +53,7 @@ public class SalarySpecialItem {
      * 金额
      */
     @Column
-    private Integer sum;
+    private Double sum;
     /**
      * 地点
      */

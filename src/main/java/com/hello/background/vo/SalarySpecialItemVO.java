@@ -41,7 +41,7 @@ public class SalarySpecialItemVO implements Serializable {
     /**
      * 金额
      */
-    private Integer sum;
+    private Double sum;
     /**
      * 地点
      */

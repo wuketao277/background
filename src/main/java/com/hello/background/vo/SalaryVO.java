@@ -39,19 +39,19 @@ public class SalaryVO {
     /**
      * 税前工资
      */
-    private Integer sum;
+    private Double sum;
     /**
      * 个税
      */
-    private Integer personalTax;
+    private Double personalTax;
     /**
      * 保险
      */
-    private Integer insurance;
+    private Double insurance;
     /**
      * 公积金
      */
-    private Integer gongjijin;
+    private Double gongjijin;
     /**
      * 工作日
      */
@@ -59,11 +59,11 @@ public class SalaryVO {
     /**
      * 税后工资
      */
-    private Integer finalSum;
+    private Double finalSum;
     /**
      * 历史负债
      */
-    private Integer historyDebt;
+    private Double historyDebt;
     /**
      * 更新日期
      */

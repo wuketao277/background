@@ -52,7 +52,7 @@ public class SalaryService {
             return false;
         }
         Salary salary = optional.get();
-        Integer finalSum = 0;
+        Double finalSum = 0d;
         if (null != salary.getSum() && salary.getSum() > 0) {
             finalSum = salary.getSum();
             if (null != vo.getPersonalTax() && vo.getPersonalTax() > 0) {
@@ -65,6 +65,7 @@ public class SalaryService {
                 finalSum -= vo.getGongjijin();
             }
         }
+        finalSum = new BigDecimal(finalSum).setScale(2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
         salary.setFinalSum(finalSum);
         salary.setInsurance(vo.getInsurance());
         salary.setPersonalTax(vo.getPersonalTax());
@@ -103,7 +104,7 @@ public class SalaryService {
                 salary.setMonth(month);
                 salary.setUpdateTime(new Date());
                 salary.setUpdateUserName(updateUserId);
-                Integer sum = 0;
+                Double sum = 0d;
                 StringBuilder sb = new StringBuilder();
                 // 计算成功case的提成
                 // 过滤所有和当前人有关的收款信息
@@ -180,13 +181,13 @@ public class SalaryService {
                     // 需要cover base
                     sb.append("需要cover base" + "\r\n");
                     // 最后和底薪进行比较，取较大的值
-                    Integer base = null != user.getSalarybase() ? user.getSalarybase() : 0;
+                    Double base = new Double(null != user.getSalarybase() ? user.getSalarybase() : 0);
                     sb.append(String.format("base:%s commission:%s \r\n", base, sum));
                     if (sum >= base) {
                         // 当月提成大于底薪。发提成，历史负债为0
                         sb.append("commission多发commission：" + sum + "\r\n");
                         salary.setSum(sum);
-                        salary.setHistoryDebt(0);
+                        salary.setHistoryDebt(0d);
                     } else {
                         // 当月提成小于底薪。发底薪
                         sb.append("base多发base：" + base + "\r\n");

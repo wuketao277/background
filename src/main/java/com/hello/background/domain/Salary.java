@@ -54,22 +54,22 @@ public class Salary {
      * 税前工资
      */
     @Column
-    private Integer sum;
+    private Double sum;
     /**
      * 个税
      */
     @Column
-    private Integer personalTax;
+    private Double personalTax;
     /**
      * 保险
      */
     @Column
-    private Integer insurance;
+    private Double insurance;
     /**
      * 公积金
      */
     @Column
-    private Integer gongjijin;
+    private Double gongjijin;
     /**
      * 工作日
      */
@@ -79,12 +79,12 @@ public class Salary {
      * 税后工资
      */
     @Column
-    private Integer finalSum;
+    private Double finalSum;
     /**
      * 历史负债
      */
     @Column
-    private Integer historyDebt;
+    private Double historyDebt;
     /**
      * 更新日期
      */
