@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author wuketao
  * @date 2021/11/28
@@ -45,4 +47,12 @@ public interface ReimbursementSummaryRepository extends PagingAndSortingReposito
      * @param paymentMonth
      */
     void deleteByPaymentMonth(String paymentMonth);
+
+    /**
+     * 通过报销发放月份查询报销记录集合
+     *
+     * @param paymentMonth
+     * @return
+     */
+    List<ReimbursementSummary> findALLByPaymentMonth(String paymentMonth);
 }

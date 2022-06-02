@@ -3,6 +3,7 @@ package com.hello.background.controller;
 import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.service.SalaryService;
 import com.hello.background.vo.GenerateSalaryRequest;
+import com.hello.background.vo.SalaryInfoVO;
 import com.hello.background.vo.SalaryVO;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,15 @@ public class SalaryController {
     @GetMapping("queryPage")
     public Page<SalaryVO> queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         return salaryService.queryPage(session, search, currentPage, pageSize);
+    }
+
+    /**
+     * 获取薪资统计信息
+     *
+     * @return
+     */
+    @GetMapping("getSalaryStatisticsInfo")
+    public SalaryInfoVO getSalaryStatisticsInfo() {
+        return salaryService.getSalaryStatisticsInfo();
     }
 }

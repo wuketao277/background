@@ -63,4 +63,14 @@ public class ReimbursementController {
         UserVO user = (UserVO) session.getAttribute("user");
         reimbursementServise.generateReimbursementSummary(user);
     }
+
+    /**
+     * 获取当前月总报销金额
+     *
+     * @return
+     */
+    @GetMapping("getCurrentMonthSumReimbursement")
+    public Double getCurrentMonthSumReimbursement() {
+        return reimbursementServise.getCurrentMonthSumReimbursement();
+    }
 }

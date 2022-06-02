@@ -4,6 +4,7 @@ import com.hello.background.domain.*;
 import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.SalaryInfoVO;
 import com.hello.background.vo.SalaryVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -241,5 +243,25 @@ public class SalaryService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 获取薪资信息
+     *
+     * @return
+     */
+    public SalaryInfoVO getSalaryStatisticsInfo() {
+        SalaryInfoVO vo = new SalaryInfoVO();
+        String month = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        List<Salary> salaryList = salaryRepository.findAllByMonth(month);
+        for (Salary salary : salaryList) {
+            if (null != salary.getSum()) {
+                vo.setCurMonthPreTaxSum(vo.getCurMonthPreTaxSum() + salary.getSum());
+            }
+            if (null != salary.getFinalSum()) {
+                vo.setCurMonthAfterTaxSum(vo.getCurMonthAfterTaxSum() + salary.getFinalSum());
+            }
+        }
+        return vo;
     }
 }

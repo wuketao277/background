@@ -72,4 +72,12 @@ public interface SalaryRepository extends JpaRepository<Salary, Integer> {
      * @return
      */
     List<Salary> findByConsultantUserNameOrderByMonthDesc(String consultantUserName);
+
+    /**
+     * 通过月份获取薪资信息
+     *
+     * @param month
+     * @return
+     */
+    List<Salary> findAllByMonth(String month);
 }

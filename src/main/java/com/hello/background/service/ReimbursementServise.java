@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author wuketao
@@ -204,5 +205,23 @@ public class ReimbursementServise {
             summary.setUpdateUserName(curUser.getUsername());
             reimbursementSummaryRepository.save(summary);
         }
+    }
+
+    /**
+     * 获取当前月总报销金额
+     *
+     * @return
+     */
+    public Double getCurrentMonthSumReimbursement() {
+        Double result = new Double(0);
+        String monthStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        List<ReimbursementSummary> list = reimbursementSummaryRepository.findALLByPaymentMonth(monthStr);
+        List<BigDecimal> collect = list.stream().map(r -> r.getSum()).collect(Collectors.toList());
+        for (BigDecimal bd : collect) {
+            if (null != bd) {
+                result += bd.doubleValue();
+            }
+        }
+        return result;
     }
 }
