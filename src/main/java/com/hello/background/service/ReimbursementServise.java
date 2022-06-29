@@ -224,4 +224,13 @@ public class ReimbursementServise {
         }
         return result;
     }
+
+    /**
+     * 通过主键删除
+     *
+     * @param id
+     */
+    public void deleteById(Integer id) {
+        reimbursementItemRepository.deleteById(id);
+    }
 }

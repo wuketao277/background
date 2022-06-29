@@ -90,7 +90,7 @@ public class Candidate {
     /**
      * 学校名称
      */
-    @Column(length = 100)
+    @Column(length = 200)
     private String schoolName;
 
     /**

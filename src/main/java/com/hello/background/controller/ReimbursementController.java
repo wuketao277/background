@@ -73,4 +73,14 @@ public class ReimbursementController {
     public Double getCurrentMonthSumReimbursement() {
         return reimbursementServise.getCurrentMonthSumReimbursement();
     }
+
+    /**
+     * 通过主键删除报销
+     *
+     * @return
+     */
+    @DeleteMapping("deleteById")
+    public void deleteById(@RequestParam Integer id) {
+        reimbursementServise.deleteById(id);
+    }
 }

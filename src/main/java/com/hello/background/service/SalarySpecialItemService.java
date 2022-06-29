@@ -73,4 +73,13 @@ public class SalarySpecialItemService {
                 total);
         return map;
     }
+
+    /**
+     * 通过主键删除
+     *
+     * @param id
+     */
+    public void deleteById(Integer id) {
+        salarySpecialItemRepository.deleteById(id);
+    }
 }

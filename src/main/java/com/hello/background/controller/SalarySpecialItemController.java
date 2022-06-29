@@ -50,4 +50,14 @@ public class SalarySpecialItemController {
     public Page<SalarySpecialItemVO> queryPage(@NotEmpty String search, Integer currentPage, Integer pageSize, HttpSession session) {
         return salarySpecialItemService.queryPage(session, search, currentPage, pageSize);
     }
+
+    /**
+     * 通过主键删除报销
+     *
+     * @return
+     */
+    @DeleteMapping("deleteById")
+    public void deleteById(@RequestParam Integer id) {
+        salarySpecialItemService.deleteById(id);
+    }
 }
