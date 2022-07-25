@@ -228,4 +228,8 @@ public class SuccessfulPermVO implements Serializable {
      * 说明
      */
     private String comment;
+    /**
+     * 类型 perm 、contracting
+     */
+    private String type;
 }
