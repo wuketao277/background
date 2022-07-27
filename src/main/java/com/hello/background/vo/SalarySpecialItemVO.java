@@ -43,9 +43,13 @@ public class SalarySpecialItemVO implements Serializable {
      */
     private Double sum;
     /**
-     * 地点
+     * 描述
      */
     private String description;
+    /**
+     * 是否前置计算
+     */
+    private String isPre;
     /**
      * 更新日期
      */

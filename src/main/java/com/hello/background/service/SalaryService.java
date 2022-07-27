@@ -8,6 +8,7 @@ import com.hello.background.vo.SalaryInfoVO;
 import com.hello.background.vo.SalaryVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -106,7 +107,8 @@ public class SalaryService {
                 salary.setMonth(month);
                 salary.setUpdateTime(new Date());
                 salary.setUpdateUserName(updateUserId);
-                Double sum = 0d;
+                // 提成金额
+                Double commissionSum = 0d;
                 StringBuilder sb = new StringBuilder();
                 // 计算成功case的提成
                 // 过滤所有和当前人有关的收款信息
@@ -124,85 +126,97 @@ public class SalaryService {
                     // 计算BD
                     if (user.getUsername().equals(perm.getBdUserName()) && null != perm.getBdCommissionPercent()) {
                         int i = perm.getGp() * perm.getBdCommissionPercent() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s BD:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getBdCommissionPercent()).divide(new BigDecimal(100)), i));
                     }
                     // 计算CW
                     if (user.getUsername().equals(perm.getCwUserName()) && null != perm.getCwCommissionPercent()) {
                         int i = perm.getGp() * perm.getCwCommissionPercent() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s CW:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getCwCommissionPercent()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问1
                     if (user.getUsername().equals(perm.getConsultantUserName()) && null != perm.getConsultantCommissionPercent()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s Consultant:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问2
                     if (user.getUsername().equals(perm.getConsultantUserName2()) && null != perm.getConsultantCommissionPercent2()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent2() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s Consultant2:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent2()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问3
                     if (user.getUsername().equals(perm.getConsultantUserName3()) && null != perm.getConsultantCommissionPercent3()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent3() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s Consultant3:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent3()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问4
                     if (user.getUsername().equals(perm.getConsultantUserName4()) && null != perm.getConsultantCommissionPercent4()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent4() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s Consultant4:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent4()).divide(BigDecimal.valueOf(100)), i));
                     }
                     // 计算顾问5
                     if (user.getUsername().equals(perm.getConsultantUserName5()) && null != perm.getConsultantCommissionPercent5()) {
                         int i = perm.getGp() * perm.getConsultantCommissionPercent5() / 100;
-                        sum += i;
+                        commissionSum += i;
                         sb.append(String.format("%s Consultant5:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent5()).divide(BigDecimal.valueOf(100)), i));
                     }
                 }
                 // 减去最近一个月工资的历史负债
                 List<Salary> salaryList = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername());
                 if (!CollectionUtils.isEmpty(salaryList) && Optional.ofNullable(salaryList.get(0)).map(s -> s.getHistoryDebt()).isPresent()) {
-                    sum += salaryList.get(0).getHistoryDebt();
+                    commissionSum += salaryList.get(0).getHistoryDebt();
                     sb.append("历史负债：" + salaryList.get(0).getHistoryDebt() + "\r\n");
                 }
-                // 累加当月工资特殊项
-                List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName())).collect(Collectors.toList());
+                // 当月工资特殊项中前置计算项累加到临时工资中
+                List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && (Strings.isBlank(s.getIsPre()) || "yes".equals(s.getIsPre()))).collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(salarySpecialItemListForUser)) {
                     for (SalarySpecialItem specialItem : salarySpecialItemListForUser) {
-                        sum += specialItem.getSum();
-                        sb.append(String.format("工资特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
+                        commissionSum += specialItem.getSum();
+                        sb.append(String.format("前置计算工资特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
-                sb.append(String.format("总提成：%s \r\n", sum));
+                sb.append(String.format("总提成：%s \r\n", commissionSum));
+                // 当月工资特殊项中后置计算项总和
+                Double postSpecialSum = 0d;
+                List<SalarySpecialItem> salarySpecialItemListForUserNotIsPre = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && "no".equals(s.getIsPre())).collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(salarySpecialItemListForUserNotIsPre)) {
+                    for (SalarySpecialItem specialItem : salarySpecialItemListForUserNotIsPre) {
+                        postSpecialSum += specialItem.getSum();
+                        sb.append(String.format("后置计算工资特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
+                    }
+                }
                 if (user.getCoverbase()) {
                     // 需要cover base
                     sb.append("需要cover base" + "\r\n");
                     // 最后和底薪进行比较，取较大的值
                     Double base = new Double(null != user.getSalarybase() ? user.getSalarybase() : 0);
-                    sb.append(String.format("base:%s commission:%s \r\n", base, sum));
-                    if (sum >= base) {
+                    // 提成和底薪都要计算上工资特殊项中后置计算项总和
+                    base = base + postSpecialSum;
+                    commissionSum = commissionSum + postSpecialSum;
+                    sb.append(String.format("base:%s commission:%s 后置工资项总和:%s\r\n", base, commissionSum, postSpecialSum));
+                    if (commissionSum >= base) {
                         // 当月提成大于底薪。发提成，历史负债为0
-                        sb.append("commission多发commission：" + sum + "\r\n");
-                        salary.setSum(sum);
+                        sb.append("commission多，发commission：" + commissionSum + "\r\n");
+                        salary.setSum(commissionSum);
                         salary.setHistoryDebt(0d);
                     } else {
                         // 当月提成小于底薪。发底薪
-                        sb.append("base多发base：" + base + "\r\n");
+                        sb.append("base多，发base：" + base + "\r\n");
                         salary.setSum(base);
                         // 需要cover base的，历史负债为提成-底薪
-                        sb.append(String.format("最新历史负债：%s\r\n", (sum - base)));
-                        salary.setHistoryDebt(sum - base);
+                        sb.append(String.format("最新历史负债：%s\r\n", (commissionSum - base)));
+                        salary.setHistoryDebt(commissionSum - base);
                     }
                 } else {
                     // 不需要cover base
                     sb.append("不需要cover base" + "\r\n");
-                    sb.append(String.format("base:%s commission:%s \r\n", user.getSalarybase(), sum));
-                    salary.setSum(sum + user.getSalarybase());
+                    sb.append(String.format("base:%s commission:%s special:%s\r\n", user.getSalarybase(), commissionSum, postSpecialSum));
+                    salary.setSum(user.getSalarybase() + commissionSum + postSpecialSum);
                 }
                 sb.append("当月工资:" + salary.getSum());
                 salary.setDescription(sb.toString());

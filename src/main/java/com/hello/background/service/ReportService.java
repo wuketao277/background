@@ -42,12 +42,34 @@ public class ReportService {
             generatePaymentDateData(iterable, startDate, endDate, response);
             // 个人 gp数据
             generatePersonalOfferData(iterable, startDate, endDate, response);
+            // Invoice Date 数据
+            generateInvoiceDateData(iterable, startDate, endDate, response);
             // 个人 gp数据倒排序展示
             response.getPersonalOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
-
         } catch (Exception ex) {
         }
         return response;
+    }
+
+    /**
+     * 生成Invoice Date数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generateInvoiceDateData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (s.getInvoiceDate() != null
+                    && s.getInvoiceDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getInvoiceDate()) >= 0) {
+                response.getInvoiceDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                response.setInvoiceDateBilling(response.getInvoiceDateBilling() + s.getBilling());
+            }
+        }
     }
 
     /**
@@ -65,17 +87,24 @@ public class ReportService {
             if (s.getPaymentDate() != null
                     && s.getPaymentDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getPaymentDate()) >= 0) {
+                // 应到
                 response.getPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
                 response.setPaymentDateBilling(response.getPaymentDateBilling() + s.getBilling());
-                if (null != s.getActualPaymentDate()) {
-                    // 已付款
-                    response.getActualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                    response.setActualPaymentDateBilling(response.getActualPaymentDateBilling() + s.getBilling());
-                } else {
-                    // 未付款
-                    response.getUnactualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                    response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling() + s.getBilling());
-                }
+            }
+            if (s.getActualPaymentDate() != null
+                    && s.getActualPaymentDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getActualPaymentDate()) >= 0) {
+                // 已付款
+                response.getActualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                response.setActualPaymentDateBilling(response.getActualPaymentDateBilling() + s.getBilling());
+            }
+            if (s.getPaymentDate() != null
+                    && s.getPaymentDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getPaymentDate()) >= 0
+                    && s.getActualPaymentDate() == null) {
+                // 未付款
+                response.getUnactualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
+                response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling() + s.getBilling());
             }
         }
     }

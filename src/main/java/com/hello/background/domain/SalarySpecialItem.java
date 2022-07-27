@@ -55,7 +55,12 @@ public class SalarySpecialItem {
     @Column
     private Double sum;
     /**
-     * 地点
+     * 是否前置计算 yes no
+     */
+    @Column(length = 20)
+    private String isPre;
+    /**
+     * 描述
      */
     @Column(length = 2000)
     private String description;

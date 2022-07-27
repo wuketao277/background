@@ -16,9 +16,11 @@ public class QueryGeneralReportResponse {
     private Integer paymentDateBilling = 0;
     private Integer actualPaymentDateBilling = 0;
     private Integer unactualPaymentDateBilling = 0;
+    private Integer invoiceDateBilling = 0;
     private List<QueryGeneralReportResponseKeyValue> offerDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> paymentDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> actualPaymentDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> unactualPaymentDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> personalOfferData = new ArrayList<>();
+    private List<QueryGeneralReportResponseKeyValue> invoiceDateData = new ArrayList<>();
 }
