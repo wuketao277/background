@@ -195,22 +195,23 @@ public class SalaryService {
                     sb.append("需要cover base" + "\r\n");
                     // 最后和底薪进行比较，取较大的值
                     Double base = new Double(null != user.getSalarybase() ? user.getSalarybase() : 0);
-                    // 提成和底薪都要计算上工资特殊项中后置计算项总和
-                    base = base + postSpecialSum;
-                    commissionSum = commissionSum + postSpecialSum;
                     sb.append(String.format("base:%s commission:%s 后置工资项总和:%s\r\n", base, commissionSum, postSpecialSum));
                     if (commissionSum >= base) {
                         // 当月提成大于底薪。发提成，历史负债为0
-                        sb.append("commission多，发commission：" + commissionSum + "\r\n");
-                        salary.setSum(commissionSum);
+                        Double actualSalary = commissionSum + postSpecialSum;
+                        sb.append("commission多，按commission发：" + actualSalary + "\r\n");
+                        salary.setSum(actualSalary);
                         salary.setHistoryDebt(0d);
                     } else {
                         // 当月提成小于底薪。发底薪
-                        sb.append("base多，发base：" + base + "\r\n");
-                        salary.setSum(base);
-                        // 需要cover base的，历史负债为提成-底薪
-                        sb.append(String.format("最新历史负债：%s\r\n", (commissionSum - base)));
-                        salary.setHistoryDebt(commissionSum - base);
+                        // 实发薪资
+                        Double actualSalary = base + postSpecialSum;
+                        sb.append("base多，按base发：" + actualSalary + "\r\n");
+                        salary.setSum(actualSalary);
+                        // 实发薪资高于提成，历史负债为 实发薪资-底薪
+                        Double newHistoryDebt = commissionSum - base;
+                        sb.append(String.format("最新历史负债：%s\r\n", (newHistoryDebt)));
+                        salary.setHistoryDebt(newHistoryDebt);
                     }
                 } else {
                     // 不需要cover base
