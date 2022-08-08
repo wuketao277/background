@@ -53,11 +53,12 @@ public class LessonStudyRecordService {
         Page<LessonStudyRecord> page = null;
         long total = 0;
         if (Strings.isNullOrEmpty(search)) {
-            page = lessonStudyRecordRepository.findByLessonNameLikeOrUsernameLike(search, search, pageable);
-            total = lessonStudyRecordRepository.countByLessonNameLikeOrUsernameLike(search, search);
-        } else {
             page = lessonStudyRecordRepository.findAll(pageable);
             total = lessonStudyRecordRepository.findAll().size();
+        } else {
+            search = "%" + search + "%";
+            page = lessonStudyRecordRepository.findByLessonNameLikeOrUsernameLike(search, search, pageable);
+            total = lessonStudyRecordRepository.countByLessonNameLikeOrUsernameLike(search, search);
         }
         Page<LessonStudyRecordVO> map = page.map(x -> TransferUtil.transferTo(x, LessonStudyRecordVO.class));
         map = new PageImpl<>(map.getContent(),

@@ -207,7 +207,6 @@ public class TrainingController {
      */
     @GetMapping("queryLessonStudyRecordByPage")
     public Page<LessonStudyRecordVO> queryLessonStudyRecordByPage(String search, Integer currentPage, Integer pageSize) {
-        search = "%" + search + "%";
         return lessonStudyRecordService.queryPage(search, currentPage, pageSize);
     }
 
