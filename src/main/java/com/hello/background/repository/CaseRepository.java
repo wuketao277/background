@@ -22,6 +22,10 @@ public interface CaseRepository extends JpaRepository<ClientCase, Integer>, JpaS
 
     List<ClientCase> findByTitleLikeOrDescriptionLikeOrderByIdDesc(String title, String description);
 
+    List<ClientCase> findByTitleLikeAndStatusOrderByIdDesc(String title, CaseStatusEnum status);
+
+    List<ClientCase> findByTitleLikeOrderByIdDesc(String title);
+
     List<ClientCase> findByCwUserNameAndStatus(String cwUserName, CaseStatusEnum status);
 
     int countByTitleLikeOrDescriptionLike(String title, String description);

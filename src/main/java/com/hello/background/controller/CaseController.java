@@ -1,9 +1,11 @@
 package com.hello.background.controller;
 
+import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.service.CaseAttentionService;
 import com.hello.background.service.CaseService;
 import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -55,9 +57,13 @@ public class CaseController {
      * @return
      */
     @GetMapping("query")
-    public List<CaseVO> query(@NotEmpty String search) {
+    public List<CaseVO> query(@RequestParam("search") @NotEmpty String search, @RequestParam("status") String status) {
         search = "%" + search + "%";
-        return caseService.query(search);
+        if (Strings.isBlank(status) || "ALL".equals(status)) {
+            return caseService.queryByTitle(search);
+        } else {
+            return caseService.queryByTitleAndStatus(search, CaseStatusEnum.valueOf(status));
+        }
     }
 
     /**

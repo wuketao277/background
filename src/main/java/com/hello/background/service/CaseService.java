@@ -122,8 +122,32 @@ public class CaseService {
     }
 
     /**
+     * 通过职位名称和职位状态查询
+     *
+     * @param title
+     * @param status
+     * @return
+     */
+    public List<CaseVO> queryByTitleAndStatus(String title, CaseStatusEnum status) {
+        List<ClientCase> caseList = caseRepository.findByTitleLikeAndStatusOrderByIdDesc(title, status);
+        return caseList.stream().map(x -> fromDoToVo(x)).collect(Collectors.toList());
+    }
+
+    /**
+     * 通过职位名称查找
+     *
+     * @param title
+     * @return
+     */
+    public List<CaseVO> queryByTitle(String title) {
+        List<ClientCase> caseList = caseRepository.findByTitleLikeOrderByIdDesc(title);
+        return caseList.stream().map(x -> fromDoToVo(x)).collect(Collectors.toList());
+    }
+
+    /**
      * 通过id删除
-     *findByCaseId
+     * findByCaseId
+     *
      * @param id
      * @return
      */
