@@ -166,6 +166,7 @@ public class SalaryService {
                         sb.append(String.format("%s Consultant5:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent5()).divide(BigDecimal.valueOf(100)), i));
                     }
                 }
+                sb.append("总提成：" + commissionSum + "\r\n");
                 // 减去最近一个月工资的历史负债
                 List<Salary> salaryList = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername());
                 if (!CollectionUtils.isEmpty(salaryList) && Optional.ofNullable(salaryList.get(0)).map(s -> s.getHistoryDebt()).isPresent()) {
@@ -180,7 +181,7 @@ public class SalaryService {
                         sb.append(String.format("前置计算工资特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
-                sb.append(String.format("总提成：%s \r\n", commissionSum));
+                sb.append(String.format("综合提成：%s \r\n", commissionSum));
                 // 当月工资特殊项中后置计算项总和
                 Double postSpecialSum = 0d;
                 List<SalarySpecialItem> salarySpecialItemListForUserNotIsPre = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && "no".equals(s.getIsPre())).collect(Collectors.toList());

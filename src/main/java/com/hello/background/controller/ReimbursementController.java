@@ -51,8 +51,8 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("querySummaryPage")
-    public Page<ReimbursementSummaryVO> querySummaryPage(Integer currentPage, Integer pageSize, HttpSession session) {
-        return reimbursementServise.querySummaryPage(currentPage, pageSize, session);
+    public Page<ReimbursementSummaryVO> querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+        return reimbursementServise.querySummaryPage(search, currentPage, pageSize, session);
     }
 
     /**

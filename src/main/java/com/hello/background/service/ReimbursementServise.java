@@ -157,24 +157,53 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public Page<ReimbursementSummaryVO> querySummaryPage(Integer currentPage, Integer pageSize, HttpSession session) {
+    public Page<ReimbursementSummaryVO> querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
-        Page<ReimbursementSummary> page = null;
-        long total = 0;
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName");
+        Specification<ReimbursementSummary> specification;
         if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
             // 管理员
-            page = reimbursementSummaryRepository.findByPaymentMonthIsNotNullOrderByPaymentMonthDescSumDescIdDesc(pageable);
-            total = reimbursementSummaryRepository.count();
+            specification = new Specification<ReimbursementSummary>() {
+                @Override
+                public Predicate toPredicate(Root<ReimbursementSummary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    if (Strings.isNotBlank(search)) {
+                        list.add(criteriaBuilder.or(
+                                criteriaBuilder.like(root.get("userName"), "%" + search + "%"),
+                                criteriaBuilder.like(root.get("realName"), "%" + search + "%"),
+                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%")
+                        ));
+                    }
+                    Predicate[] p = new Predicate[list.size()];
+                    return criteriaBuilder.and(list.toArray(p));
+                }
+            };
         } else {
-            page = reimbursementSummaryRepository.findByUserNameOrderByPaymentMonthDesc(user.getUsername(), pageable);
-            total = reimbursementSummaryRepository.countByUserName(user.getUsername());
+            // 普通用户
+            specification = new Specification<ReimbursementSummary>() {
+                @Override
+                public Predicate toPredicate(Root<ReimbursementSummary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    if (Strings.isNotBlank(search)) {
+                        list.add(criteriaBuilder.or(
+                                criteriaBuilder.like(root.get("userName"), "%" + search + "%"),
+                                criteriaBuilder.like(root.get("realName"), "%" + search + "%"),
+                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%")
+                        ));
+                    }
+                    // 普通用户只能查询自己的信息
+                    list.add(criteriaBuilder.equal(root.get("userName"), user.getUsername()));
+                    Predicate[] p = new Predicate[list.size()];
+                    return criteriaBuilder.and(list.toArray(p));
+                }
+            };
         }
-        Page<ReimbursementSummaryVO> map = page.map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVO.class));
+        Page<ReimbursementSummary> all = reimbursementSummaryRepository.findAll(specification, pageable);
+        Page<ReimbursementSummaryVO> map = all.map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                total);
+                all.getTotalElements());
         return map;
     }
 
