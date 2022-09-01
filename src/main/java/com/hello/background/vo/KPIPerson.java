@@ -14,7 +14,7 @@ public class KPIPerson {
     private Integer userId;
     @ExcelProperty("登录名")
     private String userName;
-    @ExcelProperty("用户名")
+    @ExcelProperty("姓名")
     private String realName;
     @ExcelProperty("TI")
     private Integer ti;

@@ -9,7 +9,6 @@ import com.hello.background.repository.CommentRepository;
 import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.CalcKPIRequest;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.KPIPerson;
@@ -78,13 +77,11 @@ public class CommentService {
     /**
      * 计算KPI
      *
-     * @param request
+     * @param start 开始日期
+     * @param end   结束日期
      * @return
      */
-    public List<KPIPerson> calcKPI(CalcKPIRequest request) {
-        // 拿到前台传入的日期要进行+1操作。因为前端给的日期是差1天。
-        LocalDate start = LocalDate.parse(request.getDates().get(0).substring(0, 10)).plusDays(1);
-        LocalDate end = LocalDate.parse(request.getDates().get(1).substring(0, 10)).plusDays(1);
+    public List<KPIPerson> calcKPI(LocalDate start, LocalDate end) {
         LocalDateTime startDT = LocalDateTime.of(start.getYear(), start.getMonthValue(), start.getDayOfMonth(), 0, 0, 0);
         LocalDateTime endDT = LocalDateTime.of(end.getYear(), end.getMonthValue(), end.getDayOfMonth(), 23, 59, 59);
         List<Comment> commentList = commentRepository.findByInputTimeBetween(startDT, endDT);
@@ -143,9 +140,9 @@ public class CommentService {
      */
     public void downloadKPI(List<String> dates, HttpServletResponse response) {
         // 获取业务数据
-        CalcKPIRequest request = new CalcKPIRequest();
-        request.setDates(dates);
-        List<KPIPerson> kpiList = calcKPI(request);
+        LocalDate start = LocalDate.parse(dates.get(0).substring(0, 10));
+        LocalDate end = LocalDate.parse(dates.get(1).substring(0, 10));
+        List<KPIPerson> kpiList = calcKPI(start, end);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "kpi", null, kpiList, KPIPerson.class);
     }
