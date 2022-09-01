@@ -7,16 +7,19 @@ import com.hello.background.domain.User;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CommentRepository;
 import com.hello.background.repository.UserRepository;
+import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CalcKPIRequest;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.KPIPerson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
  * @date 2019/12/22
  * @Description
  */
+@Slf4j
 @Transactional
 @Service
 public class CommentService {
@@ -130,6 +134,20 @@ public class CommentService {
         });
         kpiPersonList.sort(Comparator.comparing(KPIPerson::getUserId));
         return kpiPersonList;
+    }
+
+    /**
+     * 下载KPI Excel文件
+     *
+     * @param response
+     */
+    public void downloadKPI(List<String> dates, HttpServletResponse response) {
+        // 获取业务数据
+        CalcKPIRequest request = new CalcKPIRequest();
+        request.setDates(dates);
+        List<KPIPerson> kpiList = calcKPI(request);
+        // 封装返回response
+        EasyExcelUtil.downloadExcel(response, "kpi", null, kpiList, KPIPerson.class);
     }
 
     /**

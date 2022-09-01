@@ -5,8 +5,10 @@ import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,6 +42,16 @@ public class CommentController {
     }
 
     /**
+     * 下载KPI Excel文件
+     *
+     * @param response
+     */
+    @GetMapping("downloadKPI")
+    public void downloadKPI(@RequestParam String startDate, @RequestParam String endDate, HttpServletResponse response) {
+        commentService.downloadKPI(Arrays.asList(startDate, endDate), response);
+    }
+
+    /**
      * 通过开始时间、结束时间、录入人 查找评论
      *
      * @param beginDate
@@ -55,7 +67,7 @@ public class CommentController {
     /**
      * 通过评论查询候选人 最多返回100条
      *
-     * @param search      搜索关键字
+     * @param search 搜索关键字
      * @return
      */
     @GetMapping("queryCandidateByCommentLimit100")
