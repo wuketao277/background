@@ -14,10 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,14 +29,81 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserVO save(UserVO vo) {
+    /**
+     * 通过id查询用户信息
+     *
+     * @param id
+     * @return
+     */
+    public UserVO findById(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 保存用户基本信息
+     *
+     * @param vo
+     * @return
+     */
+    public UserVO saveBaseInfo(UserVO vo) {
+        User user = new User();
         if (null == vo.getId()) {
             // 没有id表示新建用户。
             // 设置默认密码是1
-            vo.setPassword("1");
+            user.setPassword("1");
+            user.setCreateDate(new Date());
+        } else {
+            // 有id表示用户已存在，此时需要从系统中查询
+            user = userRepository.findById(vo.getId()).get();
         }
-        User user = new User();
-        BeanUtils.copyProperties(vo, user);
+        // 更新基本信息字段
+        user.setUsername(vo.getUsername());
+        user.setRealname(vo.getRealname());
+        user.setSalarybase(vo.getSalarybase());
+        user.setCoverbase(vo.getCoverbase());
+        user.setEnabled(vo.getEnabled());
+        // 更新数据库
+        User returnUser = userRepository.save(user);
+        UserVO returnUserVO = new UserVO();
+        BeanUtils.copyProperties(returnUser, returnUserVO);
+        return returnUserVO;
+    }
+
+    /**
+     * 保存用户扩展信息
+     *
+     * @param vo
+     * @return
+     */
+    public UserVO saveExtInfo(UserVO vo, Integer id) {
+        User user = userRepository.findById(id).get();
+        // 更新用户扩展信息字段
+        user.setGender(vo.getGender());
+        user.setPhoneNo(vo.getPhoneNo());
+        user.setPhoneNo2(vo.getPhoneNo2());
+        user.setPhoneNo3(vo.getPhoneNo3());
+        user.setEmail(vo.getEmail());
+        user.setWorkAddress(vo.getWorkAddress());
+        user.setLifeAddress(vo.getLifeAddress());
+        user.setHomeAddress(vo.getHomeAddress());
+        user.setBank(vo.getBank());
+        user.setCardBankName(vo.getCardBankName());
+        user.setCardNumber(vo.getCardNumber());
+        user.setGongJiJinAccount(vo.getGongJiJinAccount());
+        user.setIdCardNo(vo.getIdCardNo());
+        user.setBirthday(vo.getBirthday());
+        user.setEducationBackground(vo.getEducationBackground());
+        user.setEmergencyContact(vo.getEmergencyContact());
+        user.setEmergencyTelephoneNo(vo.getEmergencyTelephoneNo());
+        // 更新数据库
         User returnUser = userRepository.save(user);
         UserVO returnUserVO = new UserVO();
         BeanUtils.copyProperties(returnUser, returnUserVO);
@@ -80,7 +144,7 @@ public class UserService {
         Page<UserVO> map = page.map(x -> {
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(x, userVO);
-            if (userVO.isEnabled()) {
+            if (userVO.getEnabled()) {
                 userVO.setEnabledName("正常");
             } else {
                 userVO.setEnabledName("停用");
