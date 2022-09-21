@@ -2,6 +2,7 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +13,11 @@ import java.util.List;
  */
 @Data
 public class QueryGeneralReportResponse {
-    private Integer offerDateBilling = 0;
-    private Integer paymentDateBilling = 0;
-    private Integer actualPaymentDateBilling = 0;
-    private Integer unactualPaymentDateBilling = 0;
-    private Integer invoiceDateBilling = 0;
+    private BigDecimal offerDateBilling = BigDecimal.ZERO;
+    private BigDecimal paymentDateBilling = BigDecimal.ZERO;
+    private BigDecimal actualPaymentDateBilling = BigDecimal.ZERO;
+    private BigDecimal unactualPaymentDateBilling = BigDecimal.ZERO;
+    private BigDecimal invoiceDateBilling = BigDecimal.ZERO;
     private List<QueryGeneralReportResponseKeyValue> offerDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> paymentDateData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> actualPaymentDateData = new ArrayList<>();

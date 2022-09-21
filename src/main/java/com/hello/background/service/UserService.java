@@ -70,6 +70,8 @@ public class UserService {
         user.setSalarybase(vo.getSalarybase());
         user.setCoverbase(vo.getCoverbase());
         user.setEnabled(vo.getEnabled());
+        user.setOnBoardDate(vo.getOnBoardDate());
+        user.setDimissionDate(vo.getDimissionDate());
         // 更新数据库
         User returnUser = userRepository.save(user);
         UserVO returnUserVO = new UserVO();

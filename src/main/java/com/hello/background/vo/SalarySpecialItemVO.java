@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -41,7 +42,7 @@ public class SalarySpecialItemVO implements Serializable {
     /**
      * 金额
      */
-    private Double sum;
+    private BigDecimal sum;
     /**
      * 描述
      */

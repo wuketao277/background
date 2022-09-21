@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -54,37 +55,37 @@ public class Salary {
      * 税前工资
      */
     @Column
-    private Double sum;
+    private BigDecimal sum;
     /**
      * 个税
      */
     @Column
-    private Double personalTax;
+    private BigDecimal personalTax;
     /**
      * 保险
      */
     @Column
-    private Double insurance;
+    private BigDecimal insurance;
     /**
      * 公积金
      */
     @Column
-    private Double gongjijin;
+    private BigDecimal gongjijin;
     /**
      * 工作日
      */
     @Column
-    private Double workingDays;
+    private BigDecimal workingDays;
     /**
      * 税后工资
      */
     @Column
-    private Double finalSum;
+    private BigDecimal finalSum;
     /**
      * 历史负债
      */
     @Column
-    private Double historyDebt;
+    private BigDecimal historyDebt;
     /**
      * 更新日期
      */

@@ -46,6 +46,14 @@ public class UserVO implements Serializable {
      */
     private Boolean coverbase;
     /**
+     * 入职日期
+     */
+    private Date onBoardDate;
+    /**
+     * 离职日期
+     */
+    private Date dimissionDate;
+    /**
      * 创建日期
      */
     private Date createDate;

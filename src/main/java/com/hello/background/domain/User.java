@@ -56,6 +56,16 @@ public class User {
     @Column
     private Boolean coverbase;
     /**
+     * 入职日期
+     */
+    @Column
+    private Date onBoardDate;
+    /**
+     * 离职日期
+     */
+    @Column
+    private Date dimissionDate;
+    /**
      * 创建日期
      */
     @Column(length = 50, nullable = false)

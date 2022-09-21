@@ -2,6 +2,8 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @author wuketao
  * @date 2022/4/17
@@ -10,9 +12,9 @@ import lombok.Data;
 @Data
 public class QueryGeneralReportResponseKeyValue {
     private String name;
-    private Integer value;
+    private BigDecimal value;
 
-    public QueryGeneralReportResponseKeyValue(String name, Integer value) {
+    public QueryGeneralReportResponseKeyValue(String name, BigDecimal value) {
         this.name = name;
         this.value = value;
     }

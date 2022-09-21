@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -217,17 +218,17 @@ public class SuccessfulPerm {
      *
      */
     @Column
-    private Integer base;
+    private BigDecimal base;
     /**
      *
      */
     @Column
-    private Integer gp;
+    private BigDecimal gp;
     /**
      *
      */
     @Column
-    private Integer billing;
+    private BigDecimal billing;
     /**
      *
      */

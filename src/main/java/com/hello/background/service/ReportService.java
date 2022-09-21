@@ -67,7 +67,7 @@ public class ReportService {
                     && s.getInvoiceDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getInvoiceDate()) >= 0) {
                 response.getInvoiceDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setInvoiceDateBilling(response.getInvoiceDateBilling() + s.getBilling());
+                response.setInvoiceDateBilling(response.getInvoiceDateBilling().add(s.getBilling()));
             }
         }
     }
@@ -89,14 +89,14 @@ public class ReportService {
                     && endDate.compareTo(s.getPaymentDate()) >= 0) {
                 // 应到
                 response.getPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setPaymentDateBilling(response.getPaymentDateBilling() + s.getBilling());
+                response.setPaymentDateBilling(response.getPaymentDateBilling().add(s.getBilling()));
             }
             if (s.getActualPaymentDate() != null
                     && s.getActualPaymentDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getActualPaymentDate()) >= 0) {
                 // 已付款
                 response.getActualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setActualPaymentDateBilling(response.getActualPaymentDateBilling() + s.getBilling());
+                response.setActualPaymentDateBilling(response.getActualPaymentDateBilling().add(s.getBilling()));
             }
             if (s.getPaymentDate() != null
                     && s.getPaymentDate().compareTo(startDate) >= 0
@@ -104,7 +104,7 @@ public class ReportService {
                     && s.getActualPaymentDate() == null) {
                 // 未付款
                 response.getUnactualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling() + s.getBilling());
+                response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling().add(s.getBilling()));
             }
         }
     }
@@ -125,7 +125,7 @@ public class ReportService {
                     && s.getOfferDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getOfferDate()) >= 0) {
                 response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setOfferDateBilling(response.getOfferDateBilling() + s.getBilling());
+                response.setOfferDateBilling(response.getOfferDateBilling().add(s.getBilling()));
             }
         }
     }
@@ -139,7 +139,7 @@ public class ReportService {
      * @param response
      */
     private void generatePersonalOfferData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
-        Map<String, Integer> personalGpMap = new HashMap<>();
+        Map<String, BigDecimal> personalGpMap = new HashMap<>();
         Iterator<SuccessfulPerm> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             SuccessfulPerm s = iterator.next();
@@ -153,7 +153,7 @@ public class ReportService {
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName5(), s.getConsultantCommissionPercent5());
             }
         }
-        for (Map.Entry<String, Integer> entry : personalGpMap.entrySet()) {
+        for (Map.Entry<String, BigDecimal> entry : personalGpMap.entrySet()) {
             response.getPersonalOfferData().add(new QueryGeneralReportResponseKeyValue(entry.getKey(), entry.getValue()));
         }
     }
@@ -166,7 +166,7 @@ public class ReportService {
      * @param consultantName
      * @param consultantCommissionPercent
      */
-    private void calcPersonalGp(Map<String, Integer> personalGpMap, SuccessfulPerm s, String consultantName, Integer consultantCommissionPercent) {
+    private void calcPersonalGp(Map<String, BigDecimal> personalGpMap, SuccessfulPerm s, String consultantName, Integer consultantCommissionPercent) {
         if (Strings.isNotBlank(consultantName) && null != consultantCommissionPercent) {
             Integer totalPercent = 0
                     + (s.getConsultantCommissionPercent() != null ? s.getConsultantCommissionPercent() : 0)
@@ -175,8 +175,8 @@ public class ReportService {
                     + (s.getConsultantCommissionPercent4() != null ? s.getConsultantCommissionPercent4() : 0)
                     + (s.getConsultantCommissionPercent5() != null ? s.getConsultantCommissionPercent5() : 0);
             if (totalPercent > 0) {
-                Integer personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 10, BigDecimal.ROUND_DOWN).multiply(BigDecimal.valueOf(s.getGp())).intValue();
-                personalGpMap.put(consultantName, personalGp + (personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : 0));
+                BigDecimal personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 10, BigDecimal.ROUND_DOWN).multiply(s.getGp());
+                personalGpMap.put(consultantName, personalGp.add((personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : BigDecimal.ZERO)));
             }
         }
     }

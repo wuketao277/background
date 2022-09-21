@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -171,15 +172,15 @@ public class SuccessfulPermVO implements Serializable {
     /**
      *
      */
-    private Integer base;
+    private BigDecimal base;
     /**
      *
      */
-    private Integer gp;
+    private BigDecimal gp;
     /**
      *
      */
-    private Integer billing;
+    private BigDecimal billing;
     /**
      *
      */

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -39,31 +40,31 @@ public class SalaryVO {
     /**
      * 税前工资
      */
-    private Double sum;
+    private BigDecimal sum;
     /**
      * 个税
      */
-    private Double personalTax;
+    private BigDecimal personalTax;
     /**
      * 保险
      */
-    private Double insurance;
+    private BigDecimal insurance;
     /**
      * 公积金
      */
-    private Double gongjijin;
+    private BigDecimal gongjijin;
     /**
      * 工作日
      */
-    private Double workingDays;
+    private BigDecimal workingDays;
     /**
      * 税后工资
      */
-    private Double finalSum;
+    private BigDecimal finalSum;
     /**
      * 历史负债
      */
-    private Double historyDebt;
+    private BigDecimal historyDebt;
     /**
      * 更新日期
      */
