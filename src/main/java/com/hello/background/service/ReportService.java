@@ -124,8 +124,15 @@ public class ReportService {
             if (s.getOfferDate() != null
                     && s.getOfferDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getOfferDate()) >= 0) {
-                response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setOfferDateBilling(response.getOfferDateBilling().add(s.getBilling()));
+                // 猎头业务算billing，外包业务算gp
+                BigDecimal sum = BigDecimal.ZERO;
+                if ("perm".equals(s.getType())) {
+                    sum = s.getBilling();
+                } else {
+                    sum = s.getGp();
+                }
+                response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), sum));
+                response.setOfferDateBilling(response.getOfferDateBilling().add(sum));
             }
         }
     }
