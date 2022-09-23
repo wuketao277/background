@@ -16,7 +16,13 @@ public enum BankEnum {
     PAB("PAB", "平安银行"),
     CEB("CEB", "光大银行"),
     BOC("BOC", "中国银行"),
-    SPDB("SPDB", "浦发银行");
+    SPDB("SPDB", "浦发银行"),
+    CITIC("CITIC", "中信银行"),
+    BOS("BOS", "上海银行"),
+    CMBC("CMBC", "民生银行"),
+    CIB("CIB", "兴业银行"),
+    HB("HB", "华夏银行");
+
     private String code;
     private String name;
 
