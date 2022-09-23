@@ -7,12 +7,10 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort.Order;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,7 +131,10 @@ public class UserService {
      * @return
      */
     public Page<UserVO> queryPage(String search, Integer currentPage, Integer pageSize) {
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order(Sort.Direction.DESC, "enabled"));
+        orderList.add(new Order(Sort.Direction.ASC, "id"));
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, new Sort(orderList));
         Page<User> page = null;
         long total = 0;
         if (Strings.isNullOrEmpty(search)) {
