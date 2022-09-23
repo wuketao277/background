@@ -15,7 +15,8 @@ public enum BankEnum {
     BCM("BCM", "交通银行"),
     PAB("PAB", "平安银行"),
     CEB("CEB", "光大银行"),
-    BOC("BOC", "中国银行");
+    BOC("BOC", "中国银行"),
+    SPDB("SPDB", "浦发银行");
     private String code;
     private String name;
 
