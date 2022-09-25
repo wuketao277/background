@@ -44,7 +44,7 @@ public class Client {
     private String englishName;
 
     /**
-     * 英文名
+     * 客户备注
      */
     @Column(length = 2000)
     private String remark;
@@ -60,4 +60,16 @@ public class Client {
      */
     @Column(length = 50)
     private String createUserName;
+
+    /**
+     * 发票联系信息
+     */
+    @Column(length = 400)
+    private String invoiceContact;
+
+    /**
+     * 发票备注
+     */
+    @Column(length = 400)
+    private String invoiceRemark;
 }

@@ -33,6 +33,11 @@ public class SuccessfulPermService {
     @Autowired
     private SuccessfulPermRepository successfulPermRepository;
 
+    /**
+     * 保存
+     * @param vo
+     * @return
+     */
     public SuccessfulPermVO save(SuccessfulPermVO vo) {
         SuccessfulPerm successfulPerm = new SuccessfulPerm();
         BeanUtils.copyProperties(vo, successfulPerm);
@@ -40,7 +45,6 @@ public class SuccessfulPermService {
         vo.setId(successfulPerm.getId());
         return vo;
     }
-
 
     /**
      * 查询分页

@@ -33,7 +33,7 @@ public class ClientVO {
     private String englishName;
 
     /**
-     * 备注
+     * 客户备注
      */
     private String remark;
 
@@ -46,4 +46,14 @@ public class ClientVO {
      * 创建人
      */
     private String createUserName;
+
+    /**
+     * 发票联系信息
+     */
+    private String invoiceContact;
+
+    /**
+     * 发票备注
+     */
+    private String invoiceRemark;
 }
