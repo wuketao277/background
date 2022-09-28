@@ -2,11 +2,13 @@ package com.hello.background.vo;
 
 import com.hello.background.constant.BankEnum;
 import com.hello.background.constant.GenderEnum;
+import com.hello.background.constant.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class UserVO implements Serializable {
     /**
      * 底薪
      */
-    private Integer salarybase;
+    private BigDecimal salarybase;
     /**
      * 是否cover base
      */
@@ -53,6 +55,22 @@ public class UserVO implements Serializable {
      * 离职日期
      */
     private Date dimissionDate;
+    /**
+     * 是否考核KPI
+     */
+    private Boolean checkKPI;
+    /**
+     * 角色
+     */
+    private List<RoleEnum> roles;
+    /**
+     * 剩余事假
+     */
+    private BigDecimal remainHolidayThing;
+    /**
+     * 剩余病假
+     */
+    private BigDecimal remainHolidayIll;
     /**
      * 创建日期
      */

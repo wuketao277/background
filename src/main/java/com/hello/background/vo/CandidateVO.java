@@ -104,4 +104,19 @@ public class CandidateVO {
      * 英语水平
      */
     private String englishLevel;
+
+    /**
+     * 创建用户ID
+     */
+    private Integer createUserId;
+
+    /**
+     * 创建用户登录名
+     */
+    private String createUserName;
+
+    /**
+     * 创建用户真实姓名
+     */
+    private String createRealName;
 }

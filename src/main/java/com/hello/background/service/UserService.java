@@ -70,6 +70,10 @@ public class UserService {
         user.setEnabled(vo.getEnabled());
         user.setOnBoardDate(vo.getOnBoardDate());
         user.setDimissionDate(vo.getDimissionDate());
+        user.setRoles(vo.getRoles());
+        user.setCheckKPI(vo.getCheckKPI());
+        user.setRemainHolidayThing(vo.getRemainHolidayThing());
+        user.setRemainHolidayIll(vo.getRemainHolidayIll());
         // 更新数据库
         User returnUser = userRepository.save(user);
         UserVO returnUserVO = new UserVO();

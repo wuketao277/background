@@ -5,12 +5,14 @@ import com.hello.background.service.CandidateService;
 import com.hello.background.service.ResumeService;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.ResumeVO;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -48,8 +50,9 @@ public class CandidateController {
      * @return
      */
     @PostMapping("save")
-    public CandidateVO save(@RequestBody CandidateVO vo) {
-        return candidateService.save(vo);
+    public CandidateVO save(@RequestBody CandidateVO vo, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return candidateService.save(vo, userVO);
     }
 
     /**

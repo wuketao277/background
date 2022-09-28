@@ -10,6 +10,7 @@ import com.hello.background.domain.Candidate;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateVO;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -68,8 +69,14 @@ public class CandidateService {
      * @param vo
      * @return
      */
-    public CandidateVO save(CandidateVO vo) {
+    public CandidateVO save(CandidateVO vo, UserVO user) {
         Candidate candidate = TransferUtil.transferTo(vo, Candidate.class);
+        // 如果没有id，表示是第一次新增。就增加创建用户。
+        if (null == candidate.getId() || null == candidate.getCreateUserId()) {
+            candidate.setCreateUserId(user.getId());
+            candidate.setCreateUserName(user.getUsername());
+            candidate.setCreateRealName(user.getRealname());
+        }
         candidate = candidateRepository.save(candidate);
         return TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
     }
@@ -112,6 +119,8 @@ public class CandidateService {
                             , getPredicate("currentAddress", searchWord, root, criteriaBuilder)
                             , getPredicate("futureAddress", searchWord, root, criteriaBuilder)
                             , getPredicate("remark", searchWord, root, criteriaBuilder)
+                            , getPredicate("createUserName", searchWord, root, criteriaBuilder)
+                            , getPredicate("createRealName", searchWord, root, criteriaBuilder)
                     )));
                 }
                 Predicate[] p = new Predicate[list.size()];

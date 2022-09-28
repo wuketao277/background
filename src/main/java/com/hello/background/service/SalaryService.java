@@ -195,7 +195,7 @@ public class SalaryService {
                     // 需要cover base
                     sb.append("需要cover base" + "\r\n");
                     // 最后和底薪进行比较，取较大的值
-                    BigDecimal base = null != user.getSalarybase() ? new BigDecimal(user.getSalarybase()) : BigDecimal.ZERO;
+                    BigDecimal base = null != user.getSalarybase() ? user.getSalarybase() : BigDecimal.ZERO;
                     sb.append(String.format("base:%s commission:%s 后置工资项总和:%s\r\n", base, commissionSum, postSpecialSum));
                     if (commissionSum.compareTo(base) >= 0) {
                         // 当月提成大于底薪。发提成，历史负债为0
@@ -218,7 +218,7 @@ public class SalaryService {
                     // 不需要cover base
                     sb.append("不需要cover base" + "\r\n");
                     sb.append(String.format("base:%s commission:%s special:%s\r\n", user.getSalarybase(), commissionSum, postSpecialSum));
-                    salary.setSum(new BigDecimal(user.getSalarybase()).add(commissionSum).add(postSpecialSum));
+                    salary.setSum(user.getSalarybase().add(commissionSum).add(postSpecialSum));
                 }
                 sb.append("当月工资:" + salary.getSum());
                 salary.setDescription(sb.toString());

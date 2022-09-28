@@ -2,13 +2,17 @@ package com.hello.background.domain;
 
 import com.hello.background.constant.BankEnum;
 import com.hello.background.constant.GenderEnum;
+import com.hello.background.constant.RoleEnum;
+import com.hello.background.converter.RoleEnumListStringAttrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户信息表
@@ -49,7 +53,7 @@ public class User {
      * 底薪
      */
     @Column
-    private Integer salarybase;
+    private BigDecimal salarybase;
     /**
      * 是否cover base
      */
@@ -65,6 +69,27 @@ public class User {
      */
     @Column
     private Date dimissionDate;
+    /**
+     * 是否考核KPI
+     */
+    @Column
+    private Boolean checkKPI;
+    /**
+     * 角色
+     */
+    @Column(length = 100)
+    @Convert(converter = RoleEnumListStringAttrConverter.class)
+    private List<RoleEnum> roles;
+    /**
+     * 剩余事假
+     */
+    @Column
+    private BigDecimal remainHolidayThing;
+    /**
+     * 剩余病假
+     */
+    @Column
+    private BigDecimal remainHolidayIll;
     /**
      * 创建日期
      */

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 
 /**
  * 候选人
+ *
  * @author wuketao
  * @date 2019/11/30
  * @Description
@@ -129,4 +130,21 @@ public class Candidate {
     @Column(length = 200)
     private String englishLevel;
 
+    /**
+     * 创建用户ID
+     */
+    @Column
+    private Integer createUserId;
+
+    /**
+     * 创建用户登录名
+     */
+    @Column(length = 50)
+    private String createUserName;
+
+    /**
+     * 创建用户真实姓名
+     */
+    @Column(length = 50)
+    private String createRealName;
 }
