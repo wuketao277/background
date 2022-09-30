@@ -23,7 +23,7 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @RequestMapping("save")
+    @PostMapping("save")
     public CommentVO save(@RequestBody CommentVO vo, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         vo.setInputTime(LocalDateTime.now());
@@ -32,7 +32,17 @@ public class CommentController {
         return commentService.save(vo);
     }
 
-    @RequestMapping("findAllByCandidateId")
+    /**
+     * 通过主键删除
+     *
+     * @param id 主键
+     */
+    @GetMapping("deleteById")
+    public void deleteById(Integer id) {
+        commentService.deleteById(id);
+    }
+
+    @GetMapping("findAllByCandidateId")
     public List<CommentVO> findAllByCandidateId(Integer candidateId) {
         return commentService.findAllByCandidateId(candidateId);
     }

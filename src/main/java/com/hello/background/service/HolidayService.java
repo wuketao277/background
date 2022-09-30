@@ -88,7 +88,7 @@ public class HolidayService {
      * @return
      */
     public Page<HolidayVO> queryPage(String search, Integer currentPage, Integer pageSize, UserVO userVO) {
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "holidayDate");
         List<String> searchWordList = CommonUtils.splitSearchWord(search);
         Specification<Holiday> specification = new Specification<Holiday>() {
             @Override
@@ -98,7 +98,6 @@ public class HolidayService {
                     list.add(criteriaBuilder.and(criteriaBuilder.or(
                             getPredicate("userName", searchWord, root, criteriaBuilder)
                             , getPredicate("userRealName", searchWord, root, criteriaBuilder)
-                            , getPredicate("holidayDate", searchWord, root, criteriaBuilder)
                             , getPredicate("remark", searchWord, root, criteriaBuilder)
                     )));
                 }

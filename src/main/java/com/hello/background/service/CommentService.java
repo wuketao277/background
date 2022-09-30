@@ -42,6 +42,15 @@ public class CommentService {
     private UserRepository userRepository;
 
     /**
+     * 通过id删除
+     *
+     * @param id
+     */
+    public void deleteById(Integer id) {
+        commentRepository.deleteById(id);
+    }
+
+    /**
      * 保存评论信息
      *
      * @param vo
