@@ -2,6 +2,7 @@ package com.hello.background.vo;
 
 import com.hello.background.constant.BankEnum;
 import com.hello.background.constant.GenderEnum;
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,6 +40,10 @@ public class UserVO implements Serializable {
      * 密码
      */
     private String password;
+    /**
+     * 工作类型
+     */
+    private JobTypeEnum jobType;
     /**
      * 底薪
      */

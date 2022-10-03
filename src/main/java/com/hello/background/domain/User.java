@@ -2,6 +2,7 @@ package com.hello.background.domain;
 
 import com.hello.background.constant.BankEnum;
 import com.hello.background.constant.GenderEnum;
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.converter.RoleEnumListStringAttrConverter;
 import lombok.AllArgsConstructor;
@@ -49,6 +50,11 @@ public class User {
      */
     @Column(length = 50, nullable = false)
     private String password;
+    /**
+     * 工作类型
+     */
+    @Enumerated
+    private JobTypeEnum jobType;
     /**
      * 底薪
      */

@@ -65,6 +65,7 @@ public class UserService {
         // 更新基本信息字段
         user.setUsername(vo.getUsername());
         user.setRealname(vo.getRealname());
+        user.setJobType(vo.getJobType());
         user.setSalarybase(vo.getSalarybase());
         user.setCoverbase(vo.getCoverbase());
         user.setEnabled(vo.getEnabled());
