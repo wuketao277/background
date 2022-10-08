@@ -377,4 +377,15 @@ public class CandidateService {
             }
         }
     }
+
+    /**
+     * 通过电话号码查询候选人列表
+     *
+     * @param phoneNo
+     * @return
+     */
+    public List<CandidateVO> findByPhoneNo(String phoneNo) {
+        List<Candidate> list = candidateRepository.findByPhoneNo(phoneNo);
+        return list.stream().map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+    }
 }

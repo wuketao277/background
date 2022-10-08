@@ -124,4 +124,16 @@ public class CandidateController {
         search = "%" + search + "%";
         return candidateService.queryCandidate(search);
     }
+
+    /**
+     * 号码对应的候选人是否存在
+     *
+     * @param phoneNo
+     * @return
+     */
+    @GetMapping("isExist")
+    public boolean isExist(String phoneNo) {
+        List<CandidateVO> list = candidateService.findByPhoneNo(phoneNo);
+        return list.size() > 0;
+    }
 }
