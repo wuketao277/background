@@ -44,4 +44,12 @@ public interface MyNewsRepository extends JpaRepository<MyNews, Integer> {
      * @return
      */
     List<MyNews> findTop10ByPublishOrderByCreateTimeDesc(Boolean publish);
+
+    /**
+     * 获取最后发布的100条新闻
+     *
+     * @param publish
+     * @return
+     */
+    List<MyNews> findTop100ByPublishOrderByCreateTimeDesc(Boolean publish);
 }

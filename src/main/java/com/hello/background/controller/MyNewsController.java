@@ -75,4 +75,14 @@ public class MyNewsController {
     public List<MyNewsVO> findTop10() {
         return myNewsDomainService.findTop10ByPublishOrderByCreateTimeDesc();
     }
+
+    /**
+     * 获取前100条
+     *
+     * @return
+     */
+    @GetMapping("findTop100")
+    public List<MyNewsVO> findTop100() {
+        return myNewsDomainService.findTop100ByPublishOrderByCreateTimeDesc();
+    }
 }

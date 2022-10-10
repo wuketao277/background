@@ -117,4 +117,14 @@ public class MyNewsService {
         List<MyNews> list = myNewsRepository.findTop10ByPublishOrderByCreateTimeDesc(true);
         return list.stream().map(news -> TransferUtil.transferTo(news, MyNewsVO.class)).collect(Collectors.toList());
     }
+
+    /**
+     * 获取最后发布的新闻
+     *
+     * @return
+     */
+    public List<MyNewsVO> findTop100ByPublishOrderByCreateTimeDesc() {
+        List<MyNews> list = myNewsRepository.findTop100ByPublishOrderByCreateTimeDesc(true);
+        return list.stream().map(news -> TransferUtil.transferTo(news, MyNewsVO.class)).collect(Collectors.toList());
+    }
 }
