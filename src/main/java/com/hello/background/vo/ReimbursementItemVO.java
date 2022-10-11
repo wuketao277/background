@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -29,33 +30,57 @@ public class ReimbursementItemVO {
      */
     private String realName;
     /**
-     * 报销类型
+     * 审批状态
      */
-    private String type;
+    private ReimbursementApproveStatusEnum approveStatus;
+    /**
+     * 审批状态
+     */
+    private YesOrNoEnum needPay;
     /**
      * 日期
      */
     private String date;
     /**
-     * 报销金额
+     * 发生地点
      */
-    private BigDecimal sum;
+    private ReimbursementLocationEnum location;
     /**
-     * 发票号
+     * 报销公司
      */
-    private String invoiceNo;
-    /**
-     * 说明
-     */
-    private String description;
+    private ReimbursementCompanyEnum company;
     /**
      * 报销发放月份
      */
     private String paymentMonth;
     /**
-     * 审批状态
+     * 报销类型
      */
-    private String approveStatus;
+    private ReimbursementTypeEnum type;
+    /**
+     * 报销项目
+     */
+    private ReimbursementKindEnum kind;
+    /**
+     * 发票号
+     */
+    private String invoiceNo;
+    /**
+     * 单价
+     */
+    private BigDecimal price;
+    /**
+     * 数量
+     */
+    private BigDecimal count;
+    /**
+     * 报销金额
+     */
+    private BigDecimal sum;
+    /**
+     * 说明
+     */
+    private String description;
     /**
      * 更新日期
      */

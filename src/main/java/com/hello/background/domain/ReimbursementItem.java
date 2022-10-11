@@ -1,13 +1,11 @@
 package com.hello.background.domain;
 
+import com.hello.background.constant.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -43,40 +41,76 @@ public class ReimbursementItem {
     @Column(length = 50)
     private String realName;
     /**
-     * 报销类型
+     * 审批状态
      */
-    @Column(length = 20)
-    private String type;
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private ReimbursementApproveStatusEnum approveStatus;
+    /**
+     * 审批状态
+     */
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private YesOrNoEnum needPay;
     /**
      * 日期
      */
     @Column(length = 20)
     private String date;
     /**
-     * 报销金额
+     * 发生地点
      */
     @Column
-    private BigDecimal sum;
+    @Enumerated(value = EnumType.STRING)
+    private ReimbursementLocationEnum location;
     /**
-     * 发票号
+     * 报销公司
      */
-    @Column(length = 30)
-    private String invoiceNo;
-    /**
-     * 说明
-     */
-    @Column(length = 2000)
-    private String description;
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private ReimbursementCompanyEnum company;
     /**
      * 报销发放月份
      */
     @Column(length = 20)
     private String paymentMonth;
     /**
-     * 审批状态
+     * 报销类型
      */
-    @Column(length = 20)
-    private String approveStatus;
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private ReimbursementTypeEnum type;
+    /**
+     * 报销项目
+     */
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private ReimbursementKindEnum kind;
+    /**
+     * 发票号
+     */
+    @Column(length = 30)
+    private String invoiceNo;
+    /**
+     * 单价
+     */
+    @Column
+    private BigDecimal price;
+    /**
+     * 数量
+     */
+    @Column
+    private BigDecimal count;
+    /**
+     * 报销金额
+     */
+    @Column
+    private BigDecimal sum;
+    /**
+     * 说明
+     */
+    @Column(length = 2000)
+    private String description;
     /**
      * 更新日期
      */

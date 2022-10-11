@@ -23,5 +23,9 @@ public enum JobTypeEnum {
     /**
      * 外包
      */
-    CONSULTANT;
+    CONSULTANT,
+    /**
+     * 体验
+     */
+    EXPERIENCE;
 }
