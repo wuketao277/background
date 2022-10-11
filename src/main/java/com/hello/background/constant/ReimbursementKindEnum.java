@@ -13,7 +13,18 @@ public enum ReimbursementKindEnum {
     TaxiSubway("出租车/地铁/其他市内交通"),
     TravelHotel("差旅住宿费"),
     TravelMeal("差旅餐饭"),
-    Communication("通讯费");
+    Communication("通讯费"),
+    Training("培训费"),
+    Print("打印费"),
+    Tool("文具费"),
+    Postage("快递费"),
+    Candidate("候选人招待费"),
+    Client("客户招待费"),
+    Employee("员工内部招待费"),
+    Consultant("外包员工招待费"),
+    BodyCheck("体检费"),
+    Recruit("招聘费"),
+    Other("其他");
 
     private String name;
 
