@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.ReimbursementCompanyEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -27,6 +28,14 @@ public class ReimbursementSummaryVO {
      * 报销人真实姓名
      */
     private String realName;
+    /**
+     * 报销公司
+     */
+    private ReimbursementCompanyEnum company;
+    /**
+     * 报销公司名称
+     */
+    private String companyName;
     /**
      * 报销金额
      */

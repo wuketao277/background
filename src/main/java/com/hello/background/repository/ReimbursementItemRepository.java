@@ -1,5 +1,7 @@
 package com.hello.background.repository;
 
+import com.hello.background.constant.ReimbursementApproveStatusEnum;
+import com.hello.background.constant.YesOrNoEnum;
 import com.hello.background.domain.ReimbursementItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,4 +51,13 @@ public interface ReimbursementItemRepository extends PagingAndSortingRepository<
      * @return
      */
     List<ReimbursementItem> findByPaymentMonthAndApproveStatus(String payment, String approveStatus);
+
+    /**
+     * 通过支付月份、审批状态、是否需要报销，进行查询。并且根据用户id排序
+     *
+     * @param payment
+     * @param approveStatus
+     * @return
+     */
+    List<ReimbursementItem> findByPaymentMonthAndApproveStatusAndNeedPayOrderByUserId(String payment, ReimbursementApproveStatusEnum approveStatus, YesOrNoEnum needPay);
 }

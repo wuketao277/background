@@ -10,9 +10,13 @@ package com.hello.background.constant;
 public enum ReimbursementCompanyEnum {
     Shanghaihailuorencaifuwu("上海海罗人才服务有限公司"),
     Shanghaihailuorencaikeji("上海海罗人才科技有限公司"),
-    Shenyanghailuorencaikeji("沈阳海罗人才服务有限公司");
+    Shenyanghailuorencaifuwu("沈阳海罗人才服务有限公司");
 
     private String name;
+
+    public String getName() {
+        return name;
+    }
 
     ReimbursementCompanyEnum(String _name) {
         this.name = _name;

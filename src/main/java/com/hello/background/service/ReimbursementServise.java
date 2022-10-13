@@ -1,10 +1,12 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.ApproveStatusEnum;
+import com.hello.background.constant.ReimbursementApproveStatusEnum;
+import com.hello.background.constant.ReimbursementCompanyEnum;
+import com.hello.background.constant.RoleEnum;
+import com.hello.background.constant.YesOrNoEnum;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
 import com.hello.background.domain.User;
-import com.hello.background.domain.UserRole;
 import com.hello.background.repository.ReimbursementItemRepository;
 import com.hello.background.repository.ReimbursementSummaryRepository;
 import com.hello.background.repository.UserRepository;
@@ -57,6 +59,7 @@ public class ReimbursementServise {
     public ReimbursementItemVO save(ReimbursementItemVO vo) {
         ReimbursementItem item = new ReimbursementItem();
         BeanUtils.copyProperties(vo, item);
+        item.setCompanyName(vo.getCompany().getName());
         item = reimbursementItemRepository.save(item);
         vo.setId(item.getId());
         return vo;
@@ -100,11 +103,11 @@ public class ReimbursementServise {
      * @return
      */
     public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
-        UserVO user = (UserVO) session.getAttribute("user");
-        List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        User user = userRepository.findByUsername(userVO.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName", "date");
         Specification<ReimbursementItem> specification;
-        if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
+        if (user.getRoles().contains(RoleEnum.ADMIN)) {
             // 管理员
             specification = new Specification<ReimbursementItem>() {
                 @Override
@@ -115,6 +118,7 @@ public class ReimbursementServise {
                                 getPredicateLike("userName", search, root, criteriaBuilder)
                                 , getPredicateLike("realName", search, root, criteriaBuilder)
                                 , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
+                                , getPredicateLike("companyName", search, root, criteriaBuilder)
                         )));
                     }
                     Predicate[] p = new Predicate[list.size()];
@@ -132,6 +136,7 @@ public class ReimbursementServise {
                                 getPredicateLike("userName", search, root, criteriaBuilder)
                                 , getPredicateLike("realName", search, root, criteriaBuilder)
                                 , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
+                                , getPredicateLike("companyName", search, root, criteriaBuilder)
                         )));
                     }
                     // 普通用户只能查询自己的信息
@@ -158,11 +163,11 @@ public class ReimbursementServise {
      * @return
      */
     public Page<ReimbursementSummaryVO> querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
-        UserVO user = (UserVO) session.getAttribute("user");
-        List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        User user = userRepository.findByUsername(userVO.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName");
         Specification<ReimbursementSummary> specification;
-        if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
+        if (user.getRoles().contains(RoleEnum.ADMIN)) {
             // 管理员
             specification = new Specification<ReimbursementSummary>() {
                 @Override
@@ -172,7 +177,8 @@ public class ReimbursementServise {
                         list.add(criteriaBuilder.or(
                                 criteriaBuilder.like(root.get("userName"), "%" + search + "%"),
                                 criteriaBuilder.like(root.get("realName"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%")
+                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%"),
+                                criteriaBuilder.like(root.get("companyName"), "%" + search + "%")
                         ));
                     }
                     Predicate[] p = new Predicate[list.size()];
@@ -189,7 +195,8 @@ public class ReimbursementServise {
                         list.add(criteriaBuilder.or(
                                 criteriaBuilder.like(root.get("userName"), "%" + search + "%"),
                                 criteriaBuilder.like(root.get("realName"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%")
+                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%"),
+                                criteriaBuilder.like(root.get("companyName"), "%" + search + "%")
                         ));
                     }
                     // 普通用户只能查询自己的信息
@@ -214,17 +221,22 @@ public class ReimbursementServise {
         // 删除旧数据
         String monthStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
         reimbursementSummaryRepository.deleteByPaymentMonth(monthStr);
-        // 查询当月审批通过的报销项
-        List<ReimbursementItem> approveList = reimbursementItemRepository.findByPaymentMonthAndApproveStatus(monthStr, ApproveStatusEnum.APPROVED.getCode());
-        Map<Integer, BigDecimal> map = new HashMap<>();
+        // 查询当月审批通过且需要报销的报销项
+        List<ReimbursementItem> approveList = reimbursementItemRepository.findByPaymentMonthAndApproveStatusAndNeedPayOrderByUserId(monthStr, ReimbursementApproveStatusEnum.Approved, YesOrNoEnum.YES);
+        Map<String, BigDecimal> userAndCompanyMap = new HashMap<>();
         approveList.forEach(a -> {
-            BigDecimal bd = map.containsKey(a.getUserId()) ? map.get(a.getUserId()) : BigDecimal.ZERO;
+            // 通过登录名+公司标识作为唯一标识
+            String userAndCompany = a.getUserName() + "-" + a.getCompany();
+            BigDecimal bd = userAndCompanyMap.containsKey(userAndCompany) ? userAndCompanyMap.get(userAndCompany) : BigDecimal.ZERO;
             bd = bd.add(null != a.getSum() ? a.getSum() : BigDecimal.ZERO);
-            map.put(a.getUserId(), bd);
+            userAndCompanyMap.put(userAndCompany, bd);
         });
-        for (Map.Entry<Integer, BigDecimal> entry : map.entrySet()) {
-            User user = userRepository.findById(entry.getKey()).get();
+        for (Map.Entry<String, BigDecimal> entry : userAndCompanyMap.entrySet()) {
+            String[] splits = entry.getKey().split("-");
+            User user = userRepository.findByUsername(splits[0]);
             ReimbursementSummary summary = new ReimbursementSummary();
+            summary.setCompany(ReimbursementCompanyEnum.valueOf(splits[1]));
+            summary.setCompanyName(ReimbursementCompanyEnum.valueOf(splits[1]).getName());
             summary.setPaymentMonth(monthStr);
             summary.setUserId(user.getId());
             summary.setUserName(user.getUsername());

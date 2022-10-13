@@ -50,6 +50,10 @@ public class ReimbursementItemVO {
      */
     private ReimbursementCompanyEnum company;
     /**
+     * 报销公司名称
+     */
+    private String companyName;
+    /**
      * 报销发放月份
      */
     private String paymentMonth;

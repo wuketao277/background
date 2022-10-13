@@ -70,6 +70,11 @@ public class ReimbursementItem {
     @Enumerated(value = EnumType.STRING)
     private ReimbursementCompanyEnum company;
     /**
+     * 报销公司名称
+     */
+    @Column
+    private String companyName;
+    /**
      * 报销发放月份
      */
     @Column(length = 20)

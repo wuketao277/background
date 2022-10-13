@@ -1,13 +1,11 @@
 package com.hello.background.domain;
 
+import com.hello.background.constant.ReimbursementCompanyEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -42,6 +40,17 @@ public class ReimbursementSummary {
      */
     @Column(length = 50)
     private String realName;
+    /**
+     * 报销公司
+     */
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private ReimbursementCompanyEnum company;
+    /**
+     * 报销公司名称
+     */
+    @Column
+    private String companyName;
     /**
      * 报销金额
      */
