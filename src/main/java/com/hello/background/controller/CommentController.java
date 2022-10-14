@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -47,12 +46,16 @@ public class CommentController {
         return commentService.findAllByCandidateId(candidateId);
     }
 
+    /**
+     * 计算KPI
+     *
+     * @param request
+     * @return
+     */
     @PostMapping("calcKPI")
     public List<KPIPerson> calcKPI(@RequestBody CalcKPIRequest request) {
         // 拿到前台传入的日期要进行+1操作。因为前端给的日期是差1天。
-        LocalDate start = LocalDate.parse(request.getDates().get(0).substring(0, 10)).plusDays(1);
-        LocalDate end = LocalDate.parse(request.getDates().get(1).substring(0, 10)).plusDays(1);
-        return commentService.calcKPI(start, end);
+        return commentService.calcKPI(request.getStartDate(), request.getEndDate());
     }
 
     /**

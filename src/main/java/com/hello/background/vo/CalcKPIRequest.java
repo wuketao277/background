@@ -2,7 +2,7 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
-import java.util.List;
+import java.time.LocalDate;
 
 /**
  * @author wuketao
@@ -11,5 +11,6 @@ import java.util.List;
  */
 @Data
 public class CalcKPIRequest {
-    List<String> dates;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
