@@ -166,8 +166,8 @@ public class CommentService {
      */
     public List<CommentVO> findCommentsByTimeAndUsername(String beginDate, String endDate, String userName) {
         // 拿到前台传入的日期要进行+1操作。因为前端给的日期是差1天。
-        LocalDate start = LocalDate.parse(beginDate.substring(0, 10)).plusDays(1);
-        LocalDate end = LocalDate.parse(endDate.substring(0, 10)).plusDays(1);
+        LocalDate start = LocalDate.parse(beginDate.substring(0, 10));
+        LocalDate end = LocalDate.parse(endDate.substring(0, 10));
         LocalDateTime startDT = LocalDateTime.of(start.getYear(), start.getMonthValue(), start.getDayOfMonth(), 0, 0, 0);
         LocalDateTime endDT = LocalDateTime.of(end.getYear(), end.getMonthValue(), end.getDayOfMonth(), 23, 59, 59);
         List<Comment> commentList = commentRepository.findByInputTimeBetweenAndUsername(startDT, endDT, userName);
