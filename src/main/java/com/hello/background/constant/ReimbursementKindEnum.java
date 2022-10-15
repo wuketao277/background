@@ -14,6 +14,7 @@ public enum ReimbursementKindEnum {
     TravelHotel("差旅住宿费"),
     TravelMeal("差旅餐饭"),
     Communication("通讯费"),
+    OfficeRent("办公室租金"),
     Training("培训费"),
     Print("打印费"),
     Tool("文具费"),
