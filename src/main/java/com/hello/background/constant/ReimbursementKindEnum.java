@@ -8,6 +8,7 @@ package com.hello.background.constant;
  * @Description
  */
 public enum ReimbursementKindEnum {
+    Parking("停车"),
     InternalAirTicket("国内机票"),
     InternalTrainTicket("国内高铁/火车"),
     TaxiSubway("出租车/地铁/其他市内交通"),
@@ -19,6 +20,7 @@ public enum ReimbursementKindEnum {
     Print("打印费"),
     Tool("文具费"),
     Postage("快递费"),
+    Drug("药品"),
     Candidate("候选人招待费"),
     Client("客户招待费"),
     Employee("员工内部招待费"),
