@@ -1,5 +1,6 @@
 package com.hello.background.controller;
 
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.MyNewsService;
 import com.hello.background.vo.MyNewsVO;
 import com.hello.background.vo.UserVO;
@@ -84,5 +85,20 @@ public class MyNewsController {
     @GetMapping("findTop100")
     public List<MyNewsVO> findTop100() {
         return myNewsDomainService.findTop100ByPublishOrderByCreateTimeDesc();
+    }
+
+    /**
+     * 通过id删除新闻
+     *
+     * @param id
+     * @param session
+     */
+    @GetMapping("deleteById")
+    public void deleteById(Integer id, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        if (userVO.getRoles().contains(RoleEnum.ADMIN)) {
+            // 管理员才能删除新闻
+            myNewsDomainService.deleteById(id);
+        }
     }
 }

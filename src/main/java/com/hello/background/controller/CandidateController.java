@@ -3,9 +3,7 @@ package com.hello.background.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.service.CandidateService;
 import com.hello.background.service.ResumeService;
-import com.hello.background.vo.CandidateVO;
-import com.hello.background.vo.ResumeVO;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -135,5 +133,38 @@ public class CandidateController {
     public boolean isExist(String phoneNo) {
         List<CandidateVO> list = candidateService.findByPhoneNo(phoneNo);
         return list.size() > 0;
+    }
+
+    /**
+     * 更新关注
+     */
+    @PostMapping("updateCandidateAttention")
+    public void updateCandidateAttention(@RequestBody UpdateCandidateAttentionRequest request, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        candidateService.updateCandidateAttention(request.getAttention(), request.getCandidateId(), userVO);
+    }
+
+    /**
+     * 查询候选人关注情况
+     *
+     * @param candidateId
+     * @return
+     */
+    @GetMapping("queryCandidateAttentionByCandidateId")
+    public Boolean queryCandidateAttentionByCandidateId(Integer candidateId, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return candidateService.queryCandidateAttentionByCandidateId(candidateId, userVO);
+    }
+
+    /**
+     * 查询当前用户关注的候选人
+     *
+     * @param session
+     * @return
+     */
+    @GetMapping("queryCandidateAttentionListByUser")
+    public List<CandidateAttentionVO> queryCandidateAttentionListByUser(HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return candidateService.queryCandidateAttentionListByUser(userVO.getId());
     }
 }

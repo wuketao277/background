@@ -2,7 +2,9 @@ package com.hello.background.service;
 
 import com.google.common.base.Strings;
 import com.hello.background.domain.MyNews;
+import com.hello.background.domain.User;
 import com.hello.background.repository.MyNewsRepository;
+import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.MyNewsVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +33,8 @@ public class MyNewsService {
 
     @Autowired
     private MyNewsRepository myNewsRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 从DO对象创建VO对象
@@ -40,7 +45,10 @@ public class MyNewsService {
     public MyNewsVO fromDOToVO(MyNews myNews) {
         MyNewsVO vo = new MyNewsVO();
         TransferUtil.transfer(myNews, vo);
-        vo.setCreateUserName("Ramona");
+        Optional<User> userOptional = userRepository.findById(Integer.valueOf(myNews.getCreateUserId()));
+        if (userOptional.isPresent()) {
+            vo.setCreateUserName(userOptional.get().getUsername());
+        }
         return vo;
     }
 
@@ -126,5 +134,14 @@ public class MyNewsService {
     public List<MyNewsVO> findTop100ByPublishOrderByCreateTimeDesc() {
         List<MyNews> list = myNewsRepository.findTop100ByPublishOrderByCreateTimeDesc(true);
         return list.stream().map(news -> TransferUtil.transferTo(news, MyNewsVO.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * 通过id删掉新闻
+     *
+     * @param id
+     */
+    public void deleteById(Integer id) {
+        myNewsRepository.deleteById(id);
     }
 }

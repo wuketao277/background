@@ -7,8 +7,11 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
+import com.hello.background.domain.CandidateAttention;
+import com.hello.background.repository.CandidateAttentionRepository;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.CandidateAttentionVO;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,8 @@ public class CandidateService {
     private ResumeService resumeService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private CandidateAttentionRepository candidateAttentionRepository;
 
     private ThreadLocal<Integer> tlRowNumber = new ThreadLocal<>();
 
@@ -387,5 +392,60 @@ public class CandidateService {
     public List<CandidateVO> findByPhoneNo(String phoneNo) {
         List<Candidate> list = candidateRepository.findByPhoneNo(phoneNo);
         return list.stream().map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * 更新候选人关注信息
+     *
+     * @param attention
+     * @param candidateId
+     * @param userVO
+     */
+    public void updateCandidateAttention(Boolean attention, Integer candidateId, UserVO userVO) {
+        if (attention) {
+            // 要添加关注
+            // 先检查是否已关注
+            List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByCandidateIdAndUserId(candidateId, userVO.getId());
+            if (0 == candidateAttentionList.size()) {
+                // 如果没有关注，就增加关注
+                Optional<Candidate> optional = candidateRepository.findById(candidateId);
+                if (optional.isPresent()) {
+                    Candidate candidate = optional.get();
+                    CandidateAttention candidateAttention = new CandidateAttention();
+                    candidateAttention.setCandidateId(candidate.getId());
+                    candidateAttention.setCandidateChineseName(candidate.getChineseName());
+                    candidateAttention.setUserId(userVO.getId());
+                    candidateAttention.setUserLoginName(userVO.getUsername());
+                    candidateAttention.setUserRealName(userVO.getRealname());
+                    candidateAttentionRepository.save(candidateAttention);
+                }
+            }
+        } else {
+            // 取消关注
+            candidateAttentionRepository.deleteByCandidateIdAndUserId(candidateId, userVO.getId());
+        }
+    }
+
+    /**
+     * 查询候选人关注情况
+     *
+     * @param candidateId
+     * @param userVO
+     * @return
+     */
+    public Boolean queryCandidateAttentionByCandidateId(Integer candidateId, UserVO userVO) {
+        List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByCandidateIdAndUserId(candidateId, userVO.getId());
+        return candidateAttentionList.size() > 0;
+    }
+
+    /**
+     * 通过用户的关注情况
+     *
+     * @param userId
+     * @return
+     */
+    public List<CandidateAttentionVO> queryCandidateAttentionListByUser(Integer userId) {
+        List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByUserId(userId);
+        return candidateAttentionList.stream().map(x -> TransferUtil.transferTo(x, CandidateAttentionVO.class)).collect(Collectors.toList());
     }
 }
