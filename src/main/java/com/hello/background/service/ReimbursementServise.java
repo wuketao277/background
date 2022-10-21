@@ -1,9 +1,6 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.ReimbursementApproveStatusEnum;
-import com.hello.background.constant.ReimbursementCompanyEnum;
-import com.hello.background.constant.RoleEnum;
-import com.hello.background.constant.YesOrNoEnum;
+import com.hello.background.constant.*;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
 import com.hello.background.domain.User;
@@ -13,10 +10,12 @@ import com.hello.background.repository.UserRepository;
 import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ReimbursementItemVO;
+import com.hello.background.vo.ReimbursementStatisticsResponse;
 import com.hello.background.vo.ReimbursementSummaryVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -152,6 +151,31 @@ public class ReimbursementServise {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;
+    }
+
+    /**
+     * 查询统计
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param session
+     * @return
+     */
+    public ReimbursementStatisticsResponse queryStatistics(Integer currentPage, Integer pageSize, String search, HttpSession session) {
+        ReimbursementStatisticsResponse response = new ReimbursementStatisticsResponse();
+        Page<ReimbursementItemVO> reimbursementItemVOPage = queryPage(currentPage, pageSize, search, session);
+        List<ReimbursementItemVO> reimbursementItemVOList = Optional.ofNullable(reimbursementItemVOPage).map(p -> p.getContent()).orElse(Lists.emptyList());
+        reimbursementItemVOList.stream().forEach(r -> {
+            if (null != r.getSum()) {
+                // 统计总报销金额
+                response.setTotalReimbursementSum(response.getTotalReimbursementSum().add(r.getSum()));
+                // 统计实际需要报销的金额
+                if (null != r.getNeedPay() && r.getNeedPay() == YesOrNoEnum.YES && null != r.getApproveStatus() && r.getApproveStatus() == ReimbursementApproveStatusEnum.Approved) {
+                    response.setNeedReimbursementSum(response.getNeedReimbursementSum().add(r.getSum()));
+                }
+            }
+        });
+        return response;
     }
 
     /**

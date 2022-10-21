@@ -2,10 +2,7 @@ package com.hello.background.controller;
 
 import com.hello.background.service.ClientService;
 import com.hello.background.service.SuccessfulPermService;
-import com.hello.background.vo.DeleteSuccessfulPermRequest;
-import com.hello.background.vo.SuccessfulPermVO;
-import com.hello.background.vo.SuccessfulPermVOPageRequest;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
@@ -56,6 +53,16 @@ public class SuccessfulPermController {
     @PostMapping("queryPage")
     public Page<SuccessfulPermVO> queryPage(@RequestBody SuccessfulPermVOPageRequest request) {
         return successfulPermService.queryPage(request);
+    }
+
+    /**
+     * 查询统计
+     *
+     * @return
+     */
+    @PostMapping("queryStatistics")
+    public SuccessfulCaseStatisticsResponse queryStatistics(@RequestBody SuccessfulPermVOPageRequest request) {
+        return successfulPermService.queryStatistics(request);
     }
 
     /**

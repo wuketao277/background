@@ -2,6 +2,7 @@ package com.hello.background.controller;
 
 import com.hello.background.service.ReimbursementServise;
 import com.hello.background.vo.ReimbursementItemVO;
+import com.hello.background.vo.ReimbursementStatisticsResponse;
 import com.hello.background.vo.ReimbursementSummaryVO;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,18 @@ public class ReimbursementController {
     @GetMapping("queryPage")
     public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
         return reimbursementServise.queryPage(currentPage, pageSize, search, session);
+    }
+
+    /**
+     * 查询统计
+     *
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("queryStatistics")
+    public ReimbursementStatisticsResponse queryStatistics(Integer currentPage, Integer pageSize, String search, HttpSession session) {
+        return reimbursementServise.queryStatistics(currentPage, pageSize, search, session);
     }
 
     /**

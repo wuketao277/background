@@ -4,9 +4,11 @@ import com.hello.background.domain.SuccessfulPerm;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.SuccessfulCaseStatisticsResponse;
 import com.hello.background.vo.SuccessfulPermVO;
 import com.hello.background.vo.SuccessfulPermVOPageRequest;
 import com.hello.background.vo.SuccessfulPermVOPageSearchRequest;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +38,7 @@ public class SuccessfulPermService {
 
     /**
      * 保存
+     *
      * @param vo
      * @return
      */
@@ -172,6 +176,28 @@ public class SuccessfulPermService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;
+    }
+
+    /**
+     * 查询统计
+     *
+     * @return
+     */
+    public SuccessfulCaseStatisticsResponse queryStatistics(SuccessfulPermVOPageRequest request) {
+        SuccessfulCaseStatisticsResponse response = new SuccessfulCaseStatisticsResponse();
+        Page<SuccessfulPermVO> successfulPermVOPage = queryPage(request);
+        List<SuccessfulPermVO> successfulPermVOList = Optional.ofNullable(successfulPermVOPage).map(p -> p.getContent()).orElse(Lists.emptyList());
+        successfulPermVOList.stream().forEach(s -> {
+            BigDecimal billing = s.getBilling();
+            if (null != billing) {
+                response.setBillingSum(response.getBillingSum().add(billing));
+            }
+            BigDecimal gp = s.getGp();
+            if (null != gp) {
+                response.setGpSum(response.getGpSum().add(gp));
+            }
+        });
+        return response;
     }
 
     /**
