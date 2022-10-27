@@ -94,6 +94,16 @@ public class CaseVO {
     private String interviewProcess;
 
     /**
+     * HC情况
+     */
+    private Integer headCount;
+
+    /**
+     * pipeline
+     */
+    private String pipeline;
+
+    /**
      * 描述
      */
     private String description;

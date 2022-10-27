@@ -10,7 +10,8 @@ package com.hello.background.constant;
 public enum RoleEnum {
     ADMIN("admin"),
     RECRUITER("recruiter"),
-    AM("Account Manager");
+    AM("Account Manager"),
+    BD("bd");
 
     /**
      * 描述

@@ -68,7 +68,7 @@ public class ReimbursementItem {
      */
     @Column
     @Enumerated(value = EnumType.STRING)
-    private ReimbursementCompanyEnum company;
+    private CompanyEnum company;
     /**
      * 报销公司名称
      */

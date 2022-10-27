@@ -1,6 +1,6 @@
 package com.hello.background.domain;
 
-import com.hello.background.constant.ReimbursementCompanyEnum;
+import com.hello.background.constant.CompanyEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,7 +45,7 @@ public class ReimbursementSummary {
      */
     @Column
     @Enumerated(value = EnumType.STRING)
-    private ReimbursementCompanyEnum company;
+    private CompanyEnum company;
     /**
      * 报销公司名称
      */

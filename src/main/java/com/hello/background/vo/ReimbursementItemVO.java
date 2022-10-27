@@ -48,7 +48,7 @@ public class ReimbursementItemVO {
     /**
      * 报销公司
      */
-    private ReimbursementCompanyEnum company;
+    private CompanyEnum company;
     /**
      * 报销公司名称
      */

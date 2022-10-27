@@ -259,8 +259,8 @@ public class ReimbursementServise {
             String[] splits = entry.getKey().split("-");
             User user = userRepository.findByUsername(splits[0]);
             ReimbursementSummary summary = new ReimbursementSummary();
-            summary.setCompany(ReimbursementCompanyEnum.valueOf(splits[1]));
-            summary.setCompanyName(ReimbursementCompanyEnum.valueOf(splits[1]).getName());
+            summary.setCompany(CompanyEnum.valueOf(splits[1]));
+            summary.setCompanyName(CompanyEnum.valueOf(splits[1]).getName());
             summary.setPaymentMonth(monthStr);
             summary.setUserId(user.getId());
             summary.setUserName(user.getUsername());

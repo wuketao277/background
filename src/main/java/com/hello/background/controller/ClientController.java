@@ -1,6 +1,8 @@
 package com.hello.background.controller;
 
+import com.hello.background.service.ClientContractService;
 import com.hello.background.service.ClientService;
+import com.hello.background.vo.ClientContractVO;
 import com.hello.background.vo.ClientVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,8 @@ import java.util.List;
 public class ClientController {
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private ClientContractService clientContractService;
 
     /**
      * 保存
@@ -71,5 +75,38 @@ public class ClientController {
     @GetMapping("findAll")
     public List<ClientVO> findAll() {
         return clientService.findAll();
+    }
+
+    /**
+     * 保存客户合同
+     *
+     * @param vo
+     * @return
+     */
+    @PostMapping("saveContract")
+    public ClientContractVO saveContract(@RequestBody ClientContractVO vo) {
+        return clientContractService.save(vo);
+    }
+
+    /**
+     * 查询客户合同信息
+     *
+     * @param clientId
+     * @return
+     */
+    @GetMapping("findContractByClientId")
+    public List<ClientContractVO> findContractByClientId(Integer clientId) {
+        return clientContractService.findByClientId(clientId);
+    }
+
+    /**
+     * 通过id查询客户合同信息
+     *
+     * @param id 客户id
+     * @return 客户
+     */
+    @GetMapping("findContractByClientContractId")
+    public ClientContractVO findContractByClientContractId(Integer id) {
+        return clientContractService.findById(id);
     }
 }

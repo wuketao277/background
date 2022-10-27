@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Entity
 public class ClientCase {
     /**
-     * 新闻主键id
+     * id
      */
     @Id
     @GeneratedValue
@@ -112,6 +112,18 @@ public class ClientCase {
      */
     @Column(length = 200)
     private String interviewProcess;
+
+    /**
+     * HC情况
+     */
+    @Column
+    private Integer headCount;
+
+    /**
+     * pipeline
+     */
+    @Column(length = 200)
+    private String pipeline;
 
     /**
      * 描述
