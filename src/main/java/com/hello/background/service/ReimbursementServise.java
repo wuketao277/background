@@ -1,6 +1,9 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.*;
+import com.hello.background.constant.CompanyEnum;
+import com.hello.background.constant.ReimbursementApproveStatusEnum;
+import com.hello.background.constant.RoleEnum;
+import com.hello.background.constant.YesOrNoEnum;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
 import com.hello.background.domain.User;
@@ -297,5 +300,21 @@ public class ReimbursementServise {
      */
     public void deleteById(Integer id) {
         reimbursementItemRepository.deleteById(id);
+    }
+
+    /**
+     * 审批选中项
+     *
+     * @param reimbursementItemVOList
+     */
+    public void approveSelection(List<ReimbursementItemVO> reimbursementItemVOList) {
+        reimbursementItemVOList.stream().forEach(r -> {
+            Optional<ReimbursementItem> reimbursementItemOptional = reimbursementItemRepository.findById(r.getId());
+            if (reimbursementItemOptional.isPresent()) {
+                ReimbursementItem reimbursementItem = reimbursementItemOptional.get();
+                reimbursementItem.setApproveStatus(ReimbursementApproveStatusEnum.Approved);
+                reimbursementItemRepository.save(reimbursementItem);
+            }
+        });
     }
 }

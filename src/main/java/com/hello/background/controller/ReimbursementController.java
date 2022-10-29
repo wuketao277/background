@@ -1,16 +1,14 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.ReimbursementServise;
-import com.hello.background.vo.ReimbursementItemVO;
-import com.hello.background.vo.ReimbursementStatisticsResponse;
-import com.hello.background.vo.ReimbursementSummaryVO;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author wuketao
@@ -95,5 +93,15 @@ public class ReimbursementController {
     @DeleteMapping("deleteById")
     public void deleteById(@RequestParam Integer id) {
         reimbursementServise.deleteById(id);
+    }
+
+    /**
+     * 审批通过选中项
+     *
+     * @param reimbursementItemVOList
+     */
+    @PostMapping("approveSelection")
+    public void approveSelection(@RequestBody List<ReimbursementItemVO> reimbursementItemVOList) {
+        reimbursementServise.approveSelection(reimbursementItemVOList);
     }
 }

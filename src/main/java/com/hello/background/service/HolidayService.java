@@ -1,6 +1,7 @@
 package com.hello.background.service;
 
 import com.hello.background.common.CommonUtils;
+import com.hello.background.constant.HolidayApproveStatusEnum;
 import com.hello.background.domain.Holiday;
 import com.hello.background.repository.HolidayRepository;
 import com.hello.background.utils.TransferUtil;
@@ -131,5 +132,21 @@ public class HolidayService {
         Path<String> path = root.get(key);
         Predicate predicate = criteriaBuilder.like(path, "%" + value + "%");
         return predicate;
+    }
+
+    /**
+     * 审批选中项
+     *
+     * @param holidayVOList
+     */
+    public void approveSelection(List<HolidayVO> holidayVOList) {
+        holidayVOList.stream().forEach(h -> {
+            Optional<Holiday> holidayOptional = holidayRepository.findById(h.getId());
+            if (holidayOptional.isPresent()) {
+                Holiday holiday = holidayOptional.get();
+                holiday.setApproveStatus(HolidayApproveStatusEnum.APPROVED);
+                holidayRepository.save(holiday);
+            }
+        });
     }
 }

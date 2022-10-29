@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * 假期控制器
@@ -73,5 +74,15 @@ public class HolidayController {
     public Page<HolidayVO> queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         return holidayService.queryPage(search, currentPage, pageSize, userVO);
+    }
+
+    /**
+     * 审批通过选中项
+     *
+     * @param holidayVOList
+     */
+    @PostMapping("approveSelection")
+    public void approveSelection(@RequestBody List<HolidayVO> holidayVOList) {
+        holidayService.approveSelection(holidayVOList);
     }
 }
