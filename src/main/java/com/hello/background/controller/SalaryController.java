@@ -11,9 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 /**
  * 工资控制器
@@ -38,11 +35,7 @@ public class SalaryController {
     @PostMapping("generateSalary")
     public void generateSalary(@RequestBody GenerateSalaryRequest request, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
-        String month = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        if (Optional.ofNullable(request).map(r -> r.getMonth()).isPresent()) {
-            month = request.getMonth();
-        }
-        salaryService.generateSalary(month, user.getUsername());
+        salaryService.generateSalary(request.getMonth(), user.getUsername());
     }
 
     /**

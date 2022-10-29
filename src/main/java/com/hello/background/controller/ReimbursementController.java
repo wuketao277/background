@@ -70,9 +70,9 @@ public class ReimbursementController {
      * 生成报销摘要
      */
     @PostMapping("generateReimbursementSummary")
-    public void generateReimbursementSummary(HttpSession session) {
+    public void generateReimbursementSummary(@RequestBody GenerateReimbursementRequest request, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
-        reimbursementServise.generateReimbursementSummary(user);
+        reimbursementServise.generateReimbursementSummary(request.getMonth(), user);
     }
 
     /**

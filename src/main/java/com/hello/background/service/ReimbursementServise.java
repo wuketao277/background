@@ -244,9 +244,8 @@ public class ReimbursementServise {
     /**
      * 生成报销摘要
      */
-    public void generateReimbursementSummary(UserVO curUser) {
+    public void generateReimbursementSummary(String monthStr, UserVO curUser) {
         // 删除旧数据
-        String monthStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
         reimbursementSummaryRepository.deleteByPaymentMonth(monthStr);
         // 查询当月审批通过且需要报销的报销项
         List<ReimbursementItem> approveList = reimbursementItemRepository.findByPaymentMonthAndApproveStatusAndNeedPayOrderByUserId(monthStr, ReimbursementApproveStatusEnum.Approved, YesOrNoEnum.YES);
