@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -60,6 +61,16 @@ public class SalaryController {
     @GetMapping("queryPage")
     public Page<SalaryVO> queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         return salaryService.queryPage(session, search, currentPage, pageSize);
+    }
+
+    /**
+     * 下载薪资
+     *
+     * @return
+     */
+    @GetMapping("downloadSalary")
+    public void downloadSalary(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
+        salaryService.downloadSalary(currentPage, pageSize, search, session, response);
     }
 
     /**

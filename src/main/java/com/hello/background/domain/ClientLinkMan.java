@@ -82,4 +82,10 @@ public class ClientLinkMan {
      */
     @Column(length = 50)
     private String createUserId;
+
+    /**
+     * 备注
+     */
+    @Column(length = 400)
+    private String comments;
 }

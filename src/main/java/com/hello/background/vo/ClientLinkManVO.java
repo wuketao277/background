@@ -69,4 +69,9 @@ public class ClientLinkManVO {
      * 创建人id
      */
     private String createUserId;
+
+    /**
+     * 备注
+     */
+    private String comments;
 }

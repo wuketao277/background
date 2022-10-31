@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,26 @@ public class ReimbursementController {
     @GetMapping("queryPage")
     public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
         return reimbursementServise.queryPage(currentPage, pageSize, search, session);
+    }
+
+    /**
+     * 下载报销项详情
+     *
+     * @return
+     */
+    @GetMapping("downloadReimbursementItem")
+    public void downloadReimbursementItem(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
+        reimbursementServise.downloadReimbursementItem(currentPage, pageSize, search, session, response);
+    }
+
+    /**
+     * 下载报销
+     *
+     * @return
+     */
+    @GetMapping("downloadReimbursementSummary")
+    public void downloadReimbursementSummary(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
+        reimbursementServise.downloadReimbursementSummary(currentPage, pageSize, search, session, response);
     }
 
     /**

@@ -3,10 +3,9 @@ package com.hello.background.service;
 import com.hello.background.domain.*;
 import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
+import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.SalaryInfoVO;
-import com.hello.background.vo.SalaryVO;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -260,6 +260,15 @@ public class SalaryService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 下载薪资
+     */
+    public void downloadSalary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
+        Page<SalaryVO> page = queryPage(session, search, currentPage, pageSize);
+        // 封装返回response
+        EasyExcelUtil.downloadExcel(response, "薪资", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
     }
 
     /**

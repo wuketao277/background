@@ -15,6 +15,10 @@ public enum ReimbursementLocationEnum {
 
     private String name;
 
+    public String getName() {
+        return this.name;
+    }
+
     ReimbursementLocationEnum(String _name) {
         this.name = _name;
     }

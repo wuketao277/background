@@ -31,6 +31,10 @@ public enum ReimbursementKindEnum {
 
     private String name;
 
+    public String getName() {
+        return this.name;
+    }
+
     ReimbursementKindEnum(String _name) {
         this.name = _name;
     }

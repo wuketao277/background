@@ -17,6 +17,10 @@ public enum ReimbursementTypeEnum {
     Other("其他");
     private String name;
 
+    public String getName() {
+        return this.name;
+    }
+
     ReimbursementTypeEnum(String _name) {
         this.name = _name;
     }

@@ -11,11 +11,9 @@ import com.hello.background.repository.ReimbursementItemRepository;
 import com.hello.background.repository.ReimbursementSummaryRepository;
 import com.hello.background.repository.UserRepository;
 import com.hello.background.repository.UserRoleRepository;
+import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.ReimbursementItemVO;
-import com.hello.background.vo.ReimbursementStatisticsResponse;
-import com.hello.background.vo.ReimbursementSummaryVO;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.assertj.core.util.Lists;
@@ -27,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -154,6 +153,24 @@ public class ReimbursementServise {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;
+    }
+
+    /**
+     * 下载报销项详情
+     */
+    public void downloadReimbursementItem(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
+        Page<ReimbursementItemVO> page = queryPage(currentPage, pageSize, search, session);
+        // 封装返回response
+        EasyExcelUtil.downloadExcel(response, "报销项详情", null, page.getContent().stream().map(r -> new ReimbursementItemVODownload(r)).collect(Collectors.toList()), ReimbursementItemVODownload.class);
+    }
+
+    /**
+     * 下载报销
+     */
+    public void downloadReimbursementSummary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
+        Page<ReimbursementSummaryVO> page = querySummaryPage(search, currentPage, pageSize, session);
+        // 封装返回response
+        EasyExcelUtil.downloadExcel(response, "报销", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVODownload.class)).collect(Collectors.toList()), ReimbursementSummaryVODownload.class);
     }
 
     /**
