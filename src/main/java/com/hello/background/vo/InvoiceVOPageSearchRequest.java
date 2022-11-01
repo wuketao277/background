@@ -22,7 +22,7 @@ public class InvoiceVOPageSearchRequest {
     /**
      * AM ID
      */
-    private Integer userId;
+    private Integer amId;
 
     /**
      * 候选人 id

@@ -63,9 +63,9 @@ public class InvoiceService {
                     Predicate like = criteriaBuilder.equal(path, search.getClientId());
                     list.add(criteriaBuilder.and(like));
                 }
-                if (null != search.getUserId()) {
-                    Path<String> path = root.get("userId");
-                    Predicate equal = criteriaBuilder.equal(path, search.getUserId());
+                if (null != search.getAmId()) {
+                    Path<Integer> path = root.get("amId");
+                    Predicate equal = criteriaBuilder.equal(path, search.getAmId());
                     list.add(criteriaBuilder.and(equal));
                 }
                 if (null != search.getCandidateId()) {
