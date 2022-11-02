@@ -12,9 +12,12 @@ public enum ReimbursementKindEnum {
     InternalAirTicket("国内机票"),
     InternalTrainTicket("国内高铁/火车"),
     TaxiSubway("出租车/地铁/其他市内交通"),
+    DriveTheFare("自驾车费"),
+    NationalAirTicket("国际机票"),
     TravelHotel("差旅住宿费"),
     TravelMeal("差旅餐饭"),
     Communication("通讯费"),
+    ITFee("IT费用"),
     OfficeRent("办公室租金"),
     Training("培训费"),
     Print("打印费"),
@@ -27,6 +30,9 @@ public enum ReimbursementKindEnum {
     Consultant("外包员工招待费"),
     BodyCheck("体检费"),
     Recruit("招聘费"),
+    InsuranceAndHousefund("五险一金"),
+    Insurance("各类保险"),
+    Tax("各类税收"),
     Other("其他");
 
     private String name;
