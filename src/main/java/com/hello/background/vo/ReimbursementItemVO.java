@@ -34,9 +34,9 @@ public class ReimbursementItemVO {
      */
     private ReimbursementApproveStatusEnum approveStatus;
     /**
-     * 审批状态
+     * 是否报销
      */
-    private YesOrNoEnum needPay;
+    private ReimbursementNeedPayEnum needPay;
     /**
      * 日期
      */

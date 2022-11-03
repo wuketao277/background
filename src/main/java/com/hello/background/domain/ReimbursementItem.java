@@ -47,11 +47,11 @@ public class ReimbursementItem {
     @Enumerated(value = EnumType.STRING)
     private ReimbursementApproveStatusEnum approveStatus;
     /**
-     * 审批状态
+     * 是否报销
      */
     @Column
     @Enumerated(value = EnumType.STRING)
-    private YesOrNoEnum needPay;
+    private ReimbursementNeedPayEnum needPay;
     /**
      * 日期
      */

@@ -1,9 +1,6 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.CompanyEnum;
-import com.hello.background.constant.ReimbursementApproveStatusEnum;
-import com.hello.background.constant.RoleEnum;
-import com.hello.background.constant.YesOrNoEnum;
+import com.hello.background.constant.*;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
 import com.hello.background.domain.User;
@@ -190,7 +187,7 @@ public class ReimbursementServise {
                 // 统计总报销金额
                 response.setTotalReimbursementSum(response.getTotalReimbursementSum().add(r.getSum()));
                 // 统计实际需要报销的金额
-                if (null != r.getNeedPay() && r.getNeedPay() == YesOrNoEnum.YES && null != r.getApproveStatus() && r.getApproveStatus() == ReimbursementApproveStatusEnum.Approved) {
+                if (null != r.getNeedPay() && r.getNeedPay() == ReimbursementNeedPayEnum.YES && null != r.getApproveStatus() && r.getApproveStatus() == ReimbursementApproveStatusEnum.Approved) {
                     response.setNeedReimbursementSum(response.getNeedReimbursementSum().add(r.getSum()));
                 }
             }
@@ -265,7 +262,7 @@ public class ReimbursementServise {
         // 删除旧数据
         reimbursementSummaryRepository.deleteByPaymentMonth(monthStr);
         // 查询当月审批通过且需要报销的报销项
-        List<ReimbursementItem> approveList = reimbursementItemRepository.findByPaymentMonthAndApproveStatusAndNeedPayOrderByUserId(monthStr, ReimbursementApproveStatusEnum.Approved, YesOrNoEnum.YES);
+        List<ReimbursementItem> approveList = reimbursementItemRepository.findByPaymentMonthAndApproveStatusAndNeedPayOrderByUserId(monthStr, ReimbursementApproveStatusEnum.Approved, ReimbursementNeedPayEnum.YES);
         Map<String, BigDecimal> userAndCompanyMap = new HashMap<>();
         approveList.forEach(a -> {
             // 通过登录名+公司标识作为唯一标识

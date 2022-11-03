@@ -78,6 +78,16 @@ public class ClientController {
     }
 
     /**
+     * 获取全部
+     *
+     * @return
+     */
+    @GetMapping("findAllOrderByChineseName")
+    public List<ClientVO> findAllOrderByChineseName() {
+        return clientService.findAllOrderByChineseName();
+    }
+
+    /**
      * 保存客户合同
      *
      * @param vo
