@@ -8,6 +8,7 @@ import com.hello.background.vo.SuccessfulCaseStatisticsResponse;
 import com.hello.background.vo.SuccessfulPermVO;
 import com.hello.background.vo.SuccessfulPermVOPageRequest;
 import com.hello.background.vo.SuccessfulPermVOPageSearchRequest;
+import org.apache.logging.log4j.util.Strings;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,6 +166,11 @@ public class SuccessfulPermService {
                     Path<Date> endPath = root.get("commissionDate");
                     Predicate endEqual = criteriaBuilder.lessThanOrEqualTo(endPath, end);
                     list.add(criteriaBuilder.and(endEqual));
+                }
+                if (Strings.isNotBlank(search.getType())) {
+                    Path<String> path = root.get("type");
+                    Predicate equal = criteriaBuilder.equal(path, search.getType());
+                    list.add(criteriaBuilder.and(equal));
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));

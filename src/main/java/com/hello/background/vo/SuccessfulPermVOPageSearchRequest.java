@@ -87,4 +87,8 @@ public class SuccessfulPermVOPageSearchRequest {
      * 候选人中文名
      */
     private String candidateChineseName;
+    /**
+     * 成功case类型
+     */
+    private String type;
 }

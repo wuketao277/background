@@ -5,7 +5,10 @@ import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.*;
+import com.hello.background.vo.SalaryInfoVO;
+import com.hello.background.vo.SalaryVO;
+import com.hello.background.vo.SalaryVODownload;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -276,11 +278,11 @@ public class SalaryService {
      *
      * @return
      */
-    public SalaryInfoVO getSalaryStatisticsInfo() {
+    public SalaryInfoVO getSalaryStatisticsInfo(HttpSession session, String search, Integer currentPage, Integer pageSize) {
         SalaryInfoVO vo = new SalaryInfoVO();
-        String month = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        List<Salary> salaryList = salaryRepository.findAllByMonth(month);
-        for (Salary salary : salaryList) {
+        Page<SalaryVO> page = queryPage(session, search, currentPage, pageSize);
+        List<SalaryVO> salaryList = page.getContent();
+        for (SalaryVO salary : salaryList) {
             if (null != salary.getSum()) {
                 vo.setCurMonthPreTaxSum(vo.getCurMonthPreTaxSum().add(salary.getSum()));
             }

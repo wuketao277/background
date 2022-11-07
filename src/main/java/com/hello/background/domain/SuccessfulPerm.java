@@ -290,7 +290,7 @@ public class SuccessfulPerm {
     @Column(length = 400)
     private String comment;
     /**
-     * 类型 perm 、contracting
+     * 类型 perm 、contracting、consultation
      */
     @Column(length = 20)
     private String type;

@@ -79,7 +79,7 @@ public class SalaryController {
      * @return
      */
     @GetMapping("getSalaryStatisticsInfo")
-    public SalaryInfoVO getSalaryStatisticsInfo() {
-        return salaryService.getSalaryStatisticsInfo();
+    public SalaryInfoVO getSalaryStatisticsInfo(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+        return salaryService.getSalaryStatisticsInfo(session, search, currentPage, pageSize);
     }
 }
