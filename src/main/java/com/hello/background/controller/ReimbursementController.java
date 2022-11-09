@@ -39,8 +39,8 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
-        return reimbursementServise.queryPage(currentPage, pageSize, search, session);
+    public Page<ReimbursementItemVO> queryPage(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, @RequestParam("needPay") String needPay, HttpSession session) {
+        return reimbursementServise.queryPage(currentPage, pageSize, search, needPay, session);
     }
 
     /**
@@ -49,8 +49,8 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("downloadReimbursementItem")
-    public void downloadReimbursementItem(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
-        reimbursementServise.downloadReimbursementItem(currentPage, pageSize, search, session, response);
+    public void downloadReimbursementItem(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, @RequestParam("needPay") String needPay, HttpSession session, HttpServletResponse response) {
+        reimbursementServise.downloadReimbursementItem(currentPage, pageSize, search, needPay, session, response);
     }
 
     /**
@@ -71,8 +71,8 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("queryStatistics")
-    public ReimbursementStatisticsResponse queryStatistics(Integer currentPage, Integer pageSize, String search, HttpSession session) {
-        return reimbursementServise.queryStatistics(currentPage, pageSize, search, session);
+    public ReimbursementStatisticsResponse queryStatistics(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, @RequestParam("needPay") String needPay, HttpSession session) {
+        return reimbursementServise.queryStatistics(currentPage, pageSize, search,needPay, session);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("querySummaryPage")
-    public Page<ReimbursementSummaryVO> querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+    public ReimbursementSummaryPageInfo querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         return reimbursementServise.querySummaryPage(search, currentPage, pageSize, session);
     }
 
@@ -94,16 +94,6 @@ public class ReimbursementController {
     public void generateReimbursementSummary(@RequestBody GenerateReimbursementRequest request, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         reimbursementServise.generateReimbursementSummary(request.getMonth(), user);
-    }
-
-    /**
-     * 获取当前月总报销金额
-     *
-     * @return
-     */
-    @GetMapping("getCurrentMonthSumReimbursement")
-    public Double getCurrentMonthSumReimbursement() {
-        return reimbursementServise.getCurrentMonthSumReimbursement();
     }
 
     /**

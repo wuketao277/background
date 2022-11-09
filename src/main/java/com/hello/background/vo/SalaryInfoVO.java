@@ -1,6 +1,7 @@
 package com.hello.background.vo;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 
@@ -11,6 +12,10 @@ import java.math.BigDecimal;
  */
 @Data
 public class SalaryInfoVO {
+    /**
+     * 薪资分页数据
+     */
+    private Page<SalaryVO> page;
     /**
      * 当月税前总薪资
      */

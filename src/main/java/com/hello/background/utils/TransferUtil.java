@@ -1,9 +1,13 @@
 package com.hello.background.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.stream.Collectors;
 
 /**
  * 转换工具
@@ -68,5 +72,18 @@ public class TransferUtil {
             log.error("{}", ex);
         }
         return o;
+    }
+
+    /**
+     * 转换分页数据类型
+     *
+     * @param source
+     * @param t
+     * @return
+     */
+    public static PageImpl<T> transferToPageImpl(PageImpl<Object> source, Class<T> t) {
+        return new PageImpl<>(source.getContent().stream().map(x -> TransferUtil.transferTo(x, t)).collect(Collectors.toList()),
+                new PageRequest(source.getPageable().getPageNumber(), source.getPageable().getPageSize()),
+                source.getTotalElements());
     }
 }

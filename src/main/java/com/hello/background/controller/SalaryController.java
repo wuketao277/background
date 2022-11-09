@@ -7,7 +7,6 @@ import com.hello.background.vo.SalaryInfoVO;
 import com.hello.background.vo.SalaryVO;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -59,7 +58,7 @@ public class SalaryController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<SalaryVO> queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+    public SalaryInfoVO queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         return salaryService.queryPage(session, search, currentPage, pageSize);
     }
 
@@ -71,15 +70,5 @@ public class SalaryController {
     @GetMapping("downloadSalary")
     public void downloadSalary(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
         salaryService.downloadSalary(currentPage, pageSize, search, session, response);
-    }
-
-    /**
-     * 获取薪资统计信息
-     *
-     * @return
-     */
-    @GetMapping("getSalaryStatisticsInfo")
-    public SalaryInfoVO getSalaryStatisticsInfo(String search, Integer currentPage, Integer pageSize, HttpSession session) {
-        return salaryService.getSalaryStatisticsInfo(session, search, currentPage, pageSize);
     }
 }

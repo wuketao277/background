@@ -232,16 +232,15 @@ public class SalaryService {
         });
     }
 
-
     /**
-     * 查询分页
+     * 查询分页数据
      *
      * @param search      搜索关键字
      * @param currentPage 当前页
      * @param pageSize    页尺寸
      * @return
      */
-    public Page<SalaryVO> queryPage(HttpSession session, String search, Integer currentPage, Integer pageSize) {
+    private PageImpl<Salary> queryPageData(HttpSession session, String search, Integer currentPage, Integer pageSize) {
         UserVO user = (UserVO) session.getAttribute("user");
         List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize);
@@ -257,32 +256,27 @@ public class SalaryService {
             salaryPage = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername(), pageable);
             total = salaryRepository.countByConsultantUserName(user.getUsername());
         }
-        Page<SalaryVO> map = salaryPage.map(x -> TransferUtil.transferTo(x, SalaryVO.class));
-        map = new PageImpl<>(map.getContent(),
-                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                total);
-        return map;
+        return new PageImpl<>(salaryPage.getContent(), new PageRequest(salaryPage.getPageable().getPageNumber(), salaryPage.getPageable().getPageSize()), total);
     }
 
-    /**
-     * 下载薪资
-     */
-    public void downloadSalary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
-        Page<SalaryVO> page = queryPage(session, search, currentPage, pageSize);
-        // 封装返回response
-        EasyExcelUtil.downloadExcel(response, "薪资", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
-    }
 
     /**
-     * 获取薪资信息
+     * 查询分页
      *
+     * @param search      搜索关键字
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
      * @return
      */
-    public SalaryInfoVO getSalaryStatisticsInfo(HttpSession session, String search, Integer currentPage, Integer pageSize) {
+    public SalaryInfoVO queryPage(HttpSession session, String search, Integer currentPage, Integer pageSize) {
         SalaryInfoVO vo = new SalaryInfoVO();
-        Page<SalaryVO> page = queryPage(session, search, currentPage, pageSize);
-        List<SalaryVO> salaryList = page.getContent();
-        for (SalaryVO salary : salaryList) {
+        PageImpl<Salary> salaryPage = queryPageData(session, search, currentPage, pageSize);
+        PageImpl<SalaryVO> salaryVOPage = new PageImpl<>(salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVO.class)).collect(Collectors.toList()),
+                new PageRequest(salaryPage.getPageable().getPageNumber(), salaryPage.getPageable().getPageSize()),
+                salaryPage.getTotalElements());
+        vo.setPage(salaryVOPage);
+        List<Salary> salaryList = salaryPage.getContent();
+        for (Salary salary : salaryList) {
             if (null != salary.getSum()) {
                 vo.setCurMonthPreTaxSum(vo.getCurMonthPreTaxSum().add(salary.getSum()));
             }
@@ -291,5 +285,14 @@ public class SalaryService {
             }
         }
         return vo;
+    }
+
+    /**
+     * 下载薪资
+     */
+    public void downloadSalary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
+        PageImpl<Salary> salaryPage = queryPageData(session, search, currentPage, pageSize);
+        // 封装返回response
+        EasyExcelUtil.downloadExcel(response, "薪资", null, salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
     }
 }

@@ -1,6 +1,9 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.*;
+import com.hello.background.constant.CompanyEnum;
+import com.hello.background.constant.ReimbursementApproveStatusEnum;
+import com.hello.background.constant.ReimbursementNeedPayEnum;
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
 import com.hello.background.domain.User;
@@ -25,8 +28,6 @@ import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,7 +101,7 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, HttpSession session) {
+    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, String needPay, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         User user = userRepository.findByUsername(userVO.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName", "date");
@@ -118,6 +119,11 @@ public class ReimbursementServise {
                                 , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
                                 , getPredicateLike("companyName", search, root, criteriaBuilder)
                         )));
+                    }
+                    if (Strings.isNotBlank(needPay)) {
+                        Path<String> path = root.get("needPay");
+                        Predicate predicate = criteriaBuilder.equal(path, ReimbursementNeedPayEnum.valueOf(needPay));
+                        list.add(criteriaBuilder.and(criteriaBuilder.or(predicate)));
                     }
                     Predicate[] p = new Predicate[list.size()];
                     return criteriaBuilder.and(list.toArray(p));
@@ -137,6 +143,11 @@ public class ReimbursementServise {
                                 , getPredicateLike("companyName", search, root, criteriaBuilder)
                         )));
                     }
+                    if (Strings.isNotBlank(needPay)) {
+                        Path<String> path = root.get("needPay");
+                        Predicate predicate = criteriaBuilder.equal(path, ReimbursementNeedPayEnum.valueOf(needPay));
+                        list.add(criteriaBuilder.and(criteriaBuilder.or(predicate)));
+                    }
                     // 普通用户只能查询自己的信息
                     list.add(getPredicateEqual("userName", user.getUsername(), root, criteriaBuilder));
                     Predicate[] p = new Predicate[list.size()];
@@ -155,8 +166,8 @@ public class ReimbursementServise {
     /**
      * 下载报销项详情
      */
-    public void downloadReimbursementItem(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
-        Page<ReimbursementItemVO> page = queryPage(currentPage, pageSize, search, session);
+    public void downloadReimbursementItem(Integer currentPage, Integer pageSize, String search, String needPay, HttpSession session, HttpServletResponse response) {
+        Page<ReimbursementItemVO> page = queryPage(currentPage, pageSize, search, needPay, session);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "报销项详情", null, page.getContent().stream().map(r -> new ReimbursementItemVODownload(r)).collect(Collectors.toList()), ReimbursementItemVODownload.class);
     }
@@ -165,7 +176,7 @@ public class ReimbursementServise {
      * 下载报销
      */
     public void downloadReimbursementSummary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
-        Page<ReimbursementSummaryVO> page = querySummaryPage(search, currentPage, pageSize, session);
+        Page<ReimbursementSummary> page = querySummaryPageData(search, currentPage, pageSize, session);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "报销", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVODownload.class)).collect(Collectors.toList()), ReimbursementSummaryVODownload.class);
     }
@@ -178,9 +189,9 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public ReimbursementStatisticsResponse queryStatistics(Integer currentPage, Integer pageSize, String search, HttpSession session) {
+    public ReimbursementStatisticsResponse queryStatistics(Integer currentPage, Integer pageSize, String search, String needPay, HttpSession session) {
         ReimbursementStatisticsResponse response = new ReimbursementStatisticsResponse();
-        Page<ReimbursementItemVO> reimbursementItemVOPage = queryPage(currentPage, pageSize, search, session);
+        Page<ReimbursementItemVO> reimbursementItemVOPage = queryPage(currentPage, pageSize, search, needPay, session);
         List<ReimbursementItemVO> reimbursementItemVOList = Optional.ofNullable(reimbursementItemVOPage).map(p -> p.getContent()).orElse(Lists.emptyList());
         reimbursementItemVOList.stream().forEach(r -> {
             if (null != r.getSum()) {
@@ -196,14 +207,14 @@ public class ReimbursementServise {
     }
 
     /**
-     * 分页查询
+     * 分页查询数据
      *
      * @param currentPage
      * @param pageSize
      * @param session
      * @return
      */
-    public Page<ReimbursementSummaryVO> querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+    public Page<ReimbursementSummary> querySummaryPageData(String search, Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         User user = userRepository.findByUsername(userVO.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName");
@@ -247,12 +258,27 @@ public class ReimbursementServise {
                 }
             };
         }
-        Page<ReimbursementSummary> all = reimbursementSummaryRepository.findAll(specification, pageable);
-        Page<ReimbursementSummaryVO> map = all.map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVO.class));
-        map = new PageImpl<>(map.getContent(),
-                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                all.getTotalElements());
-        return map;
+        return reimbursementSummaryRepository.findAll(specification, pageable);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param session
+     * @return
+     */
+    public ReimbursementSummaryPageInfo querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+        Page<ReimbursementSummary> all = querySummaryPageData(search, currentPage, pageSize, session);
+        ReimbursementSummaryPageInfo pageInfo = new ReimbursementSummaryPageInfo();
+        pageInfo.setPage(new PageImpl<>(all.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVO.class)).collect(Collectors.toList()), new PageRequest(all.getPageable().getPageNumber(), all.getPageable().getPageSize()), all.getTotalElements()));
+        all.getContent().stream().forEach(r -> {
+            if (null != r.getSum()) {
+                pageInfo.setSum(pageInfo.getSum() + r.getSum().doubleValue());
+            }
+        });
+        return pageInfo;
     }
 
     /**
@@ -286,24 +312,6 @@ public class ReimbursementServise {
             summary.setUpdateUserName(curUser.getUsername());
             reimbursementSummaryRepository.save(summary);
         }
-    }
-
-    /**
-     * 获取当前月总报销金额
-     *
-     * @return
-     */
-    public Double getCurrentMonthSumReimbursement() {
-        Double result = new Double(0);
-        String monthStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        List<ReimbursementSummary> list = reimbursementSummaryRepository.findALLByPaymentMonth(monthStr);
-        List<BigDecimal> collect = list.stream().map(r -> r.getSum()).collect(Collectors.toList());
-        for (BigDecimal bd : collect) {
-            if (null != bd) {
-                result += bd.doubleValue();
-            }
-        }
-        return result;
     }
 
     /**
