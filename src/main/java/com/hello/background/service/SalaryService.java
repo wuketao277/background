@@ -1,29 +1,30 @@
 package com.hello.background.service;
 
-import com.hello.background.domain.*;
+import com.hello.background.constant.RoleEnum;
+import com.hello.background.domain.Salary;
+import com.hello.background.domain.SalarySpecialItem;
+import com.hello.background.domain.SuccessfulPerm;
+import com.hello.background.domain.User;
 import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.SalaryInfoVO;
-import com.hello.background.vo.SalaryVO;
-import com.hello.background.vo.SalaryVODownload;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -235,42 +236,63 @@ public class SalaryService {
     /**
      * 查询分页数据
      *
-     * @param search      搜索关键字
      * @param currentPage 当前页
      * @param pageSize    页尺寸
      * @return
      */
-    private PageImpl<Salary> queryPageData(HttpSession session, String search, Integer currentPage, Integer pageSize) {
+    private Page<Salary> queryPageData(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
+        // 获取用户
         UserVO user = (UserVO) session.getAttribute("user");
-        List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
-        Page<Salary> salaryPage;
-        long total = 0;
-        if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
-            // 管理员
-            search = "%" + search + "%";
-            salaryPage = salaryRepository.findByConsultantRealNameLikeOrConsultantUserNameLikeOrMonthLikeOrderByMonthDescSumDescHistoryDebtAsc(search, search, search, pageable);
-            total = salaryRepository.countByConsultantRealNameLikeOrConsultantUserNameLikeOrMonthLike(search, search, search);
-        } else {
-            // 非管理员，只能查询自己的工资信息
-            salaryPage = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername(), pageable);
-            total = salaryRepository.countByConsultantUserName(user.getUsername());
-        }
-        return new PageImpl<>(salaryPage.getContent(), new PageRequest(salaryPage.getPageable().getPageNumber(), salaryPage.getPageable().getPageSize()), total);
+        // 设置分页信息
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "month");
+        // 设置查询条件
+        Specification<Salary> specification = new Specification<Salary>() {
+            @Override
+            public Predicate toPredicate(Root<Salary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (!user.getRoles().contains(RoleEnum.ADMIN)) {
+                    // 普通用户只能查询自己的信息
+                    list.add(getPredicateEqual("consultantUserName", user.getUsername(), root, criteriaBuilder));
+                }
+                if (Strings.isNotBlank(loginName)) {
+                    list.add(criteriaBuilder.and(
+                            getPredicateLike("consultantUserName", loginName, root, criteriaBuilder)
+                    ));
+                }
+                if (Strings.isNotBlank(userName)) {
+                    list.add(criteriaBuilder.and(
+                            getPredicateLike("consultantRealName", userName, root, criteriaBuilder)
+                    ));
+                }
+                if (Strings.isNotBlank(month)) {
+                    list.add(criteriaBuilder.and(
+                            getPredicateLike("month", month, root, criteriaBuilder)
+                    ));
+                }
+                if (Strings.isNotBlank(pretaxIncome)) {
+                    list.add(criteriaBuilder.equal(root.get("sum"), new BigDecimal(pretaxIncome.trim())));
+                }
+                if (Strings.isNotBlank(netPay)) {
+                    list.add(criteriaBuilder.equal(root.get("finalSum"), new BigDecimal(netPay.trim())));
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        return salaryRepository.findAll(specification, pageable);
     }
 
 
     /**
      * 查询分页
      *
-     * @param search      搜索关键字
      * @param currentPage 当前页
      * @param pageSize    页尺寸
      * @return
      */
-    public SalaryInfoVO queryPage(HttpSession session, String search, Integer currentPage, Integer pageSize) {
+    public SalaryInfoVO queryPage(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
         SalaryInfoVO vo = new SalaryInfoVO();
-        PageImpl<Salary> salaryPage = queryPageData(session, search, currentPage, pageSize);
+        Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
         PageImpl<SalaryVO> salaryVOPage = new PageImpl<>(salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVO.class)).collect(Collectors.toList()),
                 new PageRequest(salaryPage.getPageable().getPageNumber(), salaryPage.getPageable().getPageSize()),
                 salaryPage.getTotalElements());
@@ -290,9 +312,37 @@ public class SalaryService {
     /**
      * 下载薪资
      */
-    public void downloadSalary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
-        PageImpl<Salary> salaryPage = queryPageData(session, search, currentPage, pageSize);
+    public void downloadSalary(HttpSession session, HttpServletResponse response, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
+        Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "薪资", null, salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
+    }
+
+    /**
+     * 获取查询条件中的谓词
+     *
+     * @param key
+     * @param root
+     * @param criteriaBuilder
+     * @return
+     */
+    private Predicate getPredicateLike(String key, String value, Root<Salary> root, CriteriaBuilder criteriaBuilder) {
+        Path<String> path = root.get(key);
+        Predicate predicate = criteriaBuilder.like(path, "%" + value + "%");
+        return predicate;
+    }
+
+    /**
+     * 获取查询条件中的谓词
+     *
+     * @param key
+     * @param root
+     * @param criteriaBuilder
+     * @return
+     */
+    private Predicate getPredicateEqual(String key, String value, Root<Salary> root, CriteriaBuilder criteriaBuilder) {
+        Path<String> path = root.get(key);
+        Predicate predicate = criteriaBuilder.equal(path, value);
+        return predicate;
     }
 }

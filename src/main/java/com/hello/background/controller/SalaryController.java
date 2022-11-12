@@ -2,10 +2,7 @@ package com.hello.background.controller;
 
 import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.service.SalaryService;
-import com.hello.background.vo.GenerateSalaryRequest;
-import com.hello.background.vo.SalaryInfoVO;
-import com.hello.background.vo.SalaryVO;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,14 +49,18 @@ public class SalaryController {
     /**
      * 查询分页
      *
-     * @param search      搜索关键字
      * @param currentPage 当前页
      * @param pageSize    页尺寸
      * @return
      */
     @GetMapping("queryPage")
-    public SalaryInfoVO queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
-        return salaryService.queryPage(session, search, currentPage, pageSize);
+    public SalaryInfoVO queryPage(@RequestParam(value = "loginName", required = false) String loginName,
+                                  @RequestParam(value = "userName", required = false) String userName,
+                                  @RequestParam(value = "month", required = false) String month,
+                                  @RequestParam(value = "pretaxIncome", required = false) String pretaxIncome,
+                                  @RequestParam(value = "netPay", required = false) String netPay,
+                                  @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, HttpSession session) {
+        return salaryService.queryPage(session, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
     }
 
     /**
@@ -68,7 +69,15 @@ public class SalaryController {
      * @return
      */
     @GetMapping("downloadSalary")
-    public void downloadSalary(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
-        salaryService.downloadSalary(currentPage, pageSize, search, session, response);
+    public void downloadSalary(@RequestParam(value = "loginName", required = false) String loginName,
+                               @RequestParam(value = "userName", required = false) String userName,
+                               @RequestParam(value = "month", required = false) String month,
+                               @RequestParam(value = "pretaxIncome", required = false) String pretaxIncome,
+                               @RequestParam(value = "netPay", required = false) String netPay,
+                               @RequestParam("currentPage") Integer currentPage,
+                               @RequestParam("pageSize") Integer pageSize,
+                               HttpSession session,
+                               HttpServletResponse response) {
+        salaryService.downloadSalary(session, response, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
     }
 }

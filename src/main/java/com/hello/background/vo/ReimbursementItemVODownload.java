@@ -1,6 +1,7 @@
 package com.hello.background.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.utils.TransferUtil;
 import lombok.Data;
 
@@ -85,7 +86,7 @@ public class ReimbursementItemVODownload {
     @ExcelProperty(value = "描述", index = 13)
     private String description;
 
-    public ReimbursementItemVODownload(ReimbursementItemVO vo) {
+    public ReimbursementItemVODownload(ReimbursementItem vo) {
         TransferUtil.transfer(vo, this);
         this.setApproveStatusStr(Optional.ofNullable(vo.getApproveStatus()).map(x -> x.toString()).orElse(""));
         this.setKindStr(Optional.ofNullable(vo.getKind()).map(x -> x.getName()).orElse(""));

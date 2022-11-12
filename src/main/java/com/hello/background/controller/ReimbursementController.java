@@ -3,7 +3,6 @@ package com.hello.background.controller;
 import com.hello.background.service.ReimbursementServise;
 import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +38,21 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<ReimbursementItemVO> queryPage(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, @RequestParam("needPay") String needPay, HttpSession session) {
-        return reimbursementServise.queryPage(currentPage, pageSize, search, needPay, session);
+    public ReimbursementItemPageInfo queryPage(@RequestParam(value = "userName", required = false) String userName,
+                                               @RequestParam(value = "approveStatus", required = false) String approveStatus,
+                                               @RequestParam(value = "needPay", required = false) String needPay,
+                                               @RequestParam(value = "date", required = false) String date,
+                                               @RequestParam(value = "location", required = false) String location,
+                                               @RequestParam(value = "company", required = false) String company,
+                                               @RequestParam(value = "paymentMonth", required = false) String paymentMonth,
+                                               @RequestParam(value = "type", required = false) String type,
+                                               @RequestParam(value = "kind", required = false) String kind,
+                                               @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
+                                               @RequestParam(value = "sum", required = false) String sum,
+                                               @RequestParam(value = "description", required = false) String description,
+                                               @RequestParam("currentPage") Integer currentPage,
+                                               @RequestParam("pageSize") Integer pageSize, HttpSession session) {
+        return reimbursementServise.queryPage(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
     }
 
     /**
@@ -49,30 +61,22 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("downloadReimbursementItem")
-    public void downloadReimbursementItem(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, @RequestParam("needPay") String needPay, HttpSession session, HttpServletResponse response) {
-        reimbursementServise.downloadReimbursementItem(currentPage, pageSize, search, needPay, session, response);
-    }
-
-    /**
-     * 下载报销
-     *
-     * @return
-     */
-    @GetMapping("downloadReimbursementSummary")
-    public void downloadReimbursementSummary(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, HttpSession session, HttpServletResponse response) {
-        reimbursementServise.downloadReimbursementSummary(currentPage, pageSize, search, session, response);
-    }
-
-    /**
-     * 查询统计
-     *
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
-     * @return
-     */
-    @GetMapping("queryStatistics")
-    public ReimbursementStatisticsResponse queryStatistics(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, @RequestParam("search") String search, @RequestParam("needPay") String needPay, HttpSession session) {
-        return reimbursementServise.queryStatistics(currentPage, pageSize, search,needPay, session);
+    public void downloadReimbursementItem(@RequestParam(value = "userName", required = false) String userName,
+                                          @RequestParam(value = "approveStatus", required = false) String approveStatus,
+                                          @RequestParam(value = "needPay", required = false) String needPay,
+                                          @RequestParam(value = "date", required = false) String date,
+                                          @RequestParam(value = "location", required = false) String location,
+                                          @RequestParam(value = "company", required = false) String company,
+                                          @RequestParam(value = "paymentMonth", required = false) String paymentMonth,
+                                          @RequestParam(value = "type", required = false) String type,
+                                          @RequestParam(value = "kind", required = false) String kind,
+                                          @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
+                                          @RequestParam(value = "sum", required = false) String sum,
+                                          @RequestParam(value = "description", required = false) String description,
+                                          @RequestParam("currentPage") Integer currentPage,
+                                          @RequestParam("pageSize") Integer pageSize,
+                                          HttpSession session, HttpServletResponse response) {
+        reimbursementServise.downloadReimbursementItem(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session, response);
     }
 
     /**
@@ -83,8 +87,28 @@ public class ReimbursementController {
      * @return
      */
     @GetMapping("querySummaryPage")
-    public ReimbursementSummaryPageInfo querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
-        return reimbursementServise.querySummaryPage(search, currentPage, pageSize, session);
+    public ReimbursementSummaryPageInfo querySummaryPage(@RequestParam(value = "company", required = false) String company,
+                                                         @RequestParam(value = "userName", required = false) String userName,
+                                                         @RequestParam(value = "paymentMonth", required = false) String paymentMonth,
+                                                         @RequestParam(value = "sum", required = false) String sum,
+                                                         @RequestParam("currentPage") Integer currentPage,
+                                                         @RequestParam("pageSize") Integer pageSize, HttpSession session) {
+        return reimbursementServise.querySummaryPage(company, userName, paymentMonth, sum, currentPage, pageSize, session);
+    }
+
+    /**
+     * 下载报销
+     *
+     * @return
+     */
+    @GetMapping("downloadReimbursementSummary")
+    public void downloadReimbursementSummary(@RequestParam(value = "company", required = false) String company,
+                                             @RequestParam(value = "userName", required = false) String userName,
+                                             @RequestParam(value = "paymentMonth", required = false) String paymentMonth,
+                                             @RequestParam(value = "sum", required = false) String sum,
+                                             @RequestParam("currentPage") Integer currentPage,
+                                             @RequestParam("pageSize") Integer pageSize, HttpSession session, HttpServletResponse response) {
+        reimbursementServise.downloadReimbursementSummary(company, userName, paymentMonth, sum, currentPage, pageSize, session, response);
     }
 
     /**

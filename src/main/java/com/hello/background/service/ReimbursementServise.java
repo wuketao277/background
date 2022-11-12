@@ -1,9 +1,6 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.CompanyEnum;
-import com.hello.background.constant.ReimbursementApproveStatusEnum;
-import com.hello.background.constant.ReimbursementNeedPayEnum;
-import com.hello.background.constant.RoleEnum;
+import com.hello.background.constant.*;
 import com.hello.background.domain.ReimbursementItem;
 import com.hello.background.domain.ReimbursementSummary;
 import com.hello.background.domain.User;
@@ -16,7 +13,6 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -28,6 +24,7 @@ import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,7 +69,7 @@ public class ReimbursementServise {
      * @param criteriaBuilder
      * @return
      */
-    public Predicate getPredicateLike(String key, String value, Root<ReimbursementItem> root, CriteriaBuilder criteriaBuilder) {
+    private Predicate getPredicateLike(String key, String value, Root<ReimbursementItem> root, CriteriaBuilder criteriaBuilder) {
         Path<String> path = root.get(key);
         Predicate predicate = criteriaBuilder.like(path, "%" + value + "%");
         return predicate;
@@ -86,12 +83,11 @@ public class ReimbursementServise {
      * @param criteriaBuilder
      * @return
      */
-    public Predicate getPredicateEqual(String key, String value, Root<ReimbursementItem> root, CriteriaBuilder criteriaBuilder) {
+    private Predicate getPredicateEqual(String key, String value, Root<ReimbursementItem> root, CriteriaBuilder criteriaBuilder) {
         Path<String> path = root.get(key);
         Predicate predicate = criteriaBuilder.equal(path, value);
         return predicate;
     }
-
 
     /**
      * 分页查询
@@ -101,73 +97,101 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public Page<ReimbursementItemVO> queryPage(Integer currentPage, Integer pageSize, String search, String needPay, HttpSession session) {
+    private Page<ReimbursementItem> queryPageData(String userName, String approveStatus, String needPay, String date,
+                                                  String location, String company, String paymentMonth, String type,
+                                                  String kind, String invoiceNo, String sum, String description,
+                                                  Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         User user = userRepository.findByUsername(userVO.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName", "date");
-        Specification<ReimbursementItem> specification;
-        if (user.getRoles().contains(RoleEnum.ADMIN)) {
-            // 管理员
-            specification = new Specification<ReimbursementItem>() {
-                @Override
-                public Predicate toPredicate(Root<ReimbursementItem> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> list = new ArrayList<>();
-                    if (Strings.isNotBlank(search)) {
-                        list.add(criteriaBuilder.and(criteriaBuilder.or(
-                                getPredicateLike("userName", search, root, criteriaBuilder)
-                                , getPredicateLike("realName", search, root, criteriaBuilder)
-                                , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
-                                , getPredicateLike("companyName", search, root, criteriaBuilder)
-                        )));
-                    }
-                    if (Strings.isNotBlank(needPay)) {
-                        Path<String> path = root.get("needPay");
-                        Predicate predicate = criteriaBuilder.equal(path, ReimbursementNeedPayEnum.valueOf(needPay));
-                        list.add(criteriaBuilder.and(criteriaBuilder.or(predicate)));
-                    }
-                    Predicate[] p = new Predicate[list.size()];
-                    return criteriaBuilder.and(list.toArray(p));
+        Specification<ReimbursementItem> specification = new Specification<ReimbursementItem>() {
+            @Override
+            public Predicate toPredicate(Root<ReimbursementItem> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (Strings.isNotBlank(userName)) {
+                    list.add(criteriaBuilder.equal(root.get("userName"), userName));
                 }
-            };
-        } else {
-            // 普通用户
-            specification = new Specification<ReimbursementItem>() {
-                @Override
-                public Predicate toPredicate(Root<ReimbursementItem> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> list = new ArrayList<>();
-                    if (Strings.isNotBlank(search)) {
-                        list.add(criteriaBuilder.and(criteriaBuilder.or(
-                                getPredicateLike("userName", search, root, criteriaBuilder)
-                                , getPredicateLike("realName", search, root, criteriaBuilder)
-                                , getPredicateLike("paymentMonth", search, root, criteriaBuilder)
-                                , getPredicateLike("companyName", search, root, criteriaBuilder)
-                        )));
-                    }
-                    if (Strings.isNotBlank(needPay)) {
-                        Path<String> path = root.get("needPay");
-                        Predicate predicate = criteriaBuilder.equal(path, ReimbursementNeedPayEnum.valueOf(needPay));
-                        list.add(criteriaBuilder.and(criteriaBuilder.or(predicate)));
-                    }
+                if (Strings.isNotBlank(approveStatus)) {
+                    list.add(criteriaBuilder.equal(root.get("approveStatus"), ReimbursementApproveStatusEnum.valueOf(approveStatus)));
+                }
+                if (Strings.isNotBlank(needPay)) {
+                    list.add(criteriaBuilder.equal(root.get("needPay"), ReimbursementNeedPayEnum.valueOf(needPay)));
+                }
+                if (Strings.isNotBlank(date)) {
+                    list.add(criteriaBuilder.equal(root.get("date"), date));
+                }
+                if (Strings.isNotBlank(location)) {
+                    list.add(criteriaBuilder.equal(root.get("location"), ReimbursementLocationEnum.valueOf(location)));
+                }
+                if (Strings.isNotBlank(company)) {
+                    list.add(criteriaBuilder.equal(root.get("company"), CompanyEnum.valueOf(company)));
+                }
+                if (Strings.isNotBlank(paymentMonth)) {
+                    list.add(criteriaBuilder.equal(root.get("paymentMonth"), paymentMonth));
+                }
+
+                if (Strings.isNotBlank(type)) {
+                    list.add(criteriaBuilder.equal(root.get("type"), ReimbursementTypeEnum.valueOf(type)));
+                }
+                if (Strings.isNotBlank(kind)) {
+                    list.add(criteriaBuilder.equal(root.get("kind"), ReimbursementKindEnum.valueOf(kind)));
+                }
+                if (Strings.isNotBlank(invoiceNo)) {
+                    list.add(criteriaBuilder.equal(root.get("invoiceNo"), invoiceNo));
+                }
+                if (Strings.isNotBlank(sum)) {
+                    list.add(criteriaBuilder.equal(root.get("sum"), new BigDecimal(sum)));
+                }
+                if (Strings.isNotBlank(description)) {
+                    list.add(criteriaBuilder.like(root.get("description"), description));
+                }
+                if (!user.getRoles().contains(RoleEnum.ADMIN)) {
                     // 普通用户只能查询自己的信息
                     list.add(getPredicateEqual("userName", user.getUsername(), root, criteriaBuilder));
-                    Predicate[] p = new Predicate[list.size()];
-                    return criteriaBuilder.and(list.toArray(p));
                 }
-            };
-        }
-        Page<ReimbursementItem> all = reimbursementItemRepository.findAll(specification, pageable);
-        Page<ReimbursementItemVO> map = all.map(x -> TransferUtil.transferTo(x, ReimbursementItemVO.class));
-        map = new PageImpl<>(map.getContent(),
-                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                all.getTotalElements());
-        return map;
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        return reimbursementItemRepository.findAll(specification, pageable);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param session
+     * @return
+     */
+    public ReimbursementItemPageInfo queryPage(String userName, String approveStatus, String needPay, String date,
+                                               String location, String company, String paymentMonth, String type,
+                                               String kind, String invoiceNo, String sum, String description, Integer currentPage, Integer pageSize, HttpSession session) {
+        Page<ReimbursementItem> all = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
+        ReimbursementItemPageInfo pageInfo = new ReimbursementItemPageInfo();
+        pageInfo.setPage(new PageImpl<>(all.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementItemVO.class)).collect(Collectors.toList()), new PageRequest(all.getPageable().getPageNumber(), all.getPageable().getPageSize()), all.getTotalElements()));
+        all.stream().forEach(r -> {
+            if (null != r.getSum()) {
+                // 统计总报销金额
+                pageInfo.setTotalReimbursementSum(pageInfo.getTotalReimbursementSum().add(r.getSum()));
+                // 统计实际需要报销的金额
+                if (null != r.getNeedPay() && r.getNeedPay() == ReimbursementNeedPayEnum.YES && null != r.getApproveStatus() && r.getApproveStatus() == ReimbursementApproveStatusEnum.Approved) {
+                    pageInfo.setNeedReimbursementSum(pageInfo.getNeedReimbursementSum().add(r.getSum()));
+                }
+            }
+        });
+        pageInfo.setTotalReimbursementSum(pageInfo.getTotalReimbursementSum().setScale(2, RoundingMode.HALF_UP));
+        pageInfo.setNeedReimbursementSum(pageInfo.getNeedReimbursementSum().setScale(2, RoundingMode.HALF_UP));
+        return pageInfo;
     }
 
     /**
      * 下载报销项详情
      */
-    public void downloadReimbursementItem(Integer currentPage, Integer pageSize, String search, String needPay, HttpSession session, HttpServletResponse response) {
-        Page<ReimbursementItemVO> page = queryPage(currentPage, pageSize, search, needPay, session);
+    public void downloadReimbursementItem(String userName, String approveStatus, String needPay, String date,
+                                          String location, String company, String paymentMonth, String type,
+                                          String kind, String invoiceNo, String sum, String description, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
+        Page<ReimbursementItem> page = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "报销项详情", null, page.getContent().stream().map(r -> new ReimbursementItemVODownload(r)).collect(Collectors.toList()), ReimbursementItemVODownload.class);
     }
@@ -175,35 +199,11 @@ public class ReimbursementServise {
     /**
      * 下载报销
      */
-    public void downloadReimbursementSummary(Integer currentPage, Integer pageSize, String search, HttpSession session, HttpServletResponse response) {
-        Page<ReimbursementSummary> page = querySummaryPageData(search, currentPage, pageSize, session);
+    public void downloadReimbursementSummary(String company, String userName, String paymentMonth, String
+            sum, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
+        Page<ReimbursementSummary> page = querySummaryPageData(company, userName, paymentMonth, sum, currentPage, pageSize, session);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "报销", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVODownload.class)).collect(Collectors.toList()), ReimbursementSummaryVODownload.class);
-    }
-
-    /**
-     * 查询统计
-     *
-     * @param currentPage
-     * @param pageSize
-     * @param session
-     * @return
-     */
-    public ReimbursementStatisticsResponse queryStatistics(Integer currentPage, Integer pageSize, String search, String needPay, HttpSession session) {
-        ReimbursementStatisticsResponse response = new ReimbursementStatisticsResponse();
-        Page<ReimbursementItemVO> reimbursementItemVOPage = queryPage(currentPage, pageSize, search, needPay, session);
-        List<ReimbursementItemVO> reimbursementItemVOList = Optional.ofNullable(reimbursementItemVOPage).map(p -> p.getContent()).orElse(Lists.emptyList());
-        reimbursementItemVOList.stream().forEach(r -> {
-            if (null != r.getSum()) {
-                // 统计总报销金额
-                response.setTotalReimbursementSum(response.getTotalReimbursementSum().add(r.getSum()));
-                // 统计实际需要报销的金额
-                if (null != r.getNeedPay() && r.getNeedPay() == ReimbursementNeedPayEnum.YES && null != r.getApproveStatus() && r.getApproveStatus() == ReimbursementApproveStatusEnum.Approved) {
-                    response.setNeedReimbursementSum(response.getNeedReimbursementSum().add(r.getSum()));
-                }
-            }
-        });
-        return response;
     }
 
     /**
@@ -214,50 +214,39 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public Page<ReimbursementSummary> querySummaryPageData(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+    public Page<ReimbursementSummary> querySummaryPageData(String company, String userName, String
+            paymentMonth, String sum, Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         User user = userRepository.findByUsername(userVO.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName");
-        Specification<ReimbursementSummary> specification;
-        if (user.getRoles().contains(RoleEnum.ADMIN)) {
-            // 管理员
-            specification = new Specification<ReimbursementSummary>() {
-                @Override
-                public Predicate toPredicate(Root<ReimbursementSummary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> list = new ArrayList<>();
-                    if (Strings.isNotBlank(search)) {
-                        list.add(criteriaBuilder.or(
-                                criteriaBuilder.like(root.get("userName"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("realName"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("companyName"), "%" + search + "%")
-                        ));
-                    }
-                    Predicate[] p = new Predicate[list.size()];
-                    return criteriaBuilder.and(list.toArray(p));
+        Specification<ReimbursementSummary> specification = new Specification<ReimbursementSummary>() {
+            @Override
+            public Predicate toPredicate(Root<ReimbursementSummary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (Strings.isNotBlank(company)) {
+                    list.add(criteriaBuilder.equal(root.get("company"), CompanyEnum.valueOf(company))
+                    );
                 }
-            };
-        } else {
-            // 普通用户
-            specification = new Specification<ReimbursementSummary>() {
-                @Override
-                public Predicate toPredicate(Root<ReimbursementSummary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> list = new ArrayList<>();
-                    if (Strings.isNotBlank(search)) {
-                        list.add(criteriaBuilder.or(
-                                criteriaBuilder.like(root.get("userName"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("realName"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("paymentMonth"), "%" + search + "%"),
-                                criteriaBuilder.like(root.get("companyName"), "%" + search + "%")
-                        ));
-                    }
+                if (Strings.isNotBlank(userName)) {
+                    list.add(criteriaBuilder.like(root.get("userName"), "%" + userName + "%")
+                    );
+                }
+                if (Strings.isNotBlank(paymentMonth)) {
+                    list.add(criteriaBuilder.equal(root.get("paymentMonth"), paymentMonth)
+                    );
+                }
+                if (Strings.isNotBlank(sum)) {
+                    list.add(criteriaBuilder.equal(root.get("sum"), new BigDecimal(sum.trim()))
+                    );
+                }
+                if (!user.getRoles().contains(RoleEnum.ADMIN)) {
                     // 普通用户只能查询自己的信息
                     list.add(criteriaBuilder.equal(root.get("userName"), user.getUsername()));
-                    Predicate[] p = new Predicate[list.size()];
-                    return criteriaBuilder.and(list.toArray(p));
                 }
-            };
-        }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
         return reimbursementSummaryRepository.findAll(specification, pageable);
     }
 
@@ -269,15 +258,17 @@ public class ReimbursementServise {
      * @param session
      * @return
      */
-    public ReimbursementSummaryPageInfo querySummaryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
-        Page<ReimbursementSummary> all = querySummaryPageData(search, currentPage, pageSize, session);
+    public ReimbursementSummaryPageInfo querySummaryPage(String company, String userName, String
+            paymentMonth, String sum, Integer currentPage, Integer pageSize, HttpSession session) {
+        Page<ReimbursementSummary> all = querySummaryPageData(company, userName, paymentMonth, sum, currentPage, pageSize, session);
         ReimbursementSummaryPageInfo pageInfo = new ReimbursementSummaryPageInfo();
         pageInfo.setPage(new PageImpl<>(all.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVO.class)).collect(Collectors.toList()), new PageRequest(all.getPageable().getPageNumber(), all.getPageable().getPageSize()), all.getTotalElements()));
         all.getContent().stream().forEach(r -> {
             if (null != r.getSum()) {
-                pageInfo.setSum(pageInfo.getSum() + r.getSum().doubleValue());
+                pageInfo.setSum(pageInfo.getSum().add(r.getSum()));
             }
         });
+        pageInfo.setSum(pageInfo.getSum().setScale(2, RoundingMode.HALF_UP));
         return pageInfo;
     }
 

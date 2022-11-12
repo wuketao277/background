@@ -3,7 +3,8 @@ package com.hello.background.repository;
 import com.hello.background.domain.Salary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * @Description
  */
 @Repository
-public interface SalaryRepository extends JpaRepository<Salary, Integer> {
+public interface SalaryRepository extends PagingAndSortingRepository<Salary, Integer>, JpaSpecificationExecutor<Salary> {
 
     /**
      * 分页查询
