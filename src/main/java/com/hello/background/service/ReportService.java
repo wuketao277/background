@@ -42,10 +42,14 @@ public class ReportService {
             generatePaymentDateData(iterable, startDate, endDate, response);
             // 个人 gp数据
             generatePersonalOfferData(iterable, startDate, endDate, response);
-            // Invoice Date 数据
-            generateInvoiceDateData(iterable, startDate, endDate, response);
             // 个人 gp数据倒排序展示
             response.getPersonalOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+            // Invoice Date 数据
+            generateInvoiceDateData(iterable, startDate, endDate, response);
+            // 个人 gp到账数据
+            generatePersonalReceiveData(iterable, startDate, endDate, response);
+            // 个人 gp到账数据倒排序展示
+            response.getPersonalReceiveData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
         } catch (Exception ex) {
         }
         return response;
@@ -182,9 +186,37 @@ public class ReportService {
                     + (s.getConsultantCommissionPercent4() != null ? s.getConsultantCommissionPercent4() : 0)
                     + (s.getConsultantCommissionPercent5() != null ? s.getConsultantCommissionPercent5() : 0);
             if (totalPercent > 0) {
-                BigDecimal personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 10, BigDecimal.ROUND_DOWN).multiply(s.getGp());
+                BigDecimal personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 2, BigDecimal.ROUND_DOWN).multiply(s.getGp());
                 personalGpMap.put(consultantName, personalGp.add((personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : BigDecimal.ZERO)));
             }
+        }
+    }
+
+    /**
+     * 生成个人到账数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generatePersonalReceiveData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        Map<String, BigDecimal> personalGpMap = new HashMap<>();
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (s.getActualPaymentDate() != null
+                    && s.getActualPaymentDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getActualPaymentDate()) >= 0) {
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName(), s.getConsultantCommissionPercent());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName2(), s.getConsultantCommissionPercent2());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName3(), s.getConsultantCommissionPercent3());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName4(), s.getConsultantCommissionPercent4());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName5(), s.getConsultantCommissionPercent5());
+            }
+        }
+        for (Map.Entry<String, BigDecimal> entry : personalGpMap.entrySet()) {
+            response.getPersonalReceiveData().add(new QueryGeneralReportResponseKeyValue(entry.getKey(), entry.getValue()));
         }
     }
 }
