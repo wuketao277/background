@@ -42,14 +42,10 @@ public class ReportService {
             generatePaymentDateData(iterable, startDate, endDate, response);
             // 个人 gp数据
             generatePersonalOfferData(iterable, startDate, endDate, response);
-            // 个人 gp数据倒排序展示
-            response.getPersonalOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
             // Invoice Date 数据
             generateInvoiceDateData(iterable, startDate, endDate, response);
             // 个人 gp到账数据
             generatePersonalReceiveData(iterable, startDate, endDate, response);
-            // 个人 gp到账数据倒排序展示
-            response.getPersonalReceiveData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
         } catch (Exception ex) {
         }
         return response;
@@ -167,6 +163,8 @@ public class ReportService {
         for (Map.Entry<String, BigDecimal> entry : personalGpMap.entrySet()) {
             response.getPersonalOfferData().add(new QueryGeneralReportResponseKeyValue(entry.getKey(), entry.getValue()));
         }
+        // 个人 gp数据倒排序展示
+        response.getPersonalOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
     }
 
     /**
@@ -218,5 +216,7 @@ public class ReportService {
         for (Map.Entry<String, BigDecimal> entry : personalGpMap.entrySet()) {
             response.getPersonalReceiveData().add(new QueryGeneralReportResponseKeyValue(entry.getKey(), entry.getValue()));
         }
+        // 个人 gp到账数据倒排序展示
+        response.getPersonalReceiveData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
     }
 }
