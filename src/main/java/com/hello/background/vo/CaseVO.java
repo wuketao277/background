@@ -34,6 +34,21 @@ public class CaseVO {
     private String clientChineseName;
 
     /**
+     * HRid
+     */
+    private Integer hrId;
+
+    /**
+     * HR中文名
+     */
+    private String hrChineseName;
+
+    /**
+     * HR英文名
+     */
+    private String hrEnglishName;
+
+    /**
      * 职位名称
      */
     private String title;

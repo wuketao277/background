@@ -55,6 +55,21 @@ public class SuccessfulPerm {
     @Column(length = 100)
     private String title;
     /**
+     * HRid
+     */
+    @Column
+    private Integer hrId;
+    /**
+     * HR中文名
+     */
+    @Column(length = 200)
+    private String hrChineseName;
+    /**
+     * HR英文名
+     */
+    @Column(length = 200)
+    private String hrEnglishName;
+    /**
      * 候选人id
      */
     @Column

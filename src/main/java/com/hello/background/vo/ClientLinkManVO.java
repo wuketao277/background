@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ClientLinkManVO {
     /**
-     * 新闻主键id
+     * 主键id
      */
     private Integer id;
 

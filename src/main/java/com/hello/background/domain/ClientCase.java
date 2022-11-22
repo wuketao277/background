@@ -42,6 +42,24 @@ public class ClientCase {
     private String clientChineseName;
 
     /**
+     * HRid
+     */
+    @Column
+    private Integer hrId;
+
+    /**
+     * HR中文名
+     */
+    @Column(length = 200)
+    private String hrChineseName;
+
+    /**
+     * HR英文名
+     */
+    @Column(length = 200)
+    private String hrEnglishName;
+
+    /**
      * 职位名称
      */
     @Column(length = 200)

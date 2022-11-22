@@ -42,6 +42,18 @@ public class SuccessfulPermVO implements Serializable {
      */
     private String title;
     /**
+     * HRid
+     */
+    private Integer hrId;
+    /**
+     * HR中文名
+     */
+    private String hrChineseName;
+    /**
+     * HR英文名
+     */
+    private String hrEnglishName;
+    /**
      * 候选人id
      */
     private Integer candidateId;

@@ -40,14 +40,12 @@ public class CaseController {
     /**
      * 查询分页
      *
-     * @param search      搜索关键字
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
+     * @param request
      * @return
      */
-    @GetMapping("queryPage")
-    public Page<CaseVO> queryPage(@RequestParam("search") String search, @RequestParam("searchStatus") String searchStatus, @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
-        return caseService.queryPage(search, searchStatus, currentPage, pageSize);
+    @PostMapping("queryPage")
+    public Page<CaseVO> queryPage(@RequestBody CaseQueryPageRequest request) {
+        return caseService.queryPage(request);
     }
 
     /**

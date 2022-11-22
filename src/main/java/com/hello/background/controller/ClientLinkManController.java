@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.ClientLinkManService;
+import com.hello.background.vo.ClientLinkManSimpleVO;
 import com.hello.background.vo.ClientLinkManVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +41,32 @@ public class ClientLinkManController {
 
     /**
      * 通过 客户id 查询所有联系人
+     *
      * @param clientId 客户id
      * @return 所有联系人
      */
     @GetMapping("queryByClientId")
     public List<ClientLinkManVO> queryByClientId(Integer clientId) {
         return clientLinkManService.queryByClientId(clientId);
+    }
+
+    /**
+     * 获取所有联系人
+     *
+     * @return 所有联系人
+     */
+    @GetMapping("queryAll")
+    public List<ClientLinkManVO> queryAll() {
+        return clientLinkManService.queryAll();
+    }
+
+    /**
+     * 获取所有联系人
+     *
+     * @return 所有联系人
+     */
+    @GetMapping("queryAllForSimple")
+    public List<ClientLinkManSimpleVO> queryAllForSimple() {
+        return clientLinkManService.queryAllForSimple();
     }
 }

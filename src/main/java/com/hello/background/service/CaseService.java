@@ -1,21 +1,24 @@
 package com.hello.background.service;
 
-import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.ClientRepository;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.CaseQueryPageRequest;
 import com.hello.background.vo.CaseVO;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,32 +74,27 @@ public class CaseService {
     /**
      * 查询分页
      *
-     * @param search      搜索关键字
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
      * @return
      */
-    public Page<CaseVO> queryPage(String search, String searchStatus, Integer currentPage, Integer pageSize) {
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
-        List<String> searchWordList = CommonUtils.splitSearchWord(search);
+    public Page<CaseVO> queryPage(CaseQueryPageRequest request) {
+        Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), Sort.Direction.DESC, "id");
         Specification<ClientCase> specification = new Specification<ClientCase>() {
             @Override
             public Predicate toPredicate(Root<ClientCase> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                for (String searchWord : searchWordList) {
-                    Path<String> titlePath = root.get("title");
-                    Predicate titleLike = criteriaBuilder.like(titlePath, "%" + searchWord + "%");
-                    Path<String> descriptionPath = root.get("description");
-                    Predicate descriptionLike = criteriaBuilder.like(descriptionPath, "%" + searchWord + "%");
-                    Path<String> clientChineseNamePath = root.get("clientChineseName");
-                    Predicate clientChineseNameLike = criteriaBuilder.like(clientChineseNamePath, "%" + searchWord + "%");
-                    list.add(criteriaBuilder.and(criteriaBuilder.or(titleLike, descriptionLike, clientChineseNameLike)));
-                }
-                if (!StringUtils.isEmpty(searchStatus) && !"ALL".equals(searchStatus)) {
-                    Path<String> path = root.get("status");
-                    CaseStatusEnum statusEnum = CaseStatusEnum.LOOP.get(searchStatus);
-                    Predicate like = criteriaBuilder.equal(path, statusEnum);
-                    list.add(criteriaBuilder.and(like));
+                if (null != request.getSearch()) {
+                    if (null != request.getSearch().getClientId()) {
+                        list.add(criteriaBuilder.equal(root.get("clientId"), request.getSearch().getClientId()));
+                    }
+                    if (null != request.getSearch().getHrId()) {
+                        list.add(criteriaBuilder.equal(root.get("hrId"), request.getSearch().getHrId()));
+                    }
+                    if (Strings.isNotBlank(request.getSearch().getTitle())) {
+                        list.add(criteriaBuilder.like(root.get("title"), "%" + request.getSearch().getTitle() + "%"));
+                    }
+                    if (null != request.getSearch().getStatus()) {
+                        list.add(criteriaBuilder.equal(root.get("status"), request.getSearch().getStatus()));
+                    }
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));

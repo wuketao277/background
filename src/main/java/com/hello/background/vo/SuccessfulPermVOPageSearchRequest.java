@@ -24,6 +24,10 @@ public class SuccessfulPermVOPageSearchRequest {
      */
     private Integer cwId;
     /**
+     * HRid
+     */
+    private Integer hrId;
+    /**
      * BDid
      */
     private Integer bdId;

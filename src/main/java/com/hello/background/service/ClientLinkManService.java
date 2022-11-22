@@ -6,6 +6,7 @@ import com.hello.background.domain.ClientLinkMan;
 import com.hello.background.repository.ClientLinkManRepository;
 import com.hello.background.repository.ClientRepository;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.ClientLinkManSimpleVO;
 import com.hello.background.vo.ClientLinkManVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,8 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -82,5 +82,41 @@ public class ClientLinkManService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
         return map;
+    }
+
+    /**
+     * 获取所有联系人
+     *
+     * @return
+     */
+    public List<ClientLinkManVO> queryAll() {
+        List<ClientLinkMan> list = clientLinkManRepository.findAll();
+        List<ClientLinkManVO> manVOList = list.stream().map(c -> TransferUtil.transferTo(c, ClientLinkManVO.class)).collect(Collectors.toList());
+        // 按中文名排序
+        manVOList.sort(Comparator.comparing(ClientLinkManVO::getChineseName));
+        return manVOList;
+    }
+
+    /**
+     * 获取所有联系人
+     *
+     * @return
+     */
+    public List<ClientLinkManSimpleVO> queryAllForSimple() {
+        List<ClientLinkMan> list = clientLinkManRepository.findAll();
+        List<ClientLinkManSimpleVO> manVOList = list.stream().map(c -> {
+            ClientLinkManSimpleVO simpleVO = TransferUtil.transferTo(c, ClientLinkManSimpleVO.class);
+            if (!Strings.isNullOrEmpty(c.getEnglishName()) && !Strings.isNullOrEmpty(c.getChineseName())) {
+                simpleVO.setName(String.format("%s - %s", c.getEnglishName(), c.getChineseName()));
+            } else if (!Strings.isNullOrEmpty(c.getEnglishName())) {
+                simpleVO.setName(c.getEnglishName());
+            } else if (!Strings.isNullOrEmpty(c.getChineseName())) {
+                simpleVO.setName(c.getChineseName());
+            }
+            return simpleVO;
+        }).collect(Collectors.toList());
+        // 按中文名排序
+        manVOList.sort(Comparator.comparing(ClientLinkManSimpleVO::getName));
+        return manVOList;
     }
 }
