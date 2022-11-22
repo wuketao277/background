@@ -8,3 +8,5 @@
 最后要重启nginx：/usr/sbin/nginx -s reload
 nginx的配置文件：/etc/nginx/nginx.conf
 浏览器删除缓存
+
+start.sh nohup java -jar -Dspring.profiles.active=prd background-1.0-SNAPSHOT.jar
