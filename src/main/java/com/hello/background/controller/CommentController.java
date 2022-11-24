@@ -41,9 +41,26 @@ public class CommentController {
         commentService.deleteById(id);
     }
 
+    /**
+     * 查询候选人评论
+     *
+     * @param candidateId
+     * @return
+     */
     @GetMapping("findAllByCandidateId")
     public List<CommentVO> findAllByCandidateId(Integer candidateId) {
         return commentService.findAllByCandidateId(candidateId);
+    }
+
+    /**
+     * 查询候选人评论，倒序排序
+     *
+     * @param candidateId
+     * @return
+     */
+    @GetMapping("findAllByCandidateIdOrderByDesc")
+    public List<CommentVO> findAllByCandidateIdOrderByDesc(Integer candidateId) {
+        return commentService.findAllByCandidateIdOrderByDesc(candidateId);
     }
 
     /**

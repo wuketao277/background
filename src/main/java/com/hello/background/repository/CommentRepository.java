@@ -15,6 +15,8 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findAllByCandidateId(Integer candidateId);
+    
+    List<Comment> findAllByCandidateIdOrderByInputTimeDesc(Integer candidateId);
 
     List<Comment> findByContentLikeOrderByCandidateIdAscIdAsc(String content);
 
