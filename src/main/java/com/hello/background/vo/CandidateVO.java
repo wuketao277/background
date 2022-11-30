@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.CandidateNotMatchReasonEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -104,6 +105,16 @@ public class CandidateVO {
      * 英语水平
      */
     private String englishLevel;
+
+    /**
+     * 候选人不匹配原因
+     */
+    private CandidateNotMatchReasonEnum notMatchReason;
+
+    /**
+     * 候选人不匹配的详细原因
+     */
+    private String notMatchReasonDetail;
 
     /**
      * 创建用户ID

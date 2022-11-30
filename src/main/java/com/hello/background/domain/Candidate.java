@@ -1,13 +1,11 @@
 package com.hello.background.domain;
 
+import com.hello.background.constant.CandidateNotMatchReasonEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * 候选人
@@ -129,6 +127,19 @@ public class Candidate {
      */
     @Column(length = 200)
     private String englishLevel;
+
+    /**
+     * 候选人不匹配原因
+     */
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private CandidateNotMatchReasonEnum notMatchReason;
+
+    /**
+     * 候选人不匹配的详细原因
+     */
+    @Column(length = 400)
+    private String notMatchReasonDetail;
 
     /**
      * 创建用户ID
