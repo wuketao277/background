@@ -243,8 +243,13 @@ public class SalaryService {
     private Page<Salary> queryPageData(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
         // 获取用户
         UserVO user = (UserVO) session.getAttribute("user");
+        List<Sort.Order> orderList = new ArrayList<>();
+        orderList.add(new Sort.Order(Sort.Direction.DESC, "month"));
+        orderList.add(new Sort.Order(Sort.Direction.DESC, "sum"));
+        orderList.add(new Sort.Order(Sort.Direction.ASC, "historyDebt"));
+        orderList.add(new Sort.Order(Sort.Direction.ASC, "consultantId"));
         // 设置分页信息
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "month");
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, new Sort(orderList));
         // 设置查询条件
         Specification<Salary> specification = new Specification<Salary>() {
             @Override
