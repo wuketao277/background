@@ -27,7 +27,7 @@ public class ReimbursementController {
         UserVO user = (UserVO) session.getAttribute("user");
         vo.setUpdateTime(new Date());
         vo.setUpdateUserName(user.getUsername());
-        return reimbursementServise.save(vo);
+        return reimbursementServise.save(vo, user);
     }
 
     /**

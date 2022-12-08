@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,8 +53,12 @@ public class ReimbursementServise {
      *
      * @param vo
      */
-    public ReimbursementItemVO save(ReimbursementItemVO vo) {
+    public ReimbursementItemVO save(ReimbursementItemVO vo, UserVO user) {
         ReimbursementItem item = new ReimbursementItem();
+        if (null == vo.getId()) {
+            vo.setCreateTime(LocalDateTime.now());
+            vo.setCreateUser(user.getUsername());
+        }
         BeanUtils.copyProperties(vo, item);
         item.setCompanyName(vo.getCompany().getName());
         item = reimbursementItemRepository.save(item);

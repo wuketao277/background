@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -126,4 +127,14 @@ public class ReimbursementItem {
      */
     @Column(length = 20)
     private String updateUserName;
+    /**
+     * 创建日期
+     */
+    @Column
+    private LocalDateTime createTime;
+    /**
+     * 创建人
+     */
+    @Column(length = 20)
+    private String createUser;
 }

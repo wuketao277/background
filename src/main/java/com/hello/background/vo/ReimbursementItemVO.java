@@ -4,6 +4,7 @@ import com.hello.background.constant.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -93,4 +94,12 @@ public class ReimbursementItemVO {
      * 更新人
      */
     private String updateUserName;
+    /**
+     * 创建日期
+     */
+    private LocalDateTime createTime;
+    /**
+     * 创建人
+     */
+    private String createUser;
 }
