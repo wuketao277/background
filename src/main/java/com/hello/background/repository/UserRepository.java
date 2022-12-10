@@ -1,5 +1,6 @@
 package com.hello.background.repository;
 
+import com.hello.background.constant.CompanyEnum;
 import com.hello.background.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,4 +33,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     int countByRealnameLikeOrUsernameLike(String englishName, String chineseName);
 
     List<User> findByRealnameLikeOrUsernameLike(String englishName, String chineseName);
+
+    /**
+     * 查找一个公司的所有员工
+     *
+     * @param company
+     * @return
+     */
+    List<User> findAllByCompany(CompanyEnum company);
 }

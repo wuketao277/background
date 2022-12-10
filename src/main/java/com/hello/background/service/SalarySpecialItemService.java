@@ -1,7 +1,7 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.SalarySpecialItem;
-import com.hello.background.domain.UserRole;
 import com.hello.background.repository.SalarySpecialItemRepository;
 import com.hello.background.repository.UserRoleRepository;
 import com.hello.background.utils.TransferUtil;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * 工资特殊项服务
@@ -54,12 +53,11 @@ public class SalarySpecialItemService {
      */
     public Page<SalarySpecialItemVO> queryPage(HttpSession session, String search, Integer currentPage, Integer pageSize) {
         UserVO user = (UserVO) session.getAttribute("user");
-        List<UserRole> userRoleList = userRoleRepository.findByUserName(user.getUsername());
         Pageable pageable = new PageRequest(currentPage - 1, pageSize);
         Page<SalarySpecialItem> salarySpecialItemPage = null;
         long total = 0;
-        if (userRoleList.stream().anyMatch(u -> "admin".equals(u.getRoleName()))) {
-            // 管理员
+        if (user.getRoles().contains(RoleEnum.ADMIN)) {
+            // 如果是管理员，可以查看任意数据
             search = "%" + search + "%";
             salarySpecialItemPage = salarySpecialItemRepository.findByConsultantRealNameLikeOrConsultantUserNameLikeOrMonthLikeOrDescriptionLikeOrderByUpdateTimeDesc(search, search, search, search, pageable);
             total = salarySpecialItemRepository.countByConsultantRealNameLikeOrConsultantUserNameLikeOrMonthLikeOrDescriptionLike(search, search, search, search);

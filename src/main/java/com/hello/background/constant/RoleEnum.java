@@ -11,7 +11,8 @@ public enum RoleEnum {
     ADMIN("admin"),
     RECRUITER("recruiter"),
     AM("Account Manager"),
-    BD("bd");
+    BD("bd"),
+    ADMIN_COMPANY("Admin Company");
 
     /**
      * 描述

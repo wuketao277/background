@@ -255,9 +255,17 @@ public class SalaryService {
             @Override
             public Predicate toPredicate(Root<Salary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                if (!user.getRoles().contains(RoleEnum.ADMIN)) {
+                if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
                     // 普通用户只能查询自己的信息
-                    list.add(getPredicateEqual("consultantUserName", user.getUsername(), root, criteriaBuilder));
+                    list.add(criteriaBuilder.equal(root.get("consultantUserName"), user.getUsername()));
+                } else if (!user.getRoles().contains(RoleEnum.ADMIN) && user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
+                    // 不是管理员，但是公司管理员，可以查询公司的所有员工
+                    CriteriaBuilder.In<Object> consultantUserName = criteriaBuilder.in(root.get("consultantUserName"));
+                    List<User> companyAllUserList = userRepository.findAllByCompany(user.getCompany());
+                    for (User user : companyAllUserList) {
+                        consultantUserName.value(user.getUsername());
+                    }
+                    list.add(consultantUserName);
                 }
                 if (Strings.isNotBlank(loginName)) {
                     list.add(criteriaBuilder.and(

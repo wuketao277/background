@@ -150,9 +150,17 @@ public class ReimbursementServise {
                 if (Strings.isNotBlank(description)) {
                     list.add(criteriaBuilder.like(root.get("description"), description));
                 }
-                if (!user.getRoles().contains(RoleEnum.ADMIN)) {
+                if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
                     // 普通用户只能查询自己的信息
                     list.add(getPredicateEqual("userName", user.getUsername(), root, criteriaBuilder));
+                } else if (!user.getRoles().contains(RoleEnum.ADMIN) && user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
+                    // 公司管理员可以查看公司所有员工数据
+                    CriteriaBuilder.In<Object> consultantUserName = criteriaBuilder.in(root.get("userName"));
+                    List<User> companyAllUserList = userRepository.findAllByCompany(user.getCompany());
+                    for (User user : companyAllUserList) {
+                        consultantUserName.value(user.getUsername());
+                    }
+                    list.add(consultantUserName);
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
@@ -244,9 +252,17 @@ public class ReimbursementServise {
                     list.add(criteriaBuilder.equal(root.get("sum"), new BigDecimal(sum.trim()))
                     );
                 }
-                if (!user.getRoles().contains(RoleEnum.ADMIN)) {
+                if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
                     // 普通用户只能查询自己的信息
                     list.add(criteriaBuilder.equal(root.get("userName"), user.getUsername()));
+                } else if (!user.getRoles().contains(RoleEnum.ADMIN) && user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
+                    // 公司管理员可以查看公司所有员工数据
+                    CriteriaBuilder.In<Object> consultantUserName = criteriaBuilder.in(root.get("userName"));
+                    List<User> companyAllUserList = userRepository.findAllByCompany(user.getCompany());
+                    for (User user : companyAllUserList) {
+                        consultantUserName.value(user.getUsername());
+                    }
+                    list.add(consultantUserName);
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));

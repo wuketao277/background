@@ -1,9 +1,6 @@
 package com.hello.background.domain;
 
-import com.hello.background.constant.BankEnum;
-import com.hello.background.constant.GenderEnum;
-import com.hello.background.constant.JobTypeEnum;
-import com.hello.background.constant.RoleEnum;
+import com.hello.background.constant.*;
 import com.hello.background.converter.RoleEnumListStringAttrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,6 +42,12 @@ public class User {
      */
     @Column(length = 50, nullable = false)
     private String realname;
+    /**
+     * 所属公司
+     */
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private CompanyEnum company;
     /**
      * 密码
      */
