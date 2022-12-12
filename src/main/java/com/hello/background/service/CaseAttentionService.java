@@ -68,20 +68,22 @@ public class CaseAttentionService {
      * @return
      */
     public List<CaseAttention4ClientVO> queryAllCaseAttention(UserVO userVO) {
-        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserName(userVO.getUsername());
+        // 用户关注的职位，按照ID倒排序（最新关注的在最上面）
+        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByIdDesc(userVO.getUsername());
         if (CollectionUtils.isEmpty(caseAttentionList)) {
             return Collections.EMPTY_LIST;
         } else {
+            // 客户列表
             List<CaseAttention4ClientVO> clientVOList = new ArrayList<>();
-            // 所有关注的职位，按照职位id排序。
-            caseAttentionList = caseAttentionList.stream().sorted(Comparator.comparing(CaseAttention::getCaseId)).collect(Collectors.toList());
             // 遍历所有关注的职位
             for (CaseAttention caseAttention : caseAttentionList) {
                 // 首先获取职位所属客户
                 CaseAttention4ClientVO clientVO = new CaseAttention4ClientVO();
                 if (clientVOList.stream().anyMatch(c -> c.getClientId().equals(caseAttention.getClientId()))) {
+                    // 如果客户在列表中已存在，就从列表中获取。
                     clientVO = clientVOList.stream().filter(c -> c.getClientId().equals(caseAttention.getClientId())).findFirst().get();
                 } else {
+                    // 如果客户不在列表中，就创建一个新对象，存入列表中。
                     clientVO.setClientId(caseAttention.getClientId());
                     clientVO.setClientChineseName(caseAttention.getClientChineseName());
                     clientVOList.add(clientVO);
