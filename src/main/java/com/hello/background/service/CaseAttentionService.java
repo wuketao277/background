@@ -69,7 +69,7 @@ public class CaseAttentionService {
      */
     public List<CaseAttention4ClientVO> queryAllCaseAttention(UserVO userVO) {
         // 用户关注的职位，按照ID倒排序（最新关注的在最上面）
-        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByIdDesc(userVO.getUsername());
+        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByClientChineseNameAscIdDesc(userVO.getUsername());
         if (CollectionUtils.isEmpty(caseAttentionList)) {
             return Collections.EMPTY_LIST;
         } else {
@@ -115,7 +115,7 @@ public class CaseAttentionService {
                     caseVO.getCandidateList().add(candidateVO);
                 }
             }
-            return clientVOList.stream().sorted(Comparator.comparing(CaseAttention4ClientVO::getClientId)).collect(Collectors.toList());
+            return clientVOList;
         }
     }
 
