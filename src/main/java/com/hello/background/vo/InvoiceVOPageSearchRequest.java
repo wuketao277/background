@@ -25,9 +25,9 @@ public class InvoiceVOPageSearchRequest {
     private Integer amId;
 
     /**
-     * 候选人 id
+     * 候选人 中文名字
      */
-    private Integer candidateId;
+    private String candidateChineseName;
 
     /**
      * 发票类型
