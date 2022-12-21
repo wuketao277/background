@@ -112,7 +112,7 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 顾问提成比例
      */
-    private Integer consultantCommissionPercent;
+    private BigDecimal consultantCommissionPercent;
     /**
      * 顾问id2
      */
@@ -128,7 +128,7 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 顾问提成比例2
      */
-    private Integer consultantCommissionPercent2;
+    private BigDecimal consultantCommissionPercent2;
     /**
      * 顾问id3
      */
@@ -144,7 +144,7 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 顾问提成比例3
      */
-    private Integer consultantCommissionPercent3;
+    private BigDecimal consultantCommissionPercent3;
     /**
      * 顾问id4
      */
@@ -160,7 +160,7 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 顾问提成比例4
      */
-    private Integer consultantCommissionPercent4;
+    private BigDecimal consultantCommissionPercent4;
     /**
      * 顾问id5
      */
@@ -176,7 +176,247 @@ public class SuccessfulPermVO implements Serializable {
     /**
      * 顾问提成比例5
      */
-    private Integer consultantCommissionPercent5;
+    private BigDecimal consultantCommissionPercent5;
+    /**
+     * 顾问id6
+     */
+    private Integer consultantId6;
+    /**
+     * 顾问登录名6
+     */
+    private String consultantUserName6;
+    /**
+     * 顾问真实姓名6
+     */
+    private String consultantRealName6;
+    /**
+     * 顾问提成比例6
+     */
+    private BigDecimal consultantCommissionPercent6;
+    /**
+     * 顾问id7
+     */
+    private Integer consultantId7;
+    /**
+     * 顾问登录名7
+     */
+    private String consultantUserName7;
+    /**
+     * 顾问真实姓名7
+     */
+    private String consultantRealName7;
+    /**
+     * 顾问提成比例7
+     */
+    private BigDecimal consultantCommissionPercent7;
+    /**
+     * 顾问id8
+     */
+    private Integer consultantId8;
+    /**
+     * 顾问登录名8
+     */
+    private String consultantUserName8;
+    /**
+     * 顾问真实姓名8
+     */
+    private String consultantRealName8;
+    /**
+     * 顾问提成比例8
+     */
+    private BigDecimal consultantCommissionPercent8;
+    /**
+     * 顾问id9
+     */
+    private Integer consultantId9;
+    /**
+     * 顾问登录名9
+     */
+    private String consultantUserName9;
+    /**
+     * 顾问真实姓名9
+     */
+    private String consultantRealName9;
+    /**
+     * 顾问提成比例9
+     */
+    private BigDecimal consultantCommissionPercent9;
+    /**
+     * 顾问id10
+     */
+    private Integer consultantId10;
+    /**
+     * 顾问登录名10
+     */
+    private String consultantUserName10;
+    /**
+     * 顾问真实姓名10
+     */
+    private String consultantRealName10;
+    /**
+     * 顾问提成比例10
+     */
+    private BigDecimal consultantCommissionPercent10;
+    /**
+     * 顾问id11
+     */
+    private Integer consultantId11;
+    /**
+     * 顾问登录名11
+     */
+    private String consultantUserName11;
+    /**
+     * 顾问真实姓名11
+     */
+    private String consultantRealName11;
+    /**
+     * 顾问提成比例11
+     */
+    private BigDecimal consultantCommissionPercent11;
+    /**
+     * 顾问id12
+     */
+    private Integer consultantId12;
+    /**
+     * 顾问登录名12
+     */
+    private String consultantUserName12;
+    /**
+     * 顾问真实姓名12
+     */
+    private String consultantRealName12;
+    /**
+     * 顾问提成比例12
+     */
+    private BigDecimal consultantCommissionPercent12;
+    /**
+     * 顾问id13
+     */
+    private Integer consultantId13;
+    /**
+     * 顾问登录名13
+     */
+    private String consultantUserName13;
+    /**
+     * 顾问真实姓名13
+     */
+    private String consultantRealName13;
+    /**
+     * 顾问提成比例13
+     */
+    private BigDecimal consultantCommissionPercent13;
+    /**
+     * 顾问id14
+     */
+    private Integer consultantId14;
+    /**
+     * 顾问登录名14
+     */
+    private String consultantUserName14;
+    /**
+     * 顾问真实姓名14
+     */
+    private String consultantRealName14;
+    /**
+     * 顾问提成比例14
+     */
+    private BigDecimal consultantCommissionPercent14;
+    /**
+     * 顾问id15
+     */
+    private Integer consultantId15;
+    /**
+     * 顾问登录名15
+     */
+    private String consultantUserName15;
+    /**
+     * 顾问真实姓名15
+     */
+    private String consultantRealName15;
+    /**
+     * 顾问提成比例15
+     */
+    private BigDecimal consultantCommissionPercent15;
+    /**
+     * 顾问id16
+     */
+    private Integer consultantId16;
+    /**
+     * 顾问登录名16
+     */
+    private String consultantUserName16;
+    /**
+     * 顾问真实姓名16
+     */
+    private String consultantRealName16;
+    /**
+     * 顾问提成比例16
+     */
+    private BigDecimal consultantCommissionPercent16;
+    /**
+     * 顾问id17
+     */
+    private Integer consultantId17;
+    /**
+     * 顾问登录名17
+     */
+    private String consultantUserName17;
+    /**
+     * 顾问真实姓名17
+     */
+    private String consultantRealName17;
+    /**
+     * 顾问提成比例17
+     */
+    private BigDecimal consultantCommissionPercent17;
+    /**
+     * 顾问id18
+     */
+    private Integer consultantId18;
+    /**
+     * 顾问登录名18
+     */
+    private String consultantUserName18;
+    /**
+     * 顾问真实姓名18
+     */
+    private String consultantRealName18;
+    /**
+     * 顾问提成比例18
+     */
+    private BigDecimal consultantCommissionPercent18;
+    /**
+     * 顾问id19
+     */
+    private Integer consultantId19;
+    /**
+     * 顾问登录名19
+     */
+    private String consultantUserName19;
+    /**
+     * 顾问真实姓名19
+     */
+    private String consultantRealName19;
+    /**
+     * 顾问提成比例19
+     */
+    private BigDecimal consultantCommissionPercent19;
+    /**
+     * 顾问id20
+     */
+    private Integer consultantId20;
+    /**
+     * 顾问登录名20
+     */
+    private String consultantUserName20;
+    /**
+     * 顾问真实姓名20
+     */
+    private String consultantRealName20;
+    /**
+     * 顾问提成比例20
+     */
+    private BigDecimal consultantCommissionPercent20;
     /**
      * 地点
      */

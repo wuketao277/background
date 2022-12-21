@@ -158,6 +158,21 @@ public class ReportService {
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName3(), s.getConsultantCommissionPercent3());
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName4(), s.getConsultantCommissionPercent4());
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName5(), s.getConsultantCommissionPercent5());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName6(), s.getConsultantCommissionPercent6());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName7(), s.getConsultantCommissionPercent7());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName8(), s.getConsultantCommissionPercent8());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName9(), s.getConsultantCommissionPercent9());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName10(), s.getConsultantCommissionPercent10());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName11(), s.getConsultantCommissionPercent11());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName12(), s.getConsultantCommissionPercent12());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName13(), s.getConsultantCommissionPercent13());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName14(), s.getConsultantCommissionPercent14());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName15(), s.getConsultantCommissionPercent15());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName16(), s.getConsultantCommissionPercent16());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName17(), s.getConsultantCommissionPercent17());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName18(), s.getConsultantCommissionPercent18());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName19(), s.getConsultantCommissionPercent19());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName20(), s.getConsultantCommissionPercent20());
             }
         }
         for (Map.Entry<String, BigDecimal> entry : personalGpMap.entrySet()) {
@@ -175,16 +190,30 @@ public class ReportService {
      * @param consultantName
      * @param consultantCommissionPercent
      */
-    private void calcPersonalGp(Map<String, BigDecimal> personalGpMap, SuccessfulPerm s, String consultantName, Integer consultantCommissionPercent) {
+    private void calcPersonalGp(Map<String, BigDecimal> personalGpMap, SuccessfulPerm s, String consultantName, BigDecimal consultantCommissionPercent) {
         if (Strings.isNotBlank(consultantName) && null != consultantCommissionPercent) {
-            Integer totalPercent = 0
-                    + (s.getConsultantCommissionPercent() != null ? s.getConsultantCommissionPercent() : 0)
-                    + (s.getConsultantCommissionPercent2() != null ? s.getConsultantCommissionPercent2() : 0)
-                    + (s.getConsultantCommissionPercent3() != null ? s.getConsultantCommissionPercent3() : 0)
-                    + (s.getConsultantCommissionPercent4() != null ? s.getConsultantCommissionPercent4() : 0)
-                    + (s.getConsultantCommissionPercent5() != null ? s.getConsultantCommissionPercent5() : 0);
-            if (totalPercent > 0) {
-                BigDecimal personalGp = BigDecimal.valueOf(consultantCommissionPercent).divide(BigDecimal.valueOf(totalPercent), 2, BigDecimal.ROUND_DOWN).multiply(s.getGp());
+            BigDecimal totalPercent = BigDecimal.ZERO.add(Optional.ofNullable(s.getConsultantCommissionPercent()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent2()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent3()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent4()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent5()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent6()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent7()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent8()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent9()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent10()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent11()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent12()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent13()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent14()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent15()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent16()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent17()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent18()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent19()).orElse(BigDecimal.ZERO))
+                    .add(Optional.ofNullable(s.getConsultantCommissionPercent20()).orElse(BigDecimal.ZERO));
+            if (totalPercent.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal personalGp = consultantCommissionPercent.divide(totalPercent, 6, BigDecimal.ROUND_DOWN).multiply(s.getGp());
                 personalGpMap.put(consultantName, personalGp.add((personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : BigDecimal.ZERO)));
             }
         }
@@ -211,6 +240,21 @@ public class ReportService {
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName3(), s.getConsultantCommissionPercent3());
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName4(), s.getConsultantCommissionPercent4());
                 calcPersonalGp(personalGpMap, s, s.getConsultantUserName5(), s.getConsultantCommissionPercent5());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName6(), s.getConsultantCommissionPercent6());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName7(), s.getConsultantCommissionPercent7());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName8(), s.getConsultantCommissionPercent8());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName9(), s.getConsultantCommissionPercent9());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName10(), s.getConsultantCommissionPercent10());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName11(), s.getConsultantCommissionPercent11());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName12(), s.getConsultantCommissionPercent12());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName13(), s.getConsultantCommissionPercent13());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName14(), s.getConsultantCommissionPercent14());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName15(), s.getConsultantCommissionPercent15());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName16(), s.getConsultantCommissionPercent16());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName17(), s.getConsultantCommissionPercent17());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName18(), s.getConsultantCommissionPercent18());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName19(), s.getConsultantCommissionPercent19());
+                calcPersonalGp(personalGpMap, s, s.getConsultantUserName20(), s.getConsultantCommissionPercent20());
             }
         }
         for (Map.Entry<String, BigDecimal> entry : personalGpMap.entrySet()) {

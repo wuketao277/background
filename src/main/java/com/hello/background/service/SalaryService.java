@@ -140,35 +140,45 @@ public class SalaryService {
                         sb.append(String.format("%s CW:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getCwCommissionPercent()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
                     }
                     // 计算顾问1
-                    if (user.getUsername().equals(perm.getConsultantUserName()) && null != perm.getConsultantCommissionPercent()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getConsultantCommissionPercent())).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                        commissionSum = commissionSum.add(i);
-                        sb.append(String.format("%s Consultant:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent()).divide(BigDecimal.valueOf(100)), i));
-                    }
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName(), perm.getConsultantCommissionPercent(), user.getUsername(), sb, perm));
                     // 计算顾问2
-                    if (user.getUsername().equals(perm.getConsultantUserName2()) && null != perm.getConsultantCommissionPercent2()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getConsultantCommissionPercent2())).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                        commissionSum = commissionSum.add(i);
-                        sb.append(String.format("%s Consultant2:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent2()).divide(BigDecimal.valueOf(100)), i));
-                    }
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName2(), perm.getConsultantCommissionPercent2(), user.getUsername(), sb, perm));
                     // 计算顾问3
-                    if (user.getUsername().equals(perm.getConsultantUserName3()) && null != perm.getConsultantCommissionPercent3()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getConsultantCommissionPercent3())).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                        commissionSum = commissionSum.add(i);
-                        sb.append(String.format("%s Consultant3:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent3()).divide(BigDecimal.valueOf(100)), i));
-                    }
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName3(), perm.getConsultantCommissionPercent3(), user.getUsername(), sb, perm));
                     // 计算顾问4
-                    if (user.getUsername().equals(perm.getConsultantUserName4()) && null != perm.getConsultantCommissionPercent4()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getConsultantCommissionPercent4())).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                        commissionSum = commissionSum.add(i);
-                        sb.append(String.format("%s Consultant4:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent4()).divide(BigDecimal.valueOf(100)), i));
-                    }
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName4(), perm.getConsultantCommissionPercent4(), user.getUsername(), sb, perm));
                     // 计算顾问5
-                    if (user.getUsername().equals(perm.getConsultantUserName5()) && null != perm.getConsultantCommissionPercent5()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getConsultantCommissionPercent5())).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                        commissionSum = commissionSum.add(i);
-                        sb.append(String.format("%s Consultant5:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getConsultantCommissionPercent5()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
-                    }
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName5(), perm.getConsultantCommissionPercent5(), user.getUsername(), sb, perm));
+                    // 计算顾问6
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName6(), perm.getConsultantCommissionPercent6(), user.getUsername(), sb, perm));
+                    // 计算顾问7
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName7(), perm.getConsultantCommissionPercent7(), user.getUsername(), sb, perm));
+                    // 计算顾问8
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName8(), perm.getConsultantCommissionPercent8(), user.getUsername(), sb, perm));
+                    // 计算顾问9
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName9(), perm.getConsultantCommissionPercent9(), user.getUsername(), sb, perm));
+                    // 计算顾问10
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName10(), perm.getConsultantCommissionPercent10(), user.getUsername(), sb, perm));
+                    // 计算顾问11
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName11(), perm.getConsultantCommissionPercent11(), user.getUsername(), sb, perm));
+                    // 计算顾问12
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName12(), perm.getConsultantCommissionPercent12(), user.getUsername(), sb, perm));
+                    // 计算顾问13
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName13(), perm.getConsultantCommissionPercent13(), user.getUsername(), sb, perm));
+                    // 计算顾问14
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName14(), perm.getConsultantCommissionPercent14(), user.getUsername(), sb, perm));
+                    // 计算顾问15
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName15(), perm.getConsultantCommissionPercent15(), user.getUsername(), sb, perm));
+                    // 计算顾问16
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName16(), perm.getConsultantCommissionPercent16(), user.getUsername(), sb, perm));
+                    // 计算顾问17
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName17(), perm.getConsultantCommissionPercent17(), user.getUsername(), sb, perm));
+                    // 计算顾问18
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName18(), perm.getConsultantCommissionPercent18(), user.getUsername(), sb, perm));
+                    // 计算顾问19
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName19(), perm.getConsultantCommissionPercent19(), user.getUsername(), sb, perm));
+                    // 计算顾问20
+                    commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName20(), perm.getConsultantCommissionPercent20(), user.getUsername(), sb, perm));
                 }
                 sb.append("总提成：" + commissionSum + "\r\n");
                 // 减去最近一个月工资的历史负债
@@ -231,6 +241,22 @@ public class SalaryService {
                 log.error("generateSalary", ex);
             }
         });
+    }
+
+    /**
+     * 计算个人提成
+     *
+     * @return
+     */
+    private BigDecimal calcPersonalCommission(String consultantUserName, BigDecimal consultantCommissionPercent, String currentUserName, StringBuilder msgSB, SuccessfulPerm perm) {
+        BigDecimal commission = BigDecimal.ZERO;
+        // 当前用户和成功case中的顾问名称一致，且提成比例不为空
+        if (currentUserName.equals(consultantUserName)
+                && (null != consultantCommissionPercent && consultantCommissionPercent.compareTo(BigDecimal.ZERO) > 0)) {
+            commission = perm.getGp().multiply(consultantCommissionPercent).divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_DOWN);
+            msgSB.append(String.format("%s %s:%s*%s=%s \r\n", perm.getCandidateChineseName(), consultantUserName, perm.getGp(), consultantCommissionPercent.divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_DOWN), commission));
+        }
+        return commission;
     }
 
     /**
