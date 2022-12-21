@@ -32,7 +32,11 @@ public class ReportService {
     public QueryGeneralReportResponse queryGeneral(QueryGeneralReportRequest request) {
         QueryGeneralReportResponse response = new QueryGeneralReportResponse();
         try {
-            Iterable<SuccessfulPerm> iterable = successfulPermRepository.findAll();
+            List<String> approveStatusList = new ArrayList<>();
+            approveStatusList.add("applied");
+            approveStatusList.add("approved");
+            // 查询申请和审批通过的数据
+            Iterable<SuccessfulPerm> iterable = successfulPermRepository.findByApproveStatusIn(approveStatusList);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date startDate = sdf.parse(String.format("%s-%s-%s %s:%s:%s", request.getStartDate().getYear(), request.getStartDate().getMonthValue(), request.getStartDate().getDayOfMonth(), 0, 0, 0));
             Date endDate = sdf.parse(String.format("%s-%s-%s %s:%s:%s", request.getEndDate().getYear(), request.getEndDate().getMonthValue(), request.getEndDate().getDayOfMonth(), 23, 59, 59));

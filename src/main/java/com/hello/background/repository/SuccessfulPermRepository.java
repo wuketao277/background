@@ -21,4 +21,12 @@ public interface SuccessfulPermRepository extends PagingAndSortingRepository<Suc
      * @return
      */
     List<SuccessfulPerm> findByApproveStatusAndCommissionDateBetween(String approveStatus, Date start, Date end);
+
+    /**
+     * 通过审批状态集合查询
+     *
+     * @param approveStatusList
+     * @return
+     */
+    List<SuccessfulPerm> findByApproveStatusIn(List<String> approveStatusList);
 }
