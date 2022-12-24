@@ -148,7 +148,7 @@ public class ReimbursementServise {
                     list.add(criteriaBuilder.equal(root.get("sum"), new BigDecimal(sum)));
                 }
                 if (Strings.isNotBlank(description)) {
-                    list.add(criteriaBuilder.like(root.get("description"), description));
+                    list.add(criteriaBuilder.like(root.get("description"), "%" + description + "%"));
                 }
                 if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
                     // 普通用户只能查询自己的信息
