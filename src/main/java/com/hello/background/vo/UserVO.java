@@ -46,6 +46,10 @@ public class UserVO implements Serializable {
      */
     private JobTypeEnum jobType;
     /**
+     * 客户公司ID，只有外包员工才有该数据
+     */
+    private Integer clientCompanyId;
+    /**
      * 底薪
      */
     private BigDecimal salarybase;

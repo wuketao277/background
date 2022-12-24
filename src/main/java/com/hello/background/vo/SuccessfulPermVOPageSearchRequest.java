@@ -2,6 +2,8 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
+import javax.persistence.Column;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -27,6 +29,10 @@ public class SuccessfulPermVOPageSearchRequest {
      * HRid
      */
     private Integer hrId;
+    /**
+     * 收费
+     */
+    private BigDecimal billing;
     /**
      * BDid
      */

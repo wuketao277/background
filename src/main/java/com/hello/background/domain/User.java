@@ -59,6 +59,11 @@ public class User {
     @Enumerated
     private JobTypeEnum jobType;
     /**
+     * 客户公司ID，只有外包员工才有该数据
+     */
+    @Column
+    private Integer clientCompanyId;
+    /**
      * 底薪
      */
     @Column

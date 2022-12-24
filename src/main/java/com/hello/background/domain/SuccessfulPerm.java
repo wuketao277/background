@@ -540,7 +540,7 @@ public class SuccessfulPerm {
     @Column
     private BigDecimal gp;
     /**
-     *
+     * 收费
      */
     @Column
     private BigDecimal billing;

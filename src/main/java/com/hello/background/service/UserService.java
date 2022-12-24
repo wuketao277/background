@@ -1,6 +1,7 @@
 package com.hello.background.service;
 
 import com.google.common.base.Strings;
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.User;
 import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.TransferUtil;
@@ -67,6 +68,13 @@ public class UserService {
         user.setRealname(vo.getRealname());
         user.setCompany(vo.getCompany());
         user.setJobType(vo.getJobType());
+        if (vo.getJobType() == JobTypeEnum.CONSULTANT) {
+            // 外包同事要保存客户公司
+            user.setClientCompanyId(vo.getClientCompanyId());
+        } else {
+            // 非外包同事，取消客户公司信息
+            user.setClientCompanyId(null);
+        }
         user.setSalarybase(vo.getSalarybase());
         user.setCoverbase(vo.getCoverbase());
         user.setEnabled(vo.getEnabled());
