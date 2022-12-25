@@ -128,9 +128,9 @@ public class ReportService {
             if (s.getOfferDate() != null
                     && s.getOfferDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getOfferDate()) >= 0) {
-                // 猎头业务算billing，外包业务算gp
+                // 猎头业务和咨询业务算billing，外包业务算gp
                 BigDecimal sum = BigDecimal.ZERO;
-                if ("perm".equals(s.getType())) {
+                if ("perm".equals(s.getType()) || "consultation".equals(s.getType())) {
                     sum = s.getBilling();
                 } else {
                     sum = s.getGp();
