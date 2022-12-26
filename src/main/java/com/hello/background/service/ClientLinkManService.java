@@ -92,7 +92,19 @@ public class ClientLinkManService {
         properties.add("chineseName");
         Sort sort = new Sort(Sort.Direction.ASC, properties);
         List<ClientLinkMan> list = clientLinkManRepository.findAll(sort);
-        return list.stream().map(c -> TransferUtil.transferTo(c, ClientLinkManVO.class)).collect(Collectors.toList());
+        List<ClientLinkManVO> clientLinkManVOList = list.stream().map(c -> TransferUtil.transferTo(c, ClientLinkManVO.class)).collect(Collectors.toList());
+        // 获取全部客户信息
+        List<Client> clientList = clientRepository.findAll();
+        // 每个hr添加客户名称
+        clientLinkManVOList.forEach(m -> {
+            if (null != m.getClientId()) {
+                Optional<Client> clientOptional = clientList.stream().filter(c -> m.getClientId().equals(c.getId())).findFirst();
+                if (clientOptional.isPresent()) {
+                    m.setClientName(clientOptional.get().getChineseName());
+                }
+            }
+        });
+        return clientLinkManVOList;
     }
 
     /**
