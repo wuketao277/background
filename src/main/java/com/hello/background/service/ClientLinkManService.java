@@ -9,10 +9,7 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ClientLinkManSimpleVO;
 import com.hello.background.vo.ClientLinkManVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,11 +87,12 @@ public class ClientLinkManService {
      * @return
      */
     public List<ClientLinkManVO> queryAll() {
-        List<ClientLinkMan> list = clientLinkManRepository.findAll();
-        List<ClientLinkManVO> manVOList = list.stream().map(c -> TransferUtil.transferTo(c, ClientLinkManVO.class)).collect(Collectors.toList());
-        // 按中文名排序
-        manVOList.sort(Comparator.comparing(ClientLinkManVO::getChineseName));
-        return manVOList;
+        List<String> properties = new ArrayList<>();
+        properties.add("englishName");
+        properties.add("chineseName");
+        Sort sort = new Sort(Sort.Direction.ASC, properties);
+        List<ClientLinkMan> list = clientLinkManRepository.findAll(sort);
+        return list.stream().map(c -> TransferUtil.transferTo(c, ClientLinkManVO.class)).collect(Collectors.toList());
     }
 
     /**
