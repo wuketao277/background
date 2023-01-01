@@ -12,7 +12,9 @@ public enum CandidateNotMatchReasonEnum {
     LANGUAGE("LANGUAGE", "语言"),
     LOCATION("LOCATION", "地点"),
     PACKAGE("PACKAGE", "薪资"),
-    ABILITY("ABILITY", "能力");
+    ABILITY("ABILITY", "能力"),
+    NOCONSIDER("NOCONSIDER", "不考虑"),
+    OTHER("OTHER", "其他");
 
     private String code;
     private String name;

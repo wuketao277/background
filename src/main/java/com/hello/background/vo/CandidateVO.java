@@ -1,6 +1,7 @@
 package com.hello.background.vo;
 
 import com.hello.background.constant.CandidateNotMatchReasonEnum;
+import com.hello.background.constant.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,6 +51,11 @@ public class CandidateVO {
      * 电话
      */
     private String phoneNo;
+
+    /**
+     * 性别
+     */
+    private GenderEnum gender;
 
     /**
      * 邮箱

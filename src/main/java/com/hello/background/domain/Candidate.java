@@ -1,6 +1,7 @@
 package com.hello.background.domain;
 
 import com.hello.background.constant.CandidateNotMatchReasonEnum;
+import com.hello.background.constant.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -67,6 +68,12 @@ public class Candidate {
      */
     @Column(length = 200)
     private String email;
+
+    /**
+     * 性别
+     */
+    @Enumerated
+    private GenderEnum gender;
 
     /**
      * 公司名称

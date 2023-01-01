@@ -79,4 +79,11 @@ public interface CandidateRepository extends PagingAndSortingRepository<Candidat
      * @return
      */
     List<Candidate> findByPhoneNo(String phoneNo);
+
+    /**
+     * 分页获取生日不为空的候选人
+     *
+     * @return
+     */
+    List<Candidate> findAllByBirthDayIsNotNull(Pageable pageable);
 }
