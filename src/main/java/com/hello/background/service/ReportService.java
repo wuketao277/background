@@ -51,6 +51,7 @@ public class ReportService {
             // 个人 gp到账数据
             generatePersonalReceiveData(iterable, startDate, endDate, response);
         } catch (Exception ex) {
+            log.error("queryGeneral", ex);
         }
         return response;
     }
@@ -71,7 +72,7 @@ public class ReportService {
                     && s.getInvoiceDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getInvoiceDate()) >= 0) {
                 response.getInvoiceDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setInvoiceDateBilling(response.getInvoiceDateBilling().add(s.getBilling()));
+                response.setInvoiceDateBilling(response.getInvoiceDateBilling().add(Optional.ofNullable(s.getBilling()).orElse(BigDecimal.ZERO)));
             }
         }
     }
@@ -93,14 +94,14 @@ public class ReportService {
                     && endDate.compareTo(s.getPaymentDate()) >= 0) {
                 // 应到
                 response.getPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setPaymentDateBilling(response.getPaymentDateBilling().add(s.getBilling()));
+                response.setPaymentDateBilling(response.getPaymentDateBilling().add(Optional.ofNullable(s.getBilling()).orElse(BigDecimal.ZERO)));
             }
             if (s.getActualPaymentDate() != null
                     && s.getActualPaymentDate().compareTo(startDate) >= 0
                     && endDate.compareTo(s.getActualPaymentDate()) >= 0) {
                 // 已付款
                 response.getActualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setActualPaymentDateBilling(response.getActualPaymentDateBilling().add(s.getBilling()));
+                response.setActualPaymentDateBilling(response.getActualPaymentDateBilling().add(Optional.ofNullable(s.getBilling()).orElse(BigDecimal.ZERO)));
             }
             if (s.getPaymentDate() != null
                     && s.getPaymentDate().compareTo(startDate) >= 0
@@ -108,7 +109,7 @@ public class ReportService {
                     && s.getActualPaymentDate() == null) {
                 // 未付款
                 response.getUnactualPaymentDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), s.getBilling()));
-                response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling().add(s.getBilling()));
+                response.setUnactualPaymentDateBilling(response.getUnactualPaymentDateBilling().add(Optional.ofNullable(s.getBilling()).orElse(BigDecimal.ZERO)));
             }
         }
     }
@@ -131,12 +132,12 @@ public class ReportService {
                 // 猎头业务和咨询业务算billing，外包业务算gp
                 BigDecimal sum = BigDecimal.ZERO;
                 if ("perm".equals(s.getType()) || "consultation".equals(s.getType())) {
-                    sum = s.getBilling();
+                    sum = Optional.ofNullable(s.getBilling()).orElse(BigDecimal.ZERO);
                 } else {
-                    sum = s.getGp();
+                    sum = Optional.ofNullable(s.getGp()).orElse(BigDecimal.ZERO);
                 }
                 response.getOfferDateData().add(new QueryGeneralReportResponseKeyValue(s.getCandidateChineseName(), sum));
-                response.setOfferDateBilling(response.getOfferDateBilling().add(sum));
+                response.setOfferDateBilling(response.getOfferDateBilling().add(Optional.ofNullable(sum).orElse(BigDecimal.ZERO)));
             }
         }
     }

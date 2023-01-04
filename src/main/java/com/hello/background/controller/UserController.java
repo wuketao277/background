@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wuketao
@@ -116,5 +117,17 @@ public class UserController {
         // 获取当前用户
         UserVO user = (UserVO) session.getAttribute("user");
         return userService.updatePassword(updatePassword.getOldPassword(), updatePassword.getNewPassword(), user.getId());
+    }
+
+    /**
+     * 角色检查
+     *
+     * @return
+     */
+    @GetMapping("roleCheck")
+    public boolean roleCheck(String role, HttpSession session) {
+        // 获取当前用户
+        UserVO user = (UserVO) session.getAttribute("user");
+        return user.getRoles().stream().map(r -> r.name()).collect(Collectors.toList()).contains(role);
     }
 }
