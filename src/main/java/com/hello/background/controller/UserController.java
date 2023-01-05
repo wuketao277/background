@@ -1,5 +1,6 @@
 package com.hello.background.controller;
 
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.UserService;
 import com.hello.background.vo.UpdatePassword;
 import com.hello.background.vo.UserVO;
@@ -21,6 +22,18 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    /**
+     * 获取当前用户的角色列表
+     *
+     * @return
+     */
+    @GetMapping("getCurrentUserRoleList")
+    public List<RoleEnum> getCurrentUserRoleList(HttpSession session) {
+        // 获取当前用户
+        UserVO user = (UserVO) session.getAttribute("user");
+        return user.getRoles();
+    }
 
     /**
      * 通过id查询用户信息
