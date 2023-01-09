@@ -46,8 +46,9 @@ public class CaseController {
      * @return
      */
     @PostMapping("queryPage")
-    public Page<CaseVO> queryPage(@RequestBody CaseQueryPageRequest request) {
-        return caseService.queryPage(request);
+    public Page<CaseVO> queryPage(@RequestBody CaseQueryPageRequest request, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return caseService.queryPage(request, userVO);
     }
 
     /**

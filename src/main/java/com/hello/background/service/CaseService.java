@@ -1,6 +1,7 @@
 package com.hello.background.service;
 
 import com.hello.background.constant.CaseStatusEnum;
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.CaseRepository;
@@ -8,6 +9,7 @@ import com.hello.background.repository.ClientRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CaseQueryPageRequest;
 import com.hello.background.vo.CaseVO;
+import com.hello.background.vo.UserVO;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -76,7 +78,7 @@ public class CaseService {
      *
      * @return
      */
-    public Page<CaseVO> queryPage(CaseQueryPageRequest request) {
+    public Page<CaseVO> queryPage(CaseQueryPageRequest request, UserVO userVO) {
         Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), Sort.Direction.DESC, "id");
         Specification<ClientCase> specification = new Specification<ClientCase>() {
             @Override
@@ -102,7 +104,7 @@ public class CaseService {
         };
         Page<ClientCase> all = caseRepository.findAll(specification, pageable);
         Page<CaseVO> map = all.map(x -> fromDoToVo(x));
-        map = new PageImpl<>(map.getContent(),
+        map = new PageImpl<>(userVO.getJobType().equals(JobTypeEnum.EXPERIENCE) ? map.getContent().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).collect(Collectors.toList()) : map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;

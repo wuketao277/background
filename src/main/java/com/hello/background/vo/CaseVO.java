@@ -1,11 +1,13 @@
 package com.hello.background.vo;
 
 import com.hello.background.constant.CaseStatusEnum;
+import com.hello.background.constant.JobTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 职位
@@ -142,4 +144,9 @@ public class CaseVO {
      * CW登录名
      */
     private String cwUserName;
+
+    /**
+     * 该职位对哪些人可见
+     */
+    private List<JobTypeEnum> show4JobType;
 }

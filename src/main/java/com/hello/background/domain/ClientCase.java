@@ -1,6 +1,8 @@
 package com.hello.background.domain;
 
 import com.hello.background.constant.CaseStatusEnum;
+import com.hello.background.constant.JobTypeEnum;
+import com.hello.background.converter.JobTypeEnumListStringAttrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 职位
@@ -172,4 +175,11 @@ public class ClientCase {
      */
     @Column(length = 50)
     private String cwUserName;
+
+    /**
+     * 该职位对哪些人可见
+     */
+    @Column(length = 100)
+    @Convert(converter = JobTypeEnumListStringAttrConverter.class)
+    private List<JobTypeEnum> show4JobType;
 }
