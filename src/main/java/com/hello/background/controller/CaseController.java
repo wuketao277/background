@@ -31,9 +31,11 @@ public class CaseController {
 
     @PostMapping("save")
     public CaseVO save(@RequestBody CaseVO vo, HttpSession session) {
-        UserVO userVO = (UserVO) session.getAttribute("user");
-        vo.setCreateUserId(userVO.getUsername());
-        vo.setCreateTime(LocalDateTime.now());
+        if (null == vo.getId()) {
+            UserVO userVO = (UserVO) session.getAttribute("user");
+            vo.setCreateUserId(userVO.getUsername());
+            vo.setCreateTime(LocalDateTime.now());
+        }
         return caseService.save(vo);
     }
 
