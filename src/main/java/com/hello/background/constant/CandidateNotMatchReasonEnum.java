@@ -13,6 +13,7 @@ public enum CandidateNotMatchReasonEnum {
     LOCATION("LOCATION", "地点"),
     PACKAGE("PACKAGE", "薪资"),
     ABILITY("ABILITY", "能力"),
+    EDUCATION_BACKGROUND("EDUCATION_BACKGROUND", "学历"),
     NOCONSIDER("NOCONSIDER", "不考虑"),
     OTHER("OTHER", "其他");
 

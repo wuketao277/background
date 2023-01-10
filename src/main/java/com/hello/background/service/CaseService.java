@@ -104,9 +104,10 @@ public class CaseService {
         };
         Page<ClientCase> all = caseRepository.findAll(specification, pageable);
         Page<CaseVO> map = all.map(x -> fromDoToVo(x));
-        map = new PageImpl<>(userVO.getJobType().equals(JobTypeEnum.EXPERIENCE) ? map.getContent().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).collect(Collectors.toList()) : map.getContent(),
+        List<CaseVO> caseVOList = userVO.getJobType().equals(JobTypeEnum.EXPERIENCE) ? map.getContent().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).collect(Collectors.toList()) : map.getContent();
+        map = new PageImpl<>(caseVOList,
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                all.getTotalElements());
+                caseVOList.size());
         return map;
     }
 
