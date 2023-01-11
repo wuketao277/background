@@ -51,8 +51,8 @@ public class SuccessfulPermController {
      * @return
      */
     @PostMapping("queryPage")
-    public Page<SuccessfulPermVO> queryPage(@RequestBody SuccessfulPermVOPageRequest request) {
-        return successfulPermService.queryPage(request);
+    public Page<SuccessfulPermVO> queryPage(@RequestBody SuccessfulPermVOPageRequest request, HttpSession session) {
+        return successfulPermService.queryPage(request, session);
     }
 
     /**
@@ -61,8 +61,8 @@ public class SuccessfulPermController {
      * @return
      */
     @PostMapping("queryStatistics")
-    public SuccessfulCaseStatisticsResponse queryStatistics(@RequestBody SuccessfulPermVOPageRequest request) {
-        return successfulPermService.queryStatistics(request);
+    public SuccessfulCaseStatisticsResponse queryStatistics(@RequestBody SuccessfulPermVOPageRequest request, HttpSession session) {
+        return successfulPermService.queryStatistics(request, session);
     }
 
     /**

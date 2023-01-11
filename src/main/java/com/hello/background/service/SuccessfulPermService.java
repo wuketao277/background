@@ -1,13 +1,11 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.SuccessfulPerm;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.SuccessfulCaseStatisticsResponse;
-import com.hello.background.vo.SuccessfulPermVO;
-import com.hello.background.vo.SuccessfulPermVOPageRequest;
-import com.hello.background.vo.SuccessfulPermVOPageSearchRequest;
+import com.hello.background.vo.*;
 import org.apache.logging.log4j.util.Strings;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +55,9 @@ public class SuccessfulPermService {
      *
      * @return
      */
-    public Page<SuccessfulPermVO> queryPage(SuccessfulPermVOPageRequest request) {
+    public Page<SuccessfulPermVO> queryPage(SuccessfulPermVOPageRequest request, HttpSession session) {
+        // 获取用户
+        UserVO user = (UserVO) session.getAttribute("user");
         Sort sort = new Sort(Sort.Direction.DESC, "offerDate", "onBoardDate", "paymentDate", "actualPaymentDate");
         Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), sort);
         Specification<SuccessfulPerm> specification = new Specification<SuccessfulPerm>() {
@@ -95,7 +96,40 @@ public class SuccessfulPermService {
                     Predicate equal4 = criteriaBuilder.equal(path4, search.getConsultantId());
                     Path<String> path5 = root.get("consultantId5");
                     Predicate equal5 = criteriaBuilder.equal(path5, search.getConsultantId());
-                    list.add(criteriaBuilder.or(equal, equal2, equal3, equal4, equal5));
+                    Path<String> path6 = root.get("consultantId6");
+                    Predicate equal6 = criteriaBuilder.equal(path6, search.getConsultantId());
+                    Path<String> path7 = root.get("consultantId7");
+                    Predicate equal7 = criteriaBuilder.equal(path7, search.getConsultantId());
+                    Path<String> path8 = root.get("consultantId8");
+                    Predicate equal8 = criteriaBuilder.equal(path8, search.getConsultantId());
+                    Path<String> path9 = root.get("consultantId9");
+                    Predicate equal9 = criteriaBuilder.equal(path9, search.getConsultantId());
+                    Path<String> path10 = root.get("consultantId10");
+                    Predicate equal10 = criteriaBuilder.equal(path10, search.getConsultantId());
+                    Path<String> path11 = root.get("consultantId11");
+                    Predicate equal11 = criteriaBuilder.equal(path11, search.getConsultantId());
+                    Path<String> path12 = root.get("consultantId12");
+                    Predicate equal12 = criteriaBuilder.equal(path12, search.getConsultantId());
+                    Path<String> path13 = root.get("consultantId13");
+                    Predicate equal13 = criteriaBuilder.equal(path13, search.getConsultantId());
+                    Path<String> path14 = root.get("consultantId14");
+                    Predicate equal14 = criteriaBuilder.equal(path14, search.getConsultantId());
+                    Path<String> path15 = root.get("consultantId15");
+                    Predicate equal15 = criteriaBuilder.equal(path15, search.getConsultantId());
+                    Path<String> path16 = root.get("consultantId16");
+                    Predicate equal16 = criteriaBuilder.equal(path16, search.getConsultantId());
+                    Path<String> path17 = root.get("consultantId17");
+                    Predicate equal17 = criteriaBuilder.equal(path17, search.getConsultantId());
+                    Path<String> path18 = root.get("consultantId18");
+                    Predicate equal18 = criteriaBuilder.equal(path18, search.getConsultantId());
+                    Path<String> path19 = root.get("consultantId19");
+                    Predicate equal19 = criteriaBuilder.equal(path19, search.getConsultantId());
+                    Path<String> path20 = root.get("consultantId20");
+                    Predicate equal20 = criteriaBuilder.equal(path20, search.getConsultantId());
+                    list.add(criteriaBuilder.or(equal, equal2, equal3, equal4, equal5
+                            , equal6, equal7, equal8, equal9, equal10
+                            , equal11, equal12, equal13, equal14, equal15
+                            , equal16, equal17, equal18, equal19, equal20));
                 }
                 if (null != search.getCwId()) {
                     Path<String> path = root.get("cwId");
@@ -182,6 +216,57 @@ public class SuccessfulPermService {
                     Predicate equal = criteriaBuilder.equal(path, search.getType());
                     list.add(criteriaBuilder.and(equal));
                 }
+                // 非管理员只能查询与自己相关的成功case
+                if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
+                    Path<String> pathbd = root.get("bdId");
+                    Predicate equalbd = criteriaBuilder.equal(pathbd, user.getId());
+                    Path<String> pathcw = root.get("cwId");
+                    Predicate equalcw = criteriaBuilder.equal(pathcw, user.getId());
+                    Path<String> path = root.get("consultantId");
+                    Predicate equal = criteriaBuilder.equal(path, user.getId());
+                    Path<String> path2 = root.get("consultantId2");
+                    Predicate equal2 = criteriaBuilder.equal(path2, user.getId());
+                    Path<String> path3 = root.get("consultantId3");
+                    Predicate equal3 = criteriaBuilder.equal(path3, user.getId());
+                    Path<String> path4 = root.get("consultantId4");
+                    Predicate equal4 = criteriaBuilder.equal(path4, user.getId());
+                    Path<String> path5 = root.get("consultantId5");
+                    Predicate equal5 = criteriaBuilder.equal(path5, user.getId());
+                    Path<String> path6 = root.get("consultantId6");
+                    Predicate equal6 = criteriaBuilder.equal(path6, user.getId());
+                    Path<String> path7 = root.get("consultantId7");
+                    Predicate equal7 = criteriaBuilder.equal(path7, user.getId());
+                    Path<String> path8 = root.get("consultantId8");
+                    Predicate equal8 = criteriaBuilder.equal(path8, user.getId());
+                    Path<String> path9 = root.get("consultantId9");
+                    Predicate equal9 = criteriaBuilder.equal(path9, user.getId());
+                    Path<String> path10 = root.get("consultantId10");
+                    Predicate equal10 = criteriaBuilder.equal(path10, user.getId());
+                    Path<String> path11 = root.get("consultantId11");
+                    Predicate equal11 = criteriaBuilder.equal(path11, user.getId());
+                    Path<String> path12 = root.get("consultantId12");
+                    Predicate equal12 = criteriaBuilder.equal(path12, user.getId());
+                    Path<String> path13 = root.get("consultantId13");
+                    Predicate equal13 = criteriaBuilder.equal(path13, user.getId());
+                    Path<String> path14 = root.get("consultantId14");
+                    Predicate equal14 = criteriaBuilder.equal(path14, user.getId());
+                    Path<String> path15 = root.get("consultantId15");
+                    Predicate equal15 = criteriaBuilder.equal(path15, user.getId());
+                    Path<String> path16 = root.get("consultantId16");
+                    Predicate equal16 = criteriaBuilder.equal(path16, user.getId());
+                    Path<String> path17 = root.get("consultantId17");
+                    Predicate equal17 = criteriaBuilder.equal(path17, user.getId());
+                    Path<String> path18 = root.get("consultantId18");
+                    Predicate equal18 = criteriaBuilder.equal(path18, user.getId());
+                    Path<String> path19 = root.get("consultantId19");
+                    Predicate equal19 = criteriaBuilder.equal(path19, user.getId());
+                    Path<String> path20 = root.get("consultantId20");
+                    Predicate equal20 = criteriaBuilder.equal(path20, user.getId());
+                    list.add(criteriaBuilder.or(equalbd, equalcw, equal, equal2, equal3, equal4, equal5
+                            , equal6, equal7, equal8, equal9, equal10
+                            , equal11, equal12, equal13, equal14, equal15
+                            , equal16, equal17, equal18, equal19, equal20));
+                }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
             }
@@ -199,9 +284,9 @@ public class SuccessfulPermService {
      *
      * @return
      */
-    public SuccessfulCaseStatisticsResponse queryStatistics(SuccessfulPermVOPageRequest request) {
+    public SuccessfulCaseStatisticsResponse queryStatistics(SuccessfulPermVOPageRequest request, HttpSession session) {
         SuccessfulCaseStatisticsResponse response = new SuccessfulCaseStatisticsResponse();
-        Page<SuccessfulPermVO> successfulPermVOPage = queryPage(request);
+        Page<SuccessfulPermVO> successfulPermVOPage = queryPage(request, session);
         List<SuccessfulPermVO> successfulPermVOList = Optional.ofNullable(successfulPermVOPage).map(p -> p.getContent()).orElse(Lists.emptyList());
         successfulPermVOList.stream().forEach(s -> {
             BigDecimal billing = s.getBilling();
