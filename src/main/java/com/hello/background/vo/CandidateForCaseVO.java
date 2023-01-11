@@ -88,6 +88,11 @@ public class CandidateForCaseVO {
     private LocalDateTime latestCommentInputtime;
 
     /**
+     * 最远的阶段
+     */
+    private String farthestPhase;
+
+    /**
      * 是否关注
      */
     private Boolean attention = true;

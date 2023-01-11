@@ -5,6 +5,7 @@ import com.hello.background.domain.CandidateForCase;
 import com.hello.background.service.CandidateForCaseService;
 import com.hello.background.service.CandidateService;
 import com.hello.background.service.CaseService;
+import com.hello.background.service.CommentService;
 import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,12 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 候选人与职位关联表 控制器
@@ -34,6 +41,11 @@ public class CandidateForCaseController {
     private CandidateService candidateService;
     @Autowired
     private CaseService caseService;
+    @Autowired
+    private CommentService commentService;
+
+    // 创建线程池
+    private ThreadPoolExecutor threadPool = new ThreadPoolExecutor(100, 100, 100, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1000));
 
     /**
      * 保存 候选人与职位关联 信息
@@ -126,6 +138,40 @@ public class CandidateForCaseController {
     @GetMapping("findByCaseId")
     public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId) {
         List<CandidateForCaseVO> voList = candidateForCaseService.findByCaseId(caseId);
+        CountDownLatch cdl = new CountDownLatch(voList.size());
+        voList.forEach(c -> {
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // 查询候选人最远阶段
+                    List<CommentVO> commentVOList = commentService.findAllByCandidateId(c.getCandidateId());
+                    Set<String> phaseSet = commentVOList.stream().map(c -> c.getPhase()).collect(Collectors.toSet());
+                    // 从最远阶段开始排查
+                    if (phaseSet.contains("On Board")) {
+                        c.setFarthestPhase("On Board");
+                    } else if (phaseSet.contains("Offer Signed")) {
+                        c.setFarthestPhase("Offer Signed");
+                    } else if (phaseSet.contains("Final Interview")) {
+                        c.setFarthestPhase("Final Interview");
+                    } else if (phaseSet.contains("4th Interview")) {
+                        c.setFarthestPhase("4th Interview");
+                    } else if (phaseSet.contains("3rd Interview")) {
+                        c.setFarthestPhase("3rd Interview");
+                    } else if (phaseSet.contains("2nd Interview")) {
+                        c.setFarthestPhase("2nd Interview");
+                    } else if (phaseSet.contains("1st Interview")) {
+                        c.setFarthestPhase("1st Interview");
+                    } else if (phaseSet.contains("CVO")) {
+                        c.setFarthestPhase("CVO");
+                    }
+                    cdl.countDown();
+                }
+            });
+        });
+        try {
+            cdl.await();
+        } catch (Exception ex) {
+        }
         voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
         return voList;
     }
