@@ -3,7 +3,8 @@ package com.hello.background.repository;
 import com.hello.background.domain.MyTask;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.util.List;
  * @Description
  */
 @Repository
-public interface MyTaskRepository extends JpaRepository<MyTask, Integer> {
+public interface MyTaskRepository extends PagingAndSortingRepository<MyTask, Integer>, JpaSpecificationExecutor<MyTask> {
 
     /**
      * 通过后续人id查询

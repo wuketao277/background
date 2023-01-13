@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.MyTaskService;
+import com.hello.background.vo.MyTaskPageQueryVO;
 import com.hello.background.vo.MyTaskUpdateVO;
 import com.hello.background.vo.MyTaskVO;
 import com.hello.background.vo.UserVO;
@@ -106,14 +107,10 @@ public class MyTaskController {
     /**
      * 查询分页
      *
-     * @param search      搜索关键字
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
      * @return
      */
-    @GetMapping("queryMyTaskPage")
-    public Page<MyTaskVO> queryMyTaskPage(String search, Integer currentPage, Integer pageSize) {
-        search = "%" + search + "%";
-        return myTaskService.queryMyTaskPage(search, currentPage, pageSize);
+    @PostMapping("queryMyTaskPage")
+    public Page<MyTaskVO> queryMyTaskPage(@RequestBody MyTaskPageQueryVO queryVO, HttpSession session) {
+        return myTaskService.queryMyTaskPage(queryVO, session);
     }
 }
