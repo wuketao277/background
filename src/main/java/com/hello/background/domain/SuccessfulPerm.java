@@ -545,10 +545,15 @@ public class SuccessfulPerm {
     @Column
     private BigDecimal billing;
     /**
-     *
+     * 入职日期
      */
     @Column
     private Date onBoardDate;
+    /**
+     * 保证日期
+     */
+    @Column
+    private Date guaranteeDate;
     /**
      *
      */

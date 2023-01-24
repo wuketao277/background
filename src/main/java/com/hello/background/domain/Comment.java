@@ -34,7 +34,32 @@ public class Comment {
     /**
      * 候选人id
      */
+    @Column
     private Integer candidateId;
+
+    /**
+     * 客户id
+     */
+    @Column
+    private Integer clientId;
+
+    /**
+     * 客户公司名称
+     */
+    @Column(length = 200)
+    private String clientName;
+
+    /**
+     * 职位id
+     */
+    @Column
+    private Integer caseId;
+
+    /**
+     * 职位名称
+     */
+    @Column(length = 200)
+    private String caseTitle;
 
     /**
      * 登录名

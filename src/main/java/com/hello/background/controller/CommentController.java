@@ -1,5 +1,6 @@
 package com.hello.background.controller;
 
+import com.hello.background.service.CandidateForCaseService;
 import com.hello.background.service.CommentService;
 import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.util.List;
 public class CommentController {
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private CandidateForCaseService candidateForCaseService;
 
     @PostMapping("save")
     public CommentVO save(@RequestBody CommentVO vo, HttpSession session) {
@@ -28,7 +31,10 @@ public class CommentController {
         vo.setInputTime(LocalDateTime.now());
         vo.setRealname(user.getRealname());
         vo.setUsername(user.getUsername());
-        return commentService.save(vo);
+        CommentVO commentVO = commentService.save(vo);
+        // 更新候选人关联职位最新阶段
+        candidateForCaseService.updateLastPhase(commentVO.getCandidateId(), commentVO.getCaseId(), commentVO.getPhase());
+        return commentVO;
     }
 
     /**

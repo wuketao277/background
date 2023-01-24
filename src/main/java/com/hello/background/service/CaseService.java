@@ -4,8 +4,10 @@ import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
+import com.hello.background.repository.CaseAttentionRepository;
 import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.ClientRepository;
+import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CaseQueryPageRequest;
 import com.hello.background.vo.CaseVO;
@@ -39,6 +41,10 @@ public class CaseService {
     private CaseRepository caseRepository;
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CaseAttentionRepository caseAttentionRepository;
 
     /**
      * 通过id查找职位

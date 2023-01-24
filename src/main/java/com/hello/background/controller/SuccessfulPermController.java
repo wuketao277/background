@@ -1,5 +1,6 @@
 package com.hello.background.controller;
 
+import com.hello.background.service.CandidateForCaseService;
 import com.hello.background.service.ClientService;
 import com.hello.background.service.SuccessfulPermService;
 import com.hello.background.vo.*;
@@ -27,6 +28,8 @@ public class SuccessfulPermController {
     private SuccessfulPermService successfulPermService;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private CandidateForCaseService candidateForCaseService;
 
     /**
      * 保存
@@ -42,7 +45,24 @@ public class SuccessfulPermController {
         if (!StringUtils.isEmpty(vo.getClientId())) {
             vo.setClientName(Optional.ofNullable(clientService.queryById(vo.getClientId())).map(x -> x.getChineseName()).orElse(""));
         }
-        return successfulPermService.save(vo);
+        SuccessfulPermVO successfulPermVO = successfulPermService.save(vo);
+        // 更新候选人关联职位最新阶段
+        if ("perm".equals(successfulPermVO.getType())
+                && null != successfulPermVO.getClientId()
+                && null != successfulPermVO.getCaseId()) {
+            // 猎头业务，且候选人id和职位id不为空
+            if (null != successfulPermVO.getGuaranteeDate() && new Date().compareTo(successfulPermVO.getGuaranteeDate()) > 0) {
+                // 存在保证期且当前时间大于保证期，表示已成功
+                candidateForCaseService.updateLastPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Successful");
+            } else if (null != successfulPermVO.getActualPaymentDate()) {
+                // 实际付款日期不为空，更新最新阶段到Payment
+                candidateForCaseService.updateLastPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Payment");
+            } else if (null != successfulPermVO.getInvoiceDate()) {
+                // 实际付款日期不为空，更新最新阶段到Invoice
+                candidateForCaseService.updateLastPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Invoice");
+            }
+        }
+        return successfulPermVO;
     }
 
     /**

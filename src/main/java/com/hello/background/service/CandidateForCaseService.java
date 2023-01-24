@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -166,5 +167,36 @@ public class CandidateForCaseService {
         CandidateForCase candidateForCase = candidateForCaseRepository.findById(id).get();
         candidateForCase.setAttention(attention);
         candidateForCaseRepository.save(candidateForCase);
+    }
+
+    /**
+     * 更新候选人在该职位上的最新阶段
+     *
+     * @param candidateId
+     * @param caseId
+     * @param newPhase
+     */
+    public void updateLastPhase(Integer candidateId, Integer caseId, String newPhase) {
+        // 只有有效的阶段才进行储存
+        List<String> phaseList = Arrays.asList("IOI", "VI", "CVO"
+                , "1st Interview", "2nd Interview", "3rd Interview", "4th Interview",
+                "Final Interview", "Offer Signed", "On Board", "Invoice", "Payment", "END", "Successful");
+        if (phaseList.contains(newPhase)) {
+            // 通过候选人Id和职位Id，查询关联关系
+            Optional<CandidateForCase> optional = candidateForCaseRepository.findByCandidateIdAndCaseId(candidateId, caseId).stream().findFirst();
+            if (optional.isPresent()) {
+                CandidateForCase candidateForCase = optional.get();
+                if ((newPhase.equals("IOI") || newPhase.equals("VI"))
+                        && null == candidateForCase.getLastPhase()) {
+                    // IOI/VI只有在没有最新阶段时才进行更新更新数据
+                    candidateForCase.setLastPhase(newPhase);
+                    candidateForCaseRepository.save(candidateForCase);
+                } else {
+                    // 其他阶段都直接更新
+                    candidateForCase.setLastPhase(newPhase);
+                    candidateForCaseRepository.save(candidateForCase);
+                }
+            }
+        }
     }
 }

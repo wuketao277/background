@@ -60,6 +60,29 @@ public class DateTimeUtil {
         return simpleDateFormat.format(new Date());
     }
 
+    /**
+     * 获取当前时间字符串
+     *
+     * @return
+     */
+    public static String getTimeStr(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd 24HH:mm:ss");
+        return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 获取当前时间字符串
+     *
+     * @return
+     */
+    public static String getDateStr(Date date) {
+        if (null == date) {
+            return "";
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(date);
+    }
+
     public static Date localDate2Date(LocalDate ld) {
         if (null == ld) {
             return null;

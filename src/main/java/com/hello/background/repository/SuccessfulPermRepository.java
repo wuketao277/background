@@ -29,4 +29,13 @@ public interface SuccessfulPermRepository extends PagingAndSortingRepository<Suc
      * @return
      */
     List<SuccessfulPerm> findByApproveStatusIn(List<String> approveStatusList);
+
+    /**
+     * 通过候选人Id和职位Id查询成功case
+     *
+     * @param candidateId
+     * @param caseId
+     * @return
+     */
+    List<SuccessfulPerm> findByCandidateIdAndCaseId(Integer candidateId, Integer caseId);
 }

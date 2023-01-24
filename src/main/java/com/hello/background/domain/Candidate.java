@@ -136,6 +136,12 @@ public class Candidate {
     private String englishLevel;
 
     /**
+     * 日文水平
+     */
+    @Column(length = 200)
+    private String japaneseLevel;
+
+    /**
      * 候选人不匹配原因
      */
     @Column

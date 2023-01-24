@@ -15,7 +15,16 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findAllByCandidateId(Integer candidateId);
-    
+
+    /**
+     * 通过候选人ID和职位ID查询
+     *
+     * @param candidateId
+     * @param caseId
+     * @return
+     */
+    List<Comment> findAllByCandidateIdAndCaseId(Integer candidateId, Integer caseId);
+
     List<Comment> findAllByCandidateIdOrderByInputTimeDesc(Integer candidateId);
 
     List<Comment> findByContentLikeOrderByCandidateIdAscIdAsc(String content);

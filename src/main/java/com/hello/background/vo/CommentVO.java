@@ -30,7 +30,27 @@ public class CommentVO {
     /**
      * 候选人姓名
      */
-    private String chineseName;
+    private String candidateName;
+
+    /**
+     * 客户id
+     */
+    private Integer clientId;
+
+    /**
+     * 客户公司名称
+     */
+    private String clientName;
+
+    /**
+     * 职位id
+     */
+    private Integer caseId;
+
+    /**
+     * 职位名称
+     */
+    private String caseTitle;
 
     /**
      * 录入人名称

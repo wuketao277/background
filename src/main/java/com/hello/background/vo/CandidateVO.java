@@ -113,6 +113,11 @@ public class CandidateVO {
     private String englishLevel;
 
     /**
+     * 日文水平
+     */
+    private String japaneseLevel;
+
+    /**
      * 候选人不匹配原因
      */
     private CandidateNotMatchReasonEnum notMatchReason;

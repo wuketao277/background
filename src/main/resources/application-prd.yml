@@ -12,9 +12,9 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     # 配置Druid
     type: com.alibaba.druid.pool.DruidDataSource
-    initialSize: 2
-    minIdle: 2
-    maxActive: 5
+    initialSize: 20
+    minIdle: 20
+    maxActive: 20
     maxWait: 60000
     timeBetweenEvictionRunsMillis: 60000
     # 配置一个连接在池中最小生存的时间，单位是毫秒

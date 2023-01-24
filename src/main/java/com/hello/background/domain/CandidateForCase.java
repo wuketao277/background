@@ -36,24 +36,6 @@ public class CandidateForCase {
     private Integer candidateId;
 
     /**
-     * 职位id
-     */
-    @Column
-    private Integer caseId;
-
-    /**
-     * 客户id
-     */
-    @Column
-    private Integer clientId;
-
-    /**
-     * 职位名称
-     */
-    @Column(length = 200)
-    private String title;
-
-    /**
      * 中文名字
      */
     @Column(length = 50)
@@ -64,6 +46,30 @@ public class CandidateForCase {
      */
     @Column(length = 100)
     private String englishName;
+
+    /**
+     * 客户id
+     */
+    @Column
+    private Integer clientId;
+
+    /**
+     * 职位id
+     */
+    @Column
+    private Integer caseId;
+
+    /**
+     * 职位名称
+     */
+    @Column(length = 200)
+    private String title;
+
+    /**
+     * 候选人在该职位的最后阶段
+     */
+    @Column(length = 20)
+    private String lastPhase;
 
     /**
      * 状态

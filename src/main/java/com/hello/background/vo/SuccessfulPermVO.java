@@ -434,9 +434,13 @@ public class SuccessfulPermVO implements Serializable {
      */
     private BigDecimal billing;
     /**
-     *
+     * 入职日期
      */
     private Date onBoardDate;
+    /**
+     * 保证日期
+     */
+    private Date guaranteeDate;
     /**
      *
      */
