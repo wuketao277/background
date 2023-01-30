@@ -110,10 +110,14 @@ public class CaseService {
         };
         Page<ClientCase> all = caseRepository.findAll(specification, pageable);
         Page<CaseVO> map = all.map(x -> fromDoToVo(x));
-        List<CaseVO> caseVOList = userVO.getJobType().equals(JobTypeEnum.EXPERIENCE) ? map.getContent().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).collect(Collectors.toList()) : map.getContent();
-        map = new PageImpl<>(caseVOList,
+        // 判断当前用户是否是体验用户
+        boolean isExperience = userVO.getJobType().equals(JobTypeEnum.EXPERIENCE);
+        // 通过是否是体验用户，觉得返回内容和总元素数
+        List<CaseVO> content = isExperience ? map.getContent().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).collect(Collectors.toList()) : map.getContent();
+        long total = isExperience ? content.size() : map.getTotalElements();
+        map = new PageImpl<>(content,
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                caseVOList.size());
+                total);
         return map;
     }
 
