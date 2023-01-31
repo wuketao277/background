@@ -85,39 +85,46 @@ public class CaseService {
      * @return
      */
     public Page<CaseVO> queryPage(CaseQueryPageRequest request, UserVO userVO) {
-        Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), Sort.Direction.DESC, "id");
-        Specification<ClientCase> specification = new Specification<ClientCase>() {
-            @Override
-            public Predicate toPredicate(Root<ClientCase> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> list = new ArrayList<>();
-                if (null != request.getSearch()) {
-                    if (null != request.getSearch().getClientId()) {
-                        list.add(criteriaBuilder.equal(root.get("clientId"), request.getSearch().getClientId()));
-                    }
-                    if (null != request.getSearch().getHrId()) {
-                        list.add(criteriaBuilder.equal(root.get("hrId"), request.getSearch().getHrId()));
-                    }
-                    if (Strings.isNotBlank(request.getSearch().getTitle())) {
-                        list.add(criteriaBuilder.like(root.get("title"), "%" + request.getSearch().getTitle() + "%"));
-                    }
-                    if (null != request.getSearch().getStatus()) {
-                        list.add(criteriaBuilder.equal(root.get("status"), request.getSearch().getStatus()));
-                    }
-                }
-                Predicate[] p = new Predicate[list.size()];
-                return criteriaBuilder.and(list.toArray(p));
-            }
-        };
-        Page<ClientCase> all = caseRepository.findAll(specification, pageable);
-        Page<CaseVO> map = all.map(x -> fromDoToVo(x));
+        Page<CaseVO> map = null;
         // 判断当前用户是否是体验用户
         boolean isExperience = userVO.getJobType().equals(JobTypeEnum.EXPERIENCE);
-        // 通过是否是体验用户，觉得返回内容和总元素数
-        List<CaseVO> content = isExperience ? map.getContent().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).collect(Collectors.toList()) : map.getContent();
-        long total = isExperience ? content.size() : map.getTotalElements();
-        map = new PageImpl<>(content,
-                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
-                total);
+        if (isExperience) {
+            List<CaseVO> all = caseRepository.findAll().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).map(x -> fromDoToVo(x)).collect(Collectors.toList());
+            map = new PageImpl<>(all,
+                    new PageRequest(1, all.size()),
+                    all.size());
+        } else {
+            Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), Sort.Direction.DESC, "id");
+            Specification<ClientCase> specification = new Specification<ClientCase>() {
+                @Override
+                public Predicate toPredicate(Root<ClientCase> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    if (null != request.getSearch()) {
+                        if (null != request.getSearch().getClientId()) {
+                            list.add(criteriaBuilder.equal(root.get("clientId"), request.getSearch().getClientId()));
+                        }
+                        if (null != request.getSearch().getHrId()) {
+                            list.add(criteriaBuilder.equal(root.get("hrId"), request.getSearch().getHrId()));
+                        }
+                        if (Strings.isNotBlank(request.getSearch().getTitle())) {
+                            list.add(criteriaBuilder.like(root.get("title"), "%" + request.getSearch().getTitle() + "%"));
+                        }
+                        if (null != request.getSearch().getStatus()) {
+                            list.add(criteriaBuilder.equal(root.get("status"), request.getSearch().getStatus()));
+                        }
+                    }
+                    Predicate[] p = new Predicate[list.size()];
+                    return criteriaBuilder.and(list.toArray(p));
+                }
+            };
+            Page<ClientCase> all = caseRepository.findAll(specification, pageable);
+            map = all.map(x -> fromDoToVo(x));
+            // 通过是否是体验用户，觉得返回内容和总元素数
+            List<CaseVO> content = map.getContent();
+            map = new PageImpl<>(content,
+                    new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
+                    map.getTotalElements());
+        }
         return map;
     }
 
