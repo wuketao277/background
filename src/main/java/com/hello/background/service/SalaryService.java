@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Salary;
 import com.hello.background.domain.SalarySpecialItem;
@@ -9,7 +10,10 @@ import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.*;
+import com.hello.background.vo.SalaryInfoVO;
+import com.hello.background.vo.SalaryVO;
+import com.hello.background.vo.SalaryVODownload;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +89,15 @@ public class SalaryService {
     }
 
     /**
+     * 通过ID删除
+     *
+     * @param id
+     */
+    public void deleteById(Integer id) {
+        salaryRepository.deleteById(id);
+    }
+
+    /**
      * 生成工资
      *
      * @param month
@@ -102,6 +115,9 @@ public class SalaryService {
         List<SalarySpecialItem> salarySpecialItemList = salarySpecialItemRepository.findByMonth(month);
         // 查找开启状态的所有人
         List<User> userList = userRepository.findByEnabled(true);
+        // 屏蔽体验账号
+        userList = userList.stream().filter(user -> null != user.getJobType()
+                && !JobTypeEnum.EXPERIENCE.equals(user.getJobType())).collect(Collectors.toList());
         userList.stream().forEach(user -> {
             try {
                 Salary salary = new Salary();

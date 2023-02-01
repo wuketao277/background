@@ -1,8 +1,11 @@
 package com.hello.background.controller;
 
-import com.hello.background.repository.UserRoleRepository;
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.SalaryService;
-import com.hello.background.vo.*;
+import com.hello.background.vo.GenerateSalaryRequest;
+import com.hello.background.vo.SalaryInfoVO;
+import com.hello.background.vo.SalaryVO;
+import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +24,6 @@ import javax.servlet.http.HttpSession;
 public class SalaryController {
     @Autowired
     private SalaryService salaryService;
-    @Autowired
-    private UserRoleRepository userRoleRepository;
 
     /**
      * 生成工资
@@ -79,5 +80,22 @@ public class SalaryController {
                                HttpSession session,
                                HttpServletResponse response) {
         salaryService.downloadSalary(session, response, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
+    }
+
+    /**
+     * 通过id删除
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("deleteById")
+    public boolean deleteById(Integer id, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        // 非管理员角色不能执行
+        if (!user.getRoles().contains(RoleEnum.ADMIN)) {
+            return false;
+        }
+        salaryService.deleteById(id);
+        return true;
     }
 }
