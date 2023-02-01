@@ -192,7 +192,7 @@ public class CommentService {
                 candidateOptional.ifPresent(x -> candidateMap.put(x.getId(), x));
             }
             if (candidateMap.containsKey(vo.getCandidateId())) {
-                vo.setClientName(candidateMap.get(vo.getCandidateId()).getChineseName());
+                vo.setCandidateName(candidateMap.get(vo.getCandidateId()).getChineseName());
             }
             commentVOList.add(vo);
         }
