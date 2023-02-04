@@ -1,14 +1,10 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.CompanyEnum;
-import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.CandidateForCase;
 import com.hello.background.domain.CaseAttention;
-import com.hello.background.domain.User;
 import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.repository.CaseAttentionRepository;
 import com.hello.background.repository.UserRepository;
-import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.PipelineCandidateVO;
 import com.hello.background.vo.PipelineCaseVO;
 import com.hello.background.vo.PipelineVO;
@@ -39,6 +35,8 @@ public class SummaryService {
     private CaseAttentionRepository caseAttentionRepository;
     @Autowired
     private CandidateForCaseRepository candidateForCaseRepository;
+    @Autowired
+    private UserService userService;
 
     /**
      * 查询pipeline情况
@@ -48,26 +46,7 @@ public class SummaryService {
      */
     public List<PipelineVO> queryPipeline(String range, UserVO userVO) {
         List<PipelineVO> pipelineVOList = new ArrayList<>();
-        List<UserVO> userList = new ArrayList<>();
-        if ("self".equals(range)) {
-            // 只查看自己的pipeline情况
-            userList.add(userVO);
-        } else if ("all".equals(range)) {
-            // 查看所有在职的全职人员pipeline情况
-            userList = userRepository.findAll().stream().filter(u -> u.getEnabled() && null != u.getJobType() && u.getJobType().equals(JobTypeEnum.FULLTIME) && null == u.getDimissionDate()).map(u -> TransferUtil.transferTo(u, UserVO.class)).collect(Collectors.toList());
-        } else if ("shanghai".equals(range)) {
-            // 查看上海所有在职的全职人员pipeline情况
-            userList = userRepository.findAll().stream().filter(u -> u.getEnabled() && null != u.getJobType() && u.getJobType().equals(JobTypeEnum.FULLTIME) && null == u.getDimissionDate() && null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shanghaihailuorencaifuwu)).map(u -> TransferUtil.transferTo(u, UserVO.class)).collect(Collectors.toList());
-        } else if ("shenyang".equals(range)) {
-            // 查看沈阳所有在职的全职人员pipeline情况
-            userList = userRepository.findAll().stream().filter(u -> u.getEnabled() && null != u.getJobType() && u.getJobType().equals(JobTypeEnum.FULLTIME) && null == u.getDimissionDate() && null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shenyanghailuorencaifuwu)).map(u -> TransferUtil.transferTo(u, UserVO.class)).collect(Collectors.toList());
-        } else if ("beijing".equals(range)) {
-            // 查看北京所有在职的全职人员pipeline情况
-            List<User> list = new ArrayList<>();
-            list.add(userRepository.findByUsername("Victor"));
-            list.add(userRepository.findByUsername("Ellen"));
-            userList = list.stream().map(u -> TransferUtil.transferTo(u, UserVO.class)).collect(Collectors.toList());
-        }
+        List<UserVO> userList = userService.findByScope(range, userVO);
         // 遍历用户列表，生成pipeline情况
         userList.stream().forEach(u -> pipelineVOList.add(generatePipeline(u)));
         return pipelineVOList;
@@ -127,7 +106,7 @@ public class SummaryService {
                     case "3rd Interview":
                     case "2nd Interview":
                     case "1st Interview":
-                        pipelineCaseVO.getInterviewCandidateList().add(new PipelineCandidateVO(c.getCandidateId(), c.getChineseName()));
+                        pipelineCaseVO.getInterviewCandidateList().add(new PipelineCandidateVO(c.getCandidateId(), c.getChineseName() + "-" + c.getLastPhase().substring(0, 1)));
                         break;
                     case "CVO":
                         pipelineCaseVO.getCvoCandidateList().add(new PipelineCandidateVO(c.getCandidateId(), c.getChineseName()));

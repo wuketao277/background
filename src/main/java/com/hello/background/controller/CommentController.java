@@ -76,9 +76,10 @@ public class CommentController {
      * @return
      */
     @PostMapping("calcKPI")
-    public List<KPIPerson> calcKPI(@RequestBody CalcKPIRequest request) {
+    public List<KPIPerson> calcKPI(@RequestBody CalcKPIRequest request, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
         // 拿到前台传入的日期要进行+1操作。因为前端给的日期是差1天。
-        return commentService.calcKPI(request.getStartDate(), request.getEndDate());
+        return commentService.calcKPI(request.getStartDate(), request.getEndDate(), request.getScope(), user);
     }
 
     /**
@@ -87,8 +88,9 @@ public class CommentController {
      * @param response
      */
     @GetMapping("downloadKPI")
-    public void downloadKPI(@RequestParam String startDate, @RequestParam String endDate, HttpServletResponse response) {
-        commentService.downloadKPI(Arrays.asList(startDate, endDate), response);
+    public void downloadKPI(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String scope, HttpSession session, HttpServletResponse response) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        commentService.downloadKPI(Arrays.asList(startDate, endDate), scope, user, response);
     }
 
     /**

@@ -3,15 +3,14 @@ package com.hello.background.service;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.Comment;
-import com.hello.background.domain.User;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CommentRepository;
-import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.KPIPerson;
+import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class CommentService {
     @Autowired
     private CandidateRepository candidateRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     /**
      * 通过id删除
@@ -101,10 +100,14 @@ public class CommentService {
      * @param end   结束日期
      * @return
      */
-    public List<KPIPerson> calcKPI(LocalDate start, LocalDate end) {
+    public List<KPIPerson> calcKPI(LocalDate start, LocalDate end, String scope, UserVO userVO) {
+        // 获取计算时间段
         LocalDateTime startDT = LocalDateTime.of(start.getYear(), start.getMonthValue(), start.getDayOfMonth(), 0, 0, 0);
         LocalDateTime endDT = LocalDateTime.of(end.getYear(), end.getMonthValue(), end.getDayOfMonth(), 23, 59, 59);
-        List<Comment> commentList = commentRepository.findByInputTimeBetween(startDT, endDT);
+        // 通过Scope获取用户集合
+        List<UserVO> userVOList = userService.findByScope(scope, userVO);
+        // 获取该时间段内指定用户所有评论
+        List<Comment> commentList = commentRepository.findByInputTimeBetweenAndUsernameIn(startDT, endDT, userVOList.stream().map(u -> u.getUsername()).collect(Collectors.toList()));
         List<KPIPerson> kpiPersonList = new ArrayList<>();
         for (Comment cnt : commentList) {
             KPIPerson kpiPerson = new KPIPerson();
@@ -114,6 +117,7 @@ public class CommentService {
             } else {
                 kpiPerson.setRealName(cnt.getRealname());
                 kpiPerson.setUserName(cnt.getUsername());
+                kpiPerson.setUserId(userVOList.stream().filter(u -> u.getUsername().equals(cnt.getUsername())).findFirst().get().getId());
                 kpiPersonList.add(kpiPerson);
             }
             switch (cnt.getPhase()) {
@@ -142,13 +146,6 @@ public class CommentService {
                     break;
             }
         }
-        List<User> userList = userRepository.findAll();
-        kpiPersonList.forEach(k -> {
-            Optional<User> optionalUser = userList.stream().filter(u -> u.getUsername().equals(k.getUserName())).findFirst();
-            if (optionalUser.isPresent()) {
-                k.setUserId(optionalUser.get().getId());
-            }
-        });
         kpiPersonList.sort(Comparator.comparing(KPIPerson::getUserId));
         return kpiPersonList;
     }
@@ -158,11 +155,11 @@ public class CommentService {
      *
      * @param response
      */
-    public void downloadKPI(List<String> dates, HttpServletResponse response) {
+    public void downloadKPI(List<String> dates, String scope, UserVO userVO, HttpServletResponse response) {
         // 获取业务数据
         LocalDate start = LocalDate.parse(dates.get(0).substring(0, 10));
         LocalDate end = LocalDate.parse(dates.get(1).substring(0, 10));
-        List<KPIPerson> kpiList = calcKPI(start, end);
+        List<KPIPerson> kpiList = calcKPI(start, end, scope, userVO);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "kpi", null, kpiList, KPIPerson.class);
     }

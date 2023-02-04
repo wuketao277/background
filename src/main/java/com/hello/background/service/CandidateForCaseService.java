@@ -8,6 +8,7 @@ import com.hello.background.vo.ClientVO;
 import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.CopyFromOldCaseVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -186,11 +187,12 @@ public class CandidateForCaseService {
             Optional<CandidateForCase> optional = candidateForCaseRepository.findByCandidateIdAndCaseId(candidateId, caseId).stream().findFirst();
             if (optional.isPresent()) {
                 CandidateForCase candidateForCase = optional.get();
-                if ((newPhase.equals("IOI") || newPhase.equals("VI"))
-                        && null == candidateForCase.getLastPhase()) {
+                if (newPhase.equals("IOI") || newPhase.equals("VI")) {
                     // IOI/VI只有在没有最新阶段时才进行更新更新数据
-                    candidateForCase.setLastPhase(newPhase);
-                    candidateForCaseRepository.save(candidateForCase);
+                    if (Strings.isBlank(candidateForCase.getLastPhase())) {
+                        candidateForCase.setLastPhase(newPhase);
+                        candidateForCaseRepository.save(candidateForCase);
+                    }
                 } else {
                     // 其他阶段都直接更新
                     candidateForCase.setLastPhase(newPhase);

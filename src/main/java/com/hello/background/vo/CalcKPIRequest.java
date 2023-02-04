@@ -13,4 +13,5 @@ import java.time.LocalDate;
 public class CalcKPIRequest {
     private LocalDate startDate;
     private LocalDate endDate;
+    private String scope;
 }

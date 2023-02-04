@@ -1,6 +1,7 @@
 package com.hello.background.service;
 
 import com.google.common.base.Strings;
+import com.hello.background.constant.CompanyEnum;
 import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.User;
 import com.hello.background.repository.UserRepository;
@@ -9,9 +10,9 @@ import com.hello.background.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Sort.Order;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -210,5 +211,33 @@ public class UserService {
             }
         }
         return result;
+    }
+
+    /**
+     * 通过Scope查询用户
+     *
+     * @param scope
+     * @param userVO
+     * @return
+     */
+    public List<UserVO> findByScope(String scope, UserVO userVO) {
+        List<User> userList = new ArrayList<>();
+        if ("myself".equals(scope)) {
+            userList.add(TransferUtil.transferTo(userVO, User.class));
+        } else if ("all".equals(scope)) {
+            // 查看所有在职的全职人员pipeline情况
+            userList = userRepository.findAll();
+        } else if ("shanghai".equals(scope)) {
+            // 查看上海所有在职的全职人员pipeline情况
+            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shanghaihailuorencaifuwu)).collect(Collectors.toList());
+        } else if ("shenyang".equals(scope)) {
+            // 查看沈阳所有在职的全职人员pipeline情况
+            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shenyanghailuorencaifuwu)).collect(Collectors.toList());
+        } else if ("beijing".equals(scope)) {
+            // 查看北京所有在职的全职人员pipeline情况
+            userList.add(userRepository.findByUsername("Victor"));
+            userList.add(userRepository.findByUsername("Ellen"));
+        }
+        return userList.stream().filter(u -> u.getEnabled() && null == u.getDimissionDate()).map(u -> TransferUtil.transferTo(u, UserVO.class)).collect(Collectors.toList());
     }
 }
