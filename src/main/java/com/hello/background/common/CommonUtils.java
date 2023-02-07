@@ -26,14 +26,29 @@ public class CommonUtils {
     public static Candidate calcAge(Candidate candidate) {
         if (!StringUtils.isEmpty(candidate.getBirthDay())) {
             try {
-                LocalDate ld = DateTimeUtil.convertToLocalDate(candidate.getBirthDay());
-                if (null == ld) {
+                LocalDate ldBirthday = DateTimeUtil.convertToLocalDate(candidate.getBirthDay());
+                if (null == ldBirthday) {
                     return candidate;
                 }
                 LocalDate now = LocalDate.now();
-                int year = now.getYear() - ld.getYear();
-                int month = now.getMonthValue() - ld.getMonthValue();
-                candidate.setAge(month > 0 ? year + 1 : year);
+                int year = now.getYear() - ldBirthday.getYear();
+                int month = now.getMonthValue() - ldBirthday.getMonthValue();
+                int day = now.getDayOfMonth() - ldBirthday.getDayOfMonth();
+                if (month < 0) {
+                    // 还没到生日月份，等于年差-1
+                    candidate.setAge(year - 1);
+                } else if (month == 0) {
+                    if (day < 0) {
+                        // 还没到生日天数，等于年差-1
+                        candidate.setAge(year - 1);
+                    } else {
+                        // 已经到了或过了生日天数，直接就等于年差
+                        candidate.setAge(year);
+                    }
+                } else {
+                    // 已经过了生日月份，直接就等于年差
+                    candidate.setAge(year);
+                }
             } catch (Exception ex) {
             }
         }

@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.CandidateForCase;
 import com.hello.background.domain.CaseAttention;
 import com.hello.background.repository.CandidateForCaseRepository;
@@ -47,8 +48,9 @@ public class SummaryService {
     public List<PipelineVO> queryPipeline(String range, UserVO userVO) {
         List<PipelineVO> pipelineVOList = new ArrayList<>();
         List<UserVO> userList = userService.findByScope(range, userVO);
-        // 遍历用户列表，生成pipeline情况
-        userList.stream().forEach(u -> pipelineVOList.add(generatePipeline(u)));
+        // 遍历用户列表，只保留全职人员且在职人员，生成pipeline情况
+        userList.stream().filter(u -> null != u.getJobType() && u.getJobType().equals(JobTypeEnum.FULLTIME) && null == u.getDimissionDate())
+                .forEach(u -> pipelineVOList.add(generatePipeline(u)));
         return pipelineVOList;
     }
 
