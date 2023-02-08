@@ -8,13 +8,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.CandidateAttention;
+import com.hello.background.domain.CandidateForCase;
 import com.hello.background.repository.CandidateAttentionRepository;
+import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateAttentionVO;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,6 +53,8 @@ public class CandidateService {
     private CommentService commentService;
     @Autowired
     private CandidateAttentionRepository candidateAttentionRepository;
+    @Autowired
+    private CandidateForCaseRepository candidateForCaseRepository;
 
     private ThreadLocal<Integer> tlRowNumber = new ThreadLocal<>();
 
@@ -81,6 +86,17 @@ public class CandidateService {
             candidate.setCreateUserId(user.getId());
             candidate.setCreateUserName(user.getUsername());
             candidate.setCreateRealName(user.getRealname());
+        } else {
+            // 对于已经存在的候选人，更新候选人-职位关系中的缓存数据
+            List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCandidateId(candidate.getId());
+            candidateForCaseList.forEach(cfc -> {
+                if ((Strings.isNotBlank(vo.getChineseName()) && (Strings.isBlank(cfc.getChineseName()) || !vo.getChineseName().equals(cfc.getChineseName())))
+                        || (Strings.isNotBlank(vo.getEnglishName()) && (Strings.isBlank(cfc.getEnglishName()) || !vo.getEnglishName().equals(cfc.getEnglishName())))) {
+                    cfc.setChineseName(vo.getChineseName());
+                    cfc.setEnglishName(vo.getEnglishName());
+                    candidateForCaseRepository.save(cfc);
+                }
+            });
         }
         candidate = candidateRepository.save(candidate);
         return TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
