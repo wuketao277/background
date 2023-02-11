@@ -1,19 +1,18 @@
 package com.hello.background.domain;
 
+import com.hello.background.constant.SalarySpecialItemTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * 工资特殊项
+ *
  * @author wuketao
  * @date 2019/12/7
  * @Description
@@ -60,6 +59,12 @@ public class SalarySpecialItem {
      */
     @Column(length = 20)
     private String isPre;
+    /**
+     * 特殊项类型
+     */
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private SalarySpecialItemTypeEnum type;
     /**
      * 描述
      */

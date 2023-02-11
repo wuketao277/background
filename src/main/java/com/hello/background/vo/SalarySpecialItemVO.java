@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.SalarySpecialItemTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,6 +52,10 @@ public class SalarySpecialItemVO implements Serializable {
      * 是否前置计算
      */
     private String isPre;
+    /**
+     * 特殊项类型
+     */
+    private SalarySpecialItemTypeEnum type;
     /**
      * 更新日期
      */

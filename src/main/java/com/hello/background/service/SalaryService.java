@@ -2,6 +2,7 @@ package com.hello.background.service;
 
 import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
+import com.hello.background.constant.SalarySpecialItemTypeEnum;
 import com.hello.background.domain.Salary;
 import com.hello.background.domain.SalarySpecialItem;
 import com.hello.background.domain.SuccessfulPerm;
@@ -211,59 +212,57 @@ public class SalaryService {
                     // 计算顾问20
                     commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName20(), perm.getConsultantCommissionPercent20(), user.getUsername(), sb, perm));
                 }
-                sb.append("总提成：" + commissionSum + "\r\n");
+                sb.append("成功case提成：" + commissionSum + "\r\n");
                 // 减去最近一个月工资的历史负债
                 List<Salary> salaryList = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername());
                 if (!CollectionUtils.isEmpty(salaryList) && Optional.ofNullable(salaryList.get(0)).map(s -> s.getHistoryDebt()).isPresent()) {
                     commissionSum = commissionSum.add(salaryList.get(0).getHistoryDebt());
                     sb.append("历史负债：" + salaryList.get(0).getHistoryDebt() + "\r\n");
                 }
-                // 当月工资特殊项中前置计算项累加到临时工资中
-                List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && (Strings.isBlank(s.getIsPre()) || "yes".equals(s.getIsPre()))).collect(Collectors.toList());
+                // 当月工资特殊项中 奖金类型的累加到奖金总和中
+                List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.COMMISSION.equals(s.getType())).collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(salarySpecialItemListForUser)) {
                     for (SalarySpecialItem specialItem : salarySpecialItemListForUser) {
                         commissionSum = commissionSum.add(specialItem.getSum());
-                        sb.append(String.format("前置计算工资特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
+                        sb.append(String.format("奖金类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
                 sb.append(String.format("综合提成：%s \r\n", commissionSum));
-                // 当月工资特殊项中后置计算项总和
-                BigDecimal postSpecialSum = BigDecimal.ZERO;
-                List<SalarySpecialItem> salarySpecialItemListForUserNotIsPre = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && "no".equals(s.getIsPre())).collect(Collectors.toList());
-                if (!CollectionUtils.isEmpty(salarySpecialItemListForUserNotIsPre)) {
-                    for (SalarySpecialItem specialItem : salarySpecialItemListForUserNotIsPre) {
-                        postSpecialSum = postSpecialSum.add(specialItem.getSum());
-                        sb.append(String.format("后置计算工资特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
+                // 获取员工工资
+                BigDecimal userSalarySum = null != user.getSalarybase() ? user.getSalarybase() : BigDecimal.ZERO;
+                // 当月工资特殊项中 工资类型的计算项总和
+                List<SalarySpecialItem> salarySpecialItemListForSalary = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.SALARY.equals(s.getType())).collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(salarySpecialItemListForSalary)) {
+                    for (SalarySpecialItem specialItem : salarySpecialItemListForSalary) {
+                        userSalarySum = userSalarySum.add(specialItem.getSum());
+                        sb.append(String.format("工资类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
                 if (user.getCoverbase()) {
                     // 需要cover base
                     sb.append("需要cover base" + "\r\n");
                     // 最后和底薪进行比较，取较大的值
-                    BigDecimal base = null != user.getSalarybase() ? user.getSalarybase() : BigDecimal.ZERO;
-                    sb.append(String.format("base:%s commission:%s 后置工资项总和:%s\r\n", base, commissionSum, postSpecialSum));
-                    if (commissionSum.compareTo(base) >= 0) {
+                    sb.append(String.format("base:%s commission:%s\r\n", userSalarySum, commissionSum));
+                    if (commissionSum.compareTo(userSalarySum) >= 0) {
                         // 当月提成大于底薪。发提成，历史负债为0
-                        BigDecimal actualSalary = commissionSum.add(postSpecialSum);
-                        sb.append("commission多，按commission发：" + actualSalary + "\r\n");
-                        salary.setSum(actualSalary);
+                        sb.append("commission多，按commission发：" + commissionSum + "\r\n");
+                        salary.setSum(commissionSum);
                         salary.setHistoryDebt(BigDecimal.ZERO);
                     } else {
                         // 当月提成小于底薪。发底薪
                         // 实发薪资
-                        BigDecimal actualSalary = base.add(postSpecialSum);
-                        sb.append("base多，按base发：" + actualSalary + "\r\n");
-                        salary.setSum(actualSalary);
+                        sb.append("base多，按base发：" + userSalarySum + "\r\n");
+                        salary.setSum(userSalarySum);
                         // 实发薪资高于提成，历史负债为 实发薪资-底薪
-                        BigDecimal newHistoryDebt = commissionSum.subtract(base);
+                        BigDecimal newHistoryDebt = commissionSum.subtract(userSalarySum);
                         sb.append(String.format("最新历史负债：%s\r\n", (newHistoryDebt)));
                         salary.setHistoryDebt(newHistoryDebt);
                     }
                 } else {
                     // 不需要cover base
                     sb.append("不需要cover base" + "\r\n");
-                    sb.append(String.format("base:%s commission:%s special:%s\r\n", user.getSalarybase(), commissionSum, postSpecialSum));
-                    salary.setSum(user.getSalarybase().add(commissionSum).add(postSpecialSum));
+                    sb.append(String.format("base:%s commission:%s\r\n", userSalarySum, commissionSum));
+                    salary.setSum(userSalarySum.add(commissionSum));
                 }
                 sb.append("当月工资:" + salary.getSum());
                 salary.setDescription(sb.toString());
