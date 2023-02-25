@@ -68,6 +68,11 @@ public class CommentVO {
     private String phase;
 
     /**
+     * 面试时间
+     */
+    private LocalDateTime interviewTime;
+
+    /**
      * 内容
      */
     private String content;

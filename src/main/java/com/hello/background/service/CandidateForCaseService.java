@@ -201,4 +201,28 @@ public class CandidateForCaseService {
             }
         }
     }
+
+    /**
+     * 更新候选人在该职位上的最远阶段
+     *
+     * @param candidateId
+     * @param caseId
+     * @param newPhase
+     */
+    public void updateFarthestPhase(Integer candidateId, Integer caseId, String newPhase) {
+        // 只有有效的阶段才进行储存
+        List<String> phaseList = Arrays.asList("CVO"
+                , "1st Interview", "2nd Interview", "3rd Interview", "4th Interview",
+                "Final Interview", "Offer Signed", "On Board", "Invoice", "Payment", "Successful");
+        if (phaseList.contains(newPhase)) {
+            // 通过候选人Id和职位Id，查询关联关系
+            Optional<CandidateForCase> optional = candidateForCaseRepository.findByCandidateIdAndCaseId(candidateId, caseId).stream().findFirst();
+            if (optional.isPresent()) {
+                CandidateForCase candidateForCase = optional.get();
+                // 其他阶段都直接更新
+                candidateForCase.setFarthestPhase(newPhase);
+                candidateForCaseRepository.save(candidateForCase);
+            }
+        }
+    }
 }

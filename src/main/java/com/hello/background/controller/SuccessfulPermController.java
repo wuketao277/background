@@ -54,12 +54,15 @@ public class SuccessfulPermController {
             if (null != successfulPermVO.getGuaranteeDate() && new Date().compareTo(successfulPermVO.getGuaranteeDate()) > 0) {
                 // 存在保证期且当前时间大于保证期，表示已成功
                 candidateForCaseService.updateLastPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Successful");
+                candidateForCaseService.updateFarthestPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Successful");
             } else if (null != successfulPermVO.getActualPaymentDate()) {
                 // 实际付款日期不为空，更新最新阶段到Payment
                 candidateForCaseService.updateLastPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Payment");
+                candidateForCaseService.updateFarthestPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Payment");
             } else if (null != successfulPermVO.getInvoiceDate()) {
                 // 实际付款日期不为空，更新最新阶段到Invoice
                 candidateForCaseService.updateLastPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Invoice");
+                candidateForCaseService.updateFarthestPhase(successfulPermVO.getCandidateId(), successfulPermVO.getCaseId(), "Invoice");
             }
         }
         return successfulPermVO;

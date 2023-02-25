@@ -80,6 +80,11 @@ public class Comment {
     private String phase;
 
     /**
+     * 面试时间
+     */
+    private LocalDateTime interviewTime;
+
+    /**
      * 内容
      */
     @Column(length = 2000)

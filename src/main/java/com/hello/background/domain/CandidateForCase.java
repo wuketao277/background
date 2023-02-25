@@ -63,6 +63,12 @@ public class CandidateForCase {
     private String title;
 
     /**
+     * 候选人在该职位的最远阶段
+     */
+    @Column(length = 20)
+    private String farthestPhase;
+
+    /**
      * 候选人在该职位的最后阶段
      */
     @Column(length = 20)

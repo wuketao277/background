@@ -135,13 +135,14 @@ public class CandidateForCaseController {
     @GetMapping("findByCaseId")
     public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId) {
         List<CandidateForCaseVO> voList = candidateForCaseService.findByCaseId(caseId);
-        voList.forEach(c -> {
-            // IOI VI END 三个阶段在候选人列表中不用展示
-            if ("IOI".equals(c.getLastPhase()) || "VI".equals(c.getLastPhase()) || "END".equals(c.getLastPhase())) {
-                c.setLastPhase(null);
-            }
-        });
+//        voList.forEach(c -> {
+//            // IOI VI END 三个阶段在候选人列表中不用展示
+//            if ("IOI".equals(c.getLastPhase()) || "VI".equals(c.getLastPhase()) || "END".equals(c.getLastPhase())) {
+//                c.setLastPhase(null);
+//            }
+//        });
         voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
+        voList.sort(Comparator.comparing(CandidateForCaseVO::getAttention).reversed());
         return voList;
     }
 

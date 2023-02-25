@@ -44,7 +44,61 @@ public class Client {
     private String englishName;
 
     /**
-     * 客户备注
+     * 地址
+     */
+    @Column(length = 100)
+    private String address;
+
+    /**
+     * 客户信息
+     */
+    @Column(length = 500)
+    private String information;
+
+    /**
+     * 推荐流程
+     */
+    @Column(length = 500)
+    private String recommendationProcess;
+
+    /**
+     * 查重要求
+     */
+    @Column(length = 500)
+    private String duplicateCheck;
+
+    /**
+     * 简历标准
+     */
+    @Column(length = 500)
+    private String resumeStandard;
+
+    /**
+     * 薪资架构
+     */
+    @Column(length = 500)
+    private String salaryStructure;
+
+    /**
+     * 推荐理由
+     */
+    @Column(length = 500)
+    private String recommendationReason;
+
+    /**
+     * 面试准备
+     */
+    @Column(length = 500)
+    private String interviewPrepare;
+
+    /**
+     * 公司卖点
+     */
+    @Column(length = 500)
+    private String sellingPoint;
+
+    /**
+     * 特别说明
      */
     @Column(length = 2000)
     private String remark;

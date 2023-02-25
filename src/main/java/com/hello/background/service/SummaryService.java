@@ -86,7 +86,7 @@ public class SummaryService {
      */
     private void generateCandidateList(PipelineCaseVO pipelineCaseVO) {
         // 获取该职位下所有的候选人
-        List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(pipelineCaseVO.getId());
+        List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseIdAndAttention(pipelineCaseVO.getId(), true);
         // 根据候选人与职位关联信息中的最后阶段分类
         candidateForCaseList.stream().forEach(c -> {
             if (null != c.getLastPhase()) {

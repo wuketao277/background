@@ -33,7 +33,52 @@ public class ClientVO {
     private String englishName;
 
     /**
-     * 客户备注
+     * 地址
+     */
+    private String address;
+
+    /**
+     * 客户信息
+     */
+    private String information;
+
+    /**
+     * 推荐流程
+     */
+    private String recommendationProcess;
+
+    /**
+     * 查重要求
+     */
+    private String duplicateCheck;
+
+    /**
+     * 简历标准
+     */
+    private String resumeStandard;
+
+    /**
+     * 薪资架构
+     */
+    private String salaryStructure;
+
+    /**
+     * 推荐理由
+     */
+    private String recommendationReason;
+
+    /**
+     * 面试准备
+     */
+    private String interviewPrepare;
+
+    /**
+     * 公司卖点
+     */
+    private String sellingPoint;
+
+    /**
+     * 特别说明
      */
     private String remark;
 

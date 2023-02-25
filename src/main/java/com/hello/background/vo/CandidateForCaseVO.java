@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 
 /**
@@ -87,6 +86,11 @@ public class CandidateForCaseVO {
      * 最后评论时间
      */
     private LocalDateTime latestCommentInputtime;
+
+    /**
+     * 候选人在该职位的最远阶段
+     */
+    private String farthestPhase;
 
     /**
      * 候选人在该职位的最后阶段

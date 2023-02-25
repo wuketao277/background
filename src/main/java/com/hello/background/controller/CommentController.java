@@ -32,8 +32,9 @@ public class CommentController {
         vo.setRealname(user.getRealname());
         vo.setUsername(user.getUsername());
         CommentVO commentVO = commentService.save(vo);
-        // 更新候选人关联职位最新阶段
+        // 更新候选人关联职位最新阶段和最远阶段
         candidateForCaseService.updateLastPhase(commentVO.getCandidateId(), commentVO.getCaseId(), commentVO.getPhase());
+        candidateForCaseService.updateFarthestPhase(commentVO.getCandidateId(), commentVO.getCaseId(), commentVO.getPhase());
         return commentVO;
     }
 
