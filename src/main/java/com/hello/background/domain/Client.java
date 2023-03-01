@@ -46,7 +46,7 @@ public class Client {
     /**
      * 地址
      */
-    @Column(length = 100)
+    @Column(length = 200)
     private String address;
 
     /**
