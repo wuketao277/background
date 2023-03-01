@@ -87,7 +87,16 @@ public class CandidateService {
             candidate.setCreateUserName(user.getUsername());
             candidate.setCreateRealName(user.getRealname());
         } else {
-            // 对于已经存在的候选人，更新候选人-职位关系中的缓存数据
+            // 对于已经存在的候选人
+            // 更新关注候选人
+            List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByCandidateId(vo.getId());
+            candidateAttentionList.forEach(ca->{
+                if (Strings.isNotBlank(ca.getCandidateChineseName()) && !ca.getCandidateChineseName().equals(vo.getChineseName())) {
+                    ca.setCandidateChineseName(vo.getChineseName());
+                    candidateAttentionRepository.save(ca);
+                }
+            });
+            // 更新候选人-职位关系中的缓存数据
             List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCandidateId(candidate.getId());
             candidateForCaseList.forEach(cfc -> {
                 if ((Strings.isNotBlank(vo.getChineseName()) && (Strings.isBlank(cfc.getChineseName()) || !vo.getChineseName().equals(cfc.getChineseName())))

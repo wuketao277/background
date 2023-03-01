@@ -2,12 +2,11 @@ package com.hello.background.service;
 
 import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.constant.JobTypeEnum;
+import com.hello.background.domain.CandidateForCase;
+import com.hello.background.domain.CaseAttention;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
-import com.hello.background.repository.CaseAttentionRepository;
-import com.hello.background.repository.CaseRepository;
-import com.hello.background.repository.ClientRepository;
-import com.hello.background.repository.UserRepository;
+import com.hello.background.repository.*;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CaseQueryPageRequest;
 import com.hello.background.vo.CaseVO;
@@ -45,6 +44,8 @@ public class CaseService {
     private UserRepository userRepository;
     @Autowired
     private CaseAttentionRepository caseAttentionRepository;
+    @Autowired
+    private CandidateForCaseRepository candidateForCaseRepository;
 
     /**
      * 通过id查找职位
@@ -76,6 +77,25 @@ public class CaseService {
         Optional<Client> clientOptional = clientRepository.findById(c.getClientId());
         c.setClientChineseName(clientOptional.get().getChineseName());
         c = caseRepository.save(c);
+        // 更新关联数据中的名称缓存
+        if (null != vo.getId()) {
+            // 更新关注职位
+            List<CaseAttention> caseAttentionList = caseAttentionRepository.findByCaseId(vo.getId());
+            caseAttentionList.forEach(ca -> {
+                if (Strings.isNotBlank(ca.getCaseTitle()) && !ca.getCaseTitle().equals(vo.getTitle())) {
+                    ca.setCaseTitle(vo.getTitle());
+                    caseAttentionRepository.save(ca);
+                }
+            });
+            // 更新候选人与职位的关联
+            List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(vo.getId());
+            candidateForCaseList.forEach(cc -> {
+                if (Strings.isNotBlank(cc.getTitle()) && !cc.getTitle().equals(vo.getTitle())) {
+                    cc.setTitle(vo.getTitle());
+                    candidateForCaseRepository.save(cc);
+                }
+            });
+        }
         return fromDoToVo(c);
     }
 

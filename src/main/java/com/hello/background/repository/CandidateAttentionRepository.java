@@ -24,6 +24,14 @@ public interface CandidateAttentionRepository extends PagingAndSortingRepository
     List<CandidateAttention> findByCandidateIdAndUserId(Integer candidateId, Integer userId);
 
     /**
+     * 通过候选人id查询
+     *
+     * @param candidateId
+     * @return
+     */
+    List<CandidateAttention> findByCandidateId(Integer candidateId);
+
+    /**
      * 通过候选人id和用户id删除
      *
      * @param candidateId
