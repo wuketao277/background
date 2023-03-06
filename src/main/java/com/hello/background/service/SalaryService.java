@@ -219,25 +219,26 @@ public class SalaryService {
                     commissionSum = commissionSum.add(salaryList.get(0).getHistoryDebt());
                     sb.append("历史负债：" + salaryList.get(0).getHistoryDebt() + "\r\n");
                 }
-                // 当月工资特殊项中 奖金类型的累加到奖金总和中
-                List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.COMMISSION.equals(s.getType())).collect(Collectors.toList());
+                // 当月工资特殊项中 前置奖金类型的累加到奖金总和中
+                List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.COMMISSION.equals(s.getType()) && Strings.isNotBlank(s.getIsPre()) && "yes".equals(s.getIsPre())).collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(salarySpecialItemListForUser)) {
                     for (SalarySpecialItem specialItem : salarySpecialItemListForUser) {
                         commissionSum = commissionSum.add(specialItem.getSum());
-                        sb.append(String.format("奖金类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
+                        sb.append(String.format("前置奖金类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
                 sb.append(String.format("综合提成：%s \r\n", commissionSum));
                 // 获取员工工资
                 BigDecimal userSalarySum = null != user.getSalarybase() ? user.getSalarybase() : BigDecimal.ZERO;
-                // 当月工资特殊项中 工资类型的计算项总和
-                List<SalarySpecialItem> salarySpecialItemListForSalary = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.SALARY.equals(s.getType())).collect(Collectors.toList());
+                // 当月工资特殊项中 前置工资类型的计算项总和中
+                List<SalarySpecialItem> salarySpecialItemListForSalary = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.SALARY.equals(s.getType()) && Strings.isNotBlank(s.getIsPre()) && "yes".equals(s.getIsPre())).collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(salarySpecialItemListForSalary)) {
                     for (SalarySpecialItem specialItem : salarySpecialItemListForSalary) {
                         userSalarySum = userSalarySum.add(specialItem.getSum());
-                        sb.append(String.format("工资类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
+                        sb.append(String.format("前置工资类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
+                sb.append(String.format("综合工资：%s \r\n", userSalarySum));
                 if (user.getCoverbase()) {
                     // 需要cover base
                     sb.append("需要cover base" + "\r\n");
@@ -264,6 +265,11 @@ public class SalaryService {
                     sb.append(String.format("base:%s commission:%s\r\n", userSalarySum, commissionSum));
                     salary.setSum(userSalarySum.add(commissionSum));
                 }
+                // 当月工资特殊项中 后置项累加到工资中
+                salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) &&  Strings.isNotBlank(s.getIsPre()) && "no".equals(s.getIsPre())).collect(Collectors.toList()).forEach(ss->{
+                    salary.setSum(salary.getSum().add(ss.getSum()));
+                    sb.append(String.format("后置特殊项：%s %s \r\n", ss.getDescription(), ss.getSum()));
+                });
                 sb.append("当月工资:" + salary.getSum());
                 salary.setDescription(sb.toString());
                 salaryRepository.save(salary);

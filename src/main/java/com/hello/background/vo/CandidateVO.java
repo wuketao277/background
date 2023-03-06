@@ -83,6 +83,11 @@ public class CandidateVO {
     private String schoolName;
 
     /**
+     * 户籍地址
+     */
+    private String hometown;
+
+    /**
      * 现地址
      */
     private String currentAddress;

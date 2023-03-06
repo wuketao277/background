@@ -9,7 +9,8 @@ package com.hello.background.constant;
  */
 public enum SalarySpecialItemTypeEnum {
     SALARY("SALARY", "工资"),
-    COMMISSION("COMMISSION", "奖金");
+    COMMISSION("COMMISSION", "奖金"),
+    OTHER("OTHER", "其他");
 
     private String code;
     private String name;

@@ -100,6 +100,12 @@ public class Candidate {
     private String schoolName;
 
     /**
+     * 户籍地址
+     */
+    @Column(length = 100)
+    private String hometown;
+
+    /**
      * 现地址
      */
     @Column(length = 100)
