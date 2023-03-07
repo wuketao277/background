@@ -34,13 +34,13 @@ public class Client {
     /**
      * 中文名
      */
-    @Column(length = 200)
+    @Column(length = 100)
     private String chineseName;
 
     /**
      * 英文名
      */
-    @Column(length = 200)
+    @Column(length = 100)
     private String englishName;
 
     /**
@@ -70,13 +70,13 @@ public class Client {
     /**
      * 简历标准
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String resumeStandard;
 
     /**
      * 薪资架构
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String salaryStructure;
 
     /**
@@ -94,7 +94,7 @@ public class Client {
     /**
      * 公司卖点
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String sellingPoint;
 
     /**
