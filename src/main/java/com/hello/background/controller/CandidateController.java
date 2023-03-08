@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hello.background.common.CommonUtils;
 import com.hello.background.service.CandidateService;
 import com.hello.background.service.ResumeService;
 import com.hello.background.vo.*;
@@ -29,6 +30,17 @@ public class CandidateController {
     private CandidateService candidateService;
     @Autowired
     private ResumeService resumeService;
+
+    /**
+     * 计算年龄
+     *
+     * @param birthdayStr
+     * @return
+     */
+    @GetMapping("calcAge")
+    public Integer calcAge(@RequestParam String birthdayStr) {
+        return CommonUtils.calcAge(birthdayStr);
+    }
 
     /**
      * 上传文件
