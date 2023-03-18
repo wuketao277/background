@@ -36,4 +36,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByInputTimeBetweenAndUsernameIn(LocalDateTime begin, LocalDateTime end, List<String> usernameList);
 
     List<Comment> findByContentLikeOrderByIdDesc(String content);
+
+    List<Comment> findByPhaseInAndInterviewTimeGreaterThanEqual(List<String> phaseList, LocalDateTime interviewTime);
+
+    List<Comment> findByUsernameInAndPhaseInAndInterviewTimeGreaterThanEqual(List<String> usernameList, List<String> phaseList, LocalDateTime interviewTime);
 }

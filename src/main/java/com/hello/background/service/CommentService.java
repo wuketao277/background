@@ -2,15 +2,14 @@ package com.hello.background.service;
 
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
+import com.hello.background.domain.ClientCase;
 import com.hello.background.domain.Comment;
 import com.hello.background.repository.CandidateRepository;
+import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.CommentRepository;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.CandidateVO;
-import com.hello.background.vo.CommentVO;
-import com.hello.background.vo.KPIPerson;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,6 +39,8 @@ public class CommentService {
     private CandidateRepository candidateRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CaseRepository caseRepository;
 
     /**
      * 通过id删除
@@ -254,5 +256,104 @@ public class CommentService {
                 }).limit(100)
                 .map(x -> candidateRepository.findById(x))
                 .map(y -> TransferUtil.transferTo(CommonUtils.calcAge(y.get()), CandidateVO.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * 查询interviewPlan数据
+     *
+     * @param range
+     * @param userVO
+     * @return
+     */
+    public List<InterviewPlanVO> queryInterviewPlan(String range, UserVO userVO) {
+        List<InterviewPlanVO> list = new ArrayList<>();
+        // 组装数据
+        List<String> phaseList = Arrays.asList("1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "Final Interview");
+        LocalDate ld = LocalDate.now();
+        LocalDateTime ldt = LocalDateTime.of(ld.getYear(), ld.getMonthValue(), ld.getDayOfMonth(), 0, 0, 0);
+        List<String> usernameList = userService.findByScope(range, userVO).stream().map(u -> u.getUsername()).collect(Collectors.toList());
+        // 查询阶段为面试安排且时间大于等于今天的记录
+        List<Comment> commentList = commentRepository.findByUsernameInAndPhaseInAndInterviewTimeGreaterThanEqual(usernameList, phaseList, ldt);
+        // 所有记录按时间排序
+        commentList.sort(Comparator.comparing(Comment::getInterviewTime));
+        // 整理数据
+        commentList.forEach(c -> {
+            InterviewPlanVO vo = new InterviewPlanVO();
+            vo.setId(c.getId());
+            vo.setClientId(c.getClientId());
+            vo.setClientName(c.getClientName());
+            vo.setCaseId(c.getCaseId());
+            vo.setCaseTitle(c.getCaseTitle());
+            vo.setCandidateId(c.getCandidateId());
+            Optional<Candidate> candidateOptional = candidateRepository.findById(c.getCandidateId());
+            if (candidateOptional.isPresent()) {
+                vo.setCandidateName(candidateOptional.get().getChineseName());
+            }
+            vo.setPhase(c.getPhase().split(" ")[0]);
+            vo.setUsername(c.getUsername());
+            vo.setInterviewTime(analysisInterviewDate(c.getInterviewTime()));
+            vo.setContent(c.getContent());
+            Optional<ClientCase> caseOptional = caseRepository.findById(c.getCaseId());
+            if (caseOptional.isPresent()) {
+                vo.setCw(caseOptional.get().getCwUserName());
+            }
+            vo.setDistanceDays(calcDistanceDays(c.getInterviewTime()));
+            list.add(vo);
+        });
+        return list;
+    }
+
+    /**
+     * 分析面试时间
+     *
+     * @param ldt
+     * @return
+     */
+    private String analysisInterviewDate(LocalDateTime ldt) {
+        if (null == ldt) {
+            return "";
+        } else {
+            return String.format("%s月%s日(%s) %02d:%02d", ldt.getMonthValue(), ldt.getDayOfMonth(), transformDayOfWeek(ldt.getDayOfWeek().getValue()), ldt.getHour(), ldt.getMinute());
+        }
+    }
+
+    /**
+     * 转换日期显示
+     *
+     * @param i
+     * @return
+     */
+    private String transformDayOfWeek(int i) {
+        switch (i) {
+            case 1:
+                return "周一";
+            case 2:
+                return "周二";
+            case 3:
+                return "周三";
+            case 4:
+                return "周四";
+            case 5:
+                return "周五";
+            case 6:
+                return "周六";
+            case 7:
+                return "周日";
+        }
+        return "";
+    }
+
+    /**
+     * 计算还有几天面试
+     *
+     * @param interviewDay
+     * @return
+     */
+    private int calcDistanceDays(LocalDateTime interviewDay) {
+        if (null == interviewDay) {
+            return 0;
+        } else {
+            return (int) Duration.between(LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth(), 0, 0, 0), interviewDay).toDays();
+        }
     }
 }

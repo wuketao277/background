@@ -27,6 +27,9 @@ public class CommentController {
 
     @PostMapping("save")
     public CommentVO save(@RequestBody CommentVO vo, HttpSession session) {
+        if (null != vo.getInterviewTime()) {
+            vo.setInterviewTime(vo.getInterviewTime().plusHours(8));
+        }
         UserVO user = (UserVO) session.getAttribute("user");
         vo.setInputTime(LocalDateTime.now());
         vo.setRealname(user.getRealname());
@@ -117,5 +120,17 @@ public class CommentController {
     public List<CandidateVO> queryCandidateByCommentLimit100(@RequestParam("search") String search) {
         search = "%" + search + "%";
         return commentService.queryCandidateByCommentLimit100(search);
+    }
+
+    /**
+     * 查询interviewPlan数据
+     *
+     * @param session
+     * @return
+     */
+    @GetMapping("queryInterviewPlan")
+    public List<InterviewPlanVO> queryInterviewPlan(@RequestParam("range") String range, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return commentService.queryInterviewPlan(range, userVO);
     }
 }
