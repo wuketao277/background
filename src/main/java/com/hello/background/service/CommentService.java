@@ -298,8 +298,8 @@ public class CommentService {
                 vo.setCw(caseOptional.get().getCwUserName());
             }
             vo.setDistanceDays(calcDistanceDays(c.getInterviewTime()));
-            // 通过公司、职位、候选人、第几轮面试来去重。
-            if (list.stream().filter(x -> x.getClientId().equals(vo.getClientId()) && x.getCaseId().equals(vo.getCaseId()) && x.getCandidateId().equals(vo.getCandidateId()) && x.getPhase().equals(vo.getPhase())).collect(Collectors.toList()).size() == 0) {
+            // 通过公司、职位、候选人、第几轮、时间 来去重。
+            if (list.stream().filter(x -> x.getClientId().equals(vo.getClientId()) && x.getCaseId().equals(vo.getCaseId()) && x.getCandidateId().equals(vo.getCandidateId()) && x.getPhase().equals(vo.getPhase()) && x.getInterviewTime().equals(vo.getInterviewTime())).collect(Collectors.toList()).size() == 0) {
                 list.add(vo);
             }
         });
