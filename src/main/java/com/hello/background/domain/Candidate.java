@@ -1,12 +1,15 @@
 package com.hello.background.domain;
 
+import com.hello.background.constant.CandidateDoubleCheckEnum;
 import com.hello.background.constant.CandidateNotMatchReasonEnum;
 import com.hello.background.constant.GenderEnum;
+import com.hello.background.converter.CandidateDoubleCheckEnumListStringAttrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * 候选人
@@ -76,28 +79,16 @@ public class Candidate {
     private GenderEnum gender;
 
     /**
-     * 公司名称
+     * 英文水平
      */
     @Column(length = 200)
-    private String companyName;
+    private String englishLevel;
 
     /**
-     * 部门
+     * 日文水平
      */
     @Column(length = 200)
-    private String department;
-
-    /**
-     * 职位名称
-     */
-    @Column(length = 200)
-    private String title;
-
-    /**
-     * 学校名称
-     */
-    @Column(length = 200)
-    private String schoolName;
+    private String japaneseLevel;
 
     /**
      * 户籍地址
@@ -118,6 +109,30 @@ public class Candidate {
     private String futureAddress;
 
     /**
+     * 家庭情况
+     */
+    @Column(length = 200)
+    private String family;
+
+    /**
+     * 公司名称
+     */
+    @Column(length = 200)
+    private String companyName;
+
+    /**
+     * 部门
+     */
+    @Column(length = 200)
+    private String department;
+
+    /**
+     * 职位名称
+     */
+    @Column(length = 200)
+    private String title;
+
+    /**
      * 现薪资
      */
     @Column(length = 100)
@@ -130,22 +145,40 @@ public class Candidate {
     private String futureMoney;
 
     /**
+     * 公司架构
+     */
+    @Column(length = 200)
+    private String companyStructure;
+
+    /**
+     * 面试历史
+     */
+    @Column(length = 200)
+    private String interviewHistory;
+
+    /**
+     * 求职动机
+     */
+    @Column(length = 200)
+    private String motivation;
+
+    /**
+     * 离职分析
+     */
+    @Column(length = 200)
+    private String dimissionAnalysis;
+
+    /**
+     * 学校名称
+     */
+    @Column(length = 200)
+    private String schoolName;
+
+    /**
      * 备注
      */
     @Column(length = 2000)
     private String remark;
-
-    /**
-     * 英文水平
-     */
-    @Column(length = 200)
-    private String englishLevel;
-
-    /**
-     * 日文水平
-     */
-    @Column(length = 200)
-    private String japaneseLevel;
 
     /**
      * 候选人不匹配原因
@@ -177,4 +210,11 @@ public class Candidate {
      */
     @Column(length = 50)
     private String createRealName;
+
+    /**
+     * 必要检查
+     */
+    @Column(length = 100)
+    @Convert(converter = CandidateDoubleCheckEnumListStringAttrConverter.class)
+    private List<CandidateDoubleCheckEnum> doubleCheck;
 }
