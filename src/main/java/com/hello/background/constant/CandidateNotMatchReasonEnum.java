@@ -14,6 +14,8 @@ public enum CandidateNotMatchReasonEnum {
     PACKAGE("PACKAGE", "薪资"),
     ABILITY("ABILITY", "能力"),
     EDUCATION_BACKGROUND("EDUCATION_BACKGROUND", "学历"),
+    AGE("AGE", "年龄"),
+    LEVEL("LEVEL", "级别"),
     NOCONSIDER("NOCONSIDER", "不考虑"),
     OTHER("OTHER", "其他");
 

@@ -13,7 +13,20 @@ import java.math.BigDecimal;
  */
 @Data
 public class SuccessfulCaseStatisticsResponse {
+    /**
+     * billing总和
+     */
     private BigDecimal billingSum = BigDecimal.ZERO;
-
+    /**
+     * gp总和
+     */
     private BigDecimal gpSum = BigDecimal.ZERO;
+    /**
+     * billing平均值
+     */
+    private BigDecimal billingAvg = BigDecimal.ZERO;
+    /**
+     * gp平均值
+     */
+    private BigDecimal gpAvg = BigDecimal.ZERO;
 }

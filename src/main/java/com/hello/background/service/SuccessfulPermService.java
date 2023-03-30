@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -298,6 +299,10 @@ public class SuccessfulPermService {
                 response.setGpSum(response.getGpSum().add(gp));
             }
         });
+        if (successfulPermVOList.size() > 0) {
+            response.setBillingAvg(response.getBillingSum().divide(new BigDecimal(successfulPermVOList.size()), 2, RoundingMode.HALF_DOWN));
+            response.setGpAvg(response.getGpSum().divide(new BigDecimal(successfulPermVOList.size()), 2, RoundingMode.HALF_DOWN));
+        }
         return response;
     }
 
