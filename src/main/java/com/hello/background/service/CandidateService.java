@@ -6,6 +6,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
+import com.hello.background.constant.SchoolConstant;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.CandidateAttention;
 import com.hello.background.domain.CandidateForCase;
@@ -15,6 +16,7 @@ import com.hello.background.repository.CandidateRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateAttentionVO;
 import com.hello.background.vo.CandidateVO;
+import com.hello.background.vo.SearchCandidateListCondition;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -34,6 +36,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author wuketao
@@ -90,7 +93,7 @@ public class CandidateService {
             // 对于已经存在的候选人
             // 更新关注候选人
             List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByCandidateId(vo.getId());
-            candidateAttentionList.forEach(ca->{
+            candidateAttentionList.forEach(ca -> {
                 if (Strings.isNotBlank(ca.getCandidateChineseName()) && !ca.getCandidateChineseName().equals(vo.getChineseName())) {
                     ca.setCandidateChineseName(vo.getChineseName());
                     candidateAttentionRepository.save(ca);
@@ -472,5 +475,217 @@ public class CandidateService {
     public List<CandidateAttentionVO> queryCandidateAttentionListByUser(Integer userId) {
         List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByUserId(userId);
         return candidateAttentionList.stream().map(x -> TransferUtil.transferTo(x, CandidateAttentionVO.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * 搜索候选人集合
+     *
+     * @param condition
+     * @return
+     */
+    public List<CandidateVO> searchCandidateList(SearchCandidateListCondition condition) {
+        List<String> searchWordList = CommonUtils.splitSearchWord(condition.getKeyWords());
+        Specification<Candidate> specification = new Specification<Candidate>() {
+            @Override
+            public Predicate toPredicate(Root<Candidate> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                for (String searchWord : searchWordList) {
+                    list.add(criteriaBuilder.and(criteriaBuilder.or(
+                            getPredicate("chineseName", searchWord, root, criteriaBuilder)
+                            , getPredicate("englishName", searchWord, root, criteriaBuilder)
+                            , getPredicate("phoneNo", searchWord, root, criteriaBuilder)
+                            , getPredicate("email", searchWord, root, criteriaBuilder)
+                            , getPredicate("companyName", searchWord, root, criteriaBuilder)
+                            , getPredicate("department", searchWord, root, criteriaBuilder)
+                            , getPredicate("title", searchWord, root, criteriaBuilder)
+                            , getPredicate("schoolName", searchWord, root, criteriaBuilder)
+                            , getPredicate("currentAddress", searchWord, root, criteriaBuilder)
+                            , getPredicate("futureAddress", searchWord, root, criteriaBuilder)
+                            , getPredicate("remark", searchWord, root, criteriaBuilder)
+                            , getPredicate("createUserName", searchWord, root, criteriaBuilder)
+                            , getPredicate("createRealName", searchWord, root, criteriaBuilder)
+                    )));
+                }
+                if (null != condition.getGender()) {
+                    list.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("gender"), condition.getGender())));
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        // 通过条件查询数据，获取流对象
+        Stream<Candidate> stream = candidateRepository.findAll(specification).parallelStream();
+        // 检查学校
+        if (null != condition.getSchoolLevel() && condition.getSchoolLevel().size() > 0) {
+            boolean is985 = condition.getSchoolLevel().contains("985");
+            boolean is211 = condition.getSchoolLevel().contains("211");
+            boolean is11 = condition.getSchoolLevel().contains("双一流");
+            stream = stream.filter(c -> checkCandidateSchool(c, is985, is211, is11));
+        }
+        // 检查年龄
+        if (null != condition.getAgeMin() || null != condition.getAgeMax()) {
+            stream = stream.filter(c -> checkAge(c, condition.getAgeMin(), condition.getAgeMax()));
+        }
+        // 检查最远阶段
+        if (Strings.isNotBlank(condition.getFarthestPhase()) && !condition.getFarthestPhase().equals("无")) {
+            stream = stream.filter(c -> checkFarthestPhase(c, conditionConvertForFarthestPhase(condition.getFarthestPhase())));
+        }
+        // 数据转换
+        List<CandidateVO> voList = stream.map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+        return voList;
+    }
+
+    /**
+     * 检查年龄
+     *
+     * @param candidate
+     * @param ageMin
+     * @param ageMax
+     * @return
+     */
+    public boolean checkAge(Candidate candidate, Integer ageMin, Integer ageMax) {
+        Integer age = CommonUtils.calcAge(candidate.getBirthDay());
+        if (null == age) {
+            return true;
+        }
+        if (null != ageMin && ageMin > age) {
+            return false;
+        }
+        if (null != ageMax && ageMax < age) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 条件转换
+     *
+     * @param phase
+     * @return
+     */
+    public String conditionConvertForFarthestPhase(String phase) {
+        switch (phase) {
+            case "CVO":
+                return "CVO";
+            case "interview1":
+                return "1st Interview";
+            case "interview2":
+                return "2nd Interview";
+            case "interview3":
+                return "3rd Interview";
+            case "interview4":
+                return "4th Interview";
+            case "finalInterview":
+                return "Final Interview";
+            case "offerSigned":
+                return "Offer Signed";
+            case "onBoard":
+                return "On Board";
+        }
+        return "";
+    }
+
+    /**
+     * 检查学校是否是985 211 双一流
+     *
+     * @param candidate
+     * @param is985     检查985
+     * @param is211     检查211
+     * @param is11      检查双一流
+     * @return
+     */
+    private boolean checkCandidateSchool(Candidate candidate, boolean is985, boolean is211, boolean is11) {
+        if (null == candidate || Strings.isBlank(candidate.getSchoolName())) {
+            return false;
+        } else {
+            String school = candidate.getSchoolName();
+            if (is985) {
+                for (String s : SchoolConstant.s985) {
+                    if (school.indexOf(s) > -1) {
+                        return true;
+                    }
+                }
+            }
+            if (is211) {
+                for (String s : SchoolConstant.s211) {
+                    if (school.indexOf(s) > -1) {
+                        return true;
+                    }
+                }
+            }
+            if (is11) {
+                for (String s : SchoolConstant.sShuangyiliu) {
+                    if (school.indexOf(s) > -1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 检查最远阶段
+     *
+     * @param candidate
+     * @param farthestPhase
+     * @return
+     */
+    private boolean checkFarthestPhase(Candidate candidate, String farthestPhase) {
+        List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCandidateId(candidate.getId());
+        for (CandidateForCase cc : candidateForCaseList) {
+            if (compareFarthestPhase(cc.getFarthestPhase(), farthestPhase)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 比较最远阶段
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    private boolean compareFarthestPhase(String a, String b) {
+        if (Strings.isBlank(a) || Strings.isBlank(b)) {
+            return false;
+        }
+        return transformFarthestPhaseToInt(a) >= transformFarthestPhaseToInt(b);
+    }
+
+    /**
+     * 将最远阶段转换为数字
+     *
+     * @param phase
+     * @return
+     */
+    private int transformFarthestPhaseToInt(String phase) {
+        switch (phase) {
+            case "CVO":
+                return 0;
+            case "1st Interview":
+                return 1;
+            case "2nd Interview":
+                return 2;
+            case "3rd Interview":
+                return 3;
+            case "4th Interview":
+                return 4;
+            case "Final Interview":
+                return 5;
+            case "Offer Signed":
+                return 6;
+            case "On Board":
+                return 7;
+            case "Invoice":
+                return 8;
+            case "Payment":
+                return 9;
+            case "Successful":
+                return 10;
+        }
+        return -1;
     }
 }

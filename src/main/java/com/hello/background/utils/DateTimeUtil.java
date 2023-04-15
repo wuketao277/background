@@ -38,7 +38,7 @@ public class DateTimeUtil {
         }
         String[] parts = new String[3];
         if (Pattern.matches(sf1, content)) {
-            parts = content.split(".");
+            parts = content.split("\\.");
         } else if (Pattern.matches(sf2, content)) {
             parts = content.split("-");
         } else if (Pattern.matches(sf3, content)) {

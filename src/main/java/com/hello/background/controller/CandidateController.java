@@ -124,6 +124,16 @@ public class CandidateController {
     }
 
     /**
+     * 搜索候选人集合
+     *
+     * @return
+     */
+    @PostMapping("searchCandidateList")
+    public List<CandidateVO> searchCandidateList(@RequestBody SearchCandidateListCondition condition) {
+        return candidateService.searchCandidateList(condition);
+    }
+
+    /**
      * 查询候选人
      *
      * @param search 搜索关键字
