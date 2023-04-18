@@ -1,12 +1,15 @@
 package com.hello.background.service;
 
 import com.hello.background.common.CommonUtils;
+import com.hello.background.constant.KPIStandardConstants;
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.domain.Comment;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.CommentRepository;
+import com.hello.background.repository.SalaryRepository;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
@@ -17,9 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +47,8 @@ public class CommentService {
     private UserService userService;
     @Autowired
     private CaseRepository caseRepository;
+    @Autowired
+    private SalaryRepository salaryRepository;
 
     /**
      * 通过id删除
@@ -125,6 +133,10 @@ public class CommentService {
             switch (cnt.getPhase()) {
                 case "TI":
                     kpiPerson.setTi(kpiPerson.getTi() + 1);
+                    kpiPerson.setTiif(kpiPerson.getTiif() + 1);
+                    break;
+                case "IF":
+                    kpiPerson.setTiif(kpiPerson.getTiif() + 1);
                     break;
                 case "VI":
                     kpiPerson.setVi(kpiPerson.getVi() + 1);
@@ -149,7 +161,62 @@ public class CommentService {
             }
         }
         kpiPersonList.sort(Comparator.comparing(KPIPerson::getUserId));
+        // 计算KPI得分
+        Integer days = (int) start.until(end, ChronoUnit.DAYS);
+        kpiPersonList.forEach(k -> calcKPIFinishRate(k, days + 1));
         return kpiPersonList;
+    }
+
+    /**
+     * 计算KPI中的完成比例
+     *
+     * @param kpiPerson
+     */
+    private void calcKPIFinishRate(KPIPerson kpiPerson, Integer days) {
+        // 读取顾问本月工作日
+//        Salary salary = salaryRepository.findByConsultantUserNameAndMonth(kpiPerson.getUserName(), String.format("%04d-%02d", LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
+//        BigDecimal workingDays = Optional.ofNullable(salary).map(s -> s.getWorkingDays()).filter(s -> s.compareTo(BigDecimal.ZERO) > 0).orElse(new BigDecimal(21.75));
+        BigDecimal workingDays = BigDecimal.valueOf(days);
+        // 读取顾问是AM还是Recruiter
+        UserVO userVO = userService.findById(kpiPerson.getUserId());
+        boolean isAM = userVO.getRoles().stream().anyMatch(r -> r.equals(RoleEnum.AM));
+        boolean isRecuriter = userVO.getRoles().stream().anyMatch(r -> r.equals(RoleEnum.RECRUITER));
+        // 读取各项指标数据，计算得分
+        if (isAM) {
+            //  计算AM的KPI完成比例
+            BigDecimal viioiPoint = calcKPIPercent(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays);
+            BigDecimal cvoPoint = calcKPIPercent(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays);
+            BigDecimal int1Point = calcKPIPercent(new BigDecimal(kpiPerson.getInterview1st()), KPIStandardConstants.am1stCount, KPIStandardConstants.am1stPercent, workingDays);
+            kpiPerson.setFinishRate(viioiPoint.add(cvoPoint).add(int1Point));
+        } else {
+            // 计算Recuriter的KPI完成比例
+            BigDecimal tiifPoint = calcKPIPercent(new BigDecimal(kpiPerson.getTiif()), KPIStandardConstants.reTIIFCount, KPIStandardConstants.reTIIFPercent, workingDays);
+            BigDecimal viioiPoint = calcKPIPercent(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.reVIIOICount, KPIStandardConstants.reVIIOIPercent, workingDays);
+            BigDecimal cvoPoint = calcKPIPercent(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays);
+            BigDecimal int1Point = calcKPIPercent(new BigDecimal(kpiPerson.getInterview1st()), KPIStandardConstants.re1stCount, KPIStandardConstants.re1stPercent, workingDays);
+            kpiPerson.setFinishRate(tiifPoint.add(viioiPoint).add(cvoPoint).add(int1Point));
+        }
+    }
+
+    /**
+     * 计算KPI各考核项的占比得分
+     *
+     * @param actualCount   实际完成情况
+     * @param standardCount 每天标准完成情况
+     * @param workdays      工作天数
+     * @param percent       该考核项的占比得分
+     * @return
+     */
+    private BigDecimal calcKPIPercent(BigDecimal actualCount, BigDecimal standardCount, BigDecimal percent, BigDecimal workdays) {
+        if (null == actualCount || null == standardCount || null == workdays || null == percent) {
+            return BigDecimal.ZERO;
+        }
+        // 该项得分= 实际发生/(每天标准*天数)
+        BigDecimal point = actualCount.divide(standardCount.multiply(workdays), 2, RoundingMode.HALF_DOWN);
+        // 如果得分大于1就取1
+        point = point.compareTo(BigDecimal.ONE) >= 0 ? BigDecimal.ONE : point;
+        // 最后乘以该项的占比
+        return point.multiply(percent);
     }
 
     /**

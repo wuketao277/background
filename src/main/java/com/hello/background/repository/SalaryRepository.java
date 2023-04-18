@@ -81,4 +81,13 @@ public interface SalaryRepository extends PagingAndSortingRepository<Salary, Int
      * @return
      */
     List<Salary> findAllByMonth(String month);
+
+    /**
+     * 通过顾问登录名和月份查询
+     *
+     * @param userName
+     * @param month
+     * @return
+     */
+    Salary findByConsultantUserNameAndMonth(String userName, String month);
 }

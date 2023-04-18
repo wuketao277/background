@@ -11,7 +11,8 @@ public enum ReimbursementLocationEnum {
     Shanghai("上海"),
     Beijing("北京"),
     Shenyang("沈阳"),
-    Enshi("恩施");
+    Nanjing("南京"),
+    Wuhan("武汉");
 
     private String name;
 

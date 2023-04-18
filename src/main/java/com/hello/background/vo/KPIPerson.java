@@ -3,6 +3,8 @@ package com.hello.background.vo;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @author wuketao
  * @date 2021/7/3
@@ -18,6 +20,8 @@ public class KPIPerson {
     private String realName;
     @ExcelProperty("TI")
     private Integer ti;
+    @ExcelProperty("TIIF")
+    private Integer tiif;
     @ExcelProperty("VI")
     private Integer vi;
     @ExcelProperty("IOI")
@@ -32,9 +36,12 @@ public class KPIPerson {
     private Integer offerSigned;
     @ExcelProperty("On Board")
     private Integer onBoard;
+    @ExcelProperty("完成比例")
+    private BigDecimal finishRate;
 
     public KPIPerson() {
         this.ti = 0;
+        this.tiif = 0;
         this.vi = 0;
         this.ioi = 0;
         this.viioi = 0;
@@ -42,5 +49,6 @@ public class KPIPerson {
         this.interview1st = 0;
         this.offerSigned = 0;
         this.onBoard = 0;
+        this.finishRate = BigDecimal.ZERO;
     }
 }
