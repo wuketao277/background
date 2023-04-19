@@ -268,6 +268,23 @@ public class SuccessfulPermService {
                             , equal11, equal12, equal13, equal14, equal15
                             , equal16, equal17, equal18, equal19, equal20));
                 }
+                // 到期未付款
+                if (Optional.ofNullable(search).map(x -> x.getNonPaymentDue()).orElse(false)) {
+                    // paymentDate小于等于今天，actualPaymentDate是空
+//                    Date start = null != search.getPaymentDateStart() ? search.getPaymentDateStart() : DateTimeUtil.startDate;
+//                    Date end = null != search.getPaymentDateEnd() ? search.getPaymentDateEnd() : DateTimeUtil.endDate;
+//                    Path<Date> startPath = root.get("paymentDate");
+//                    Predicate startEqual = criteriaBuilder.greaterThanOrEqualTo(startPath, start);
+//                    list.add(criteriaBuilder.and(startEqual));
+                    // paymentDate小于等于今天
+                    Path<Date> paymentDatePath = root.get("paymentDate");
+                    Predicate paymentDatePathPredicate = criteriaBuilder.lessThanOrEqualTo(paymentDatePath, new Date());
+                    list.add(criteriaBuilder.and(paymentDatePathPredicate));
+                    // 且actualPaymentDate是空
+                    Path<Date> actualPaymentDatePath = root.get("actualPaymentDate");
+                    Predicate actualPaymentDatePredicate = criteriaBuilder.isNull(actualPaymentDatePath);
+                    list.add(criteriaBuilder.and(actualPaymentDatePredicate));
+                }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
             }

@@ -2,7 +2,6 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -101,4 +100,8 @@ public class SuccessfulPermVOPageSearchRequest {
      * 成功case类型
      */
     private String type;
+    /**
+     * 到期未付款
+     */
+    private Boolean nonPaymentDue;
 }
