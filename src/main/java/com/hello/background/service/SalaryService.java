@@ -55,7 +55,7 @@ public class SalaryService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserRoleRepository userRoleRepository;
+    private CommonService commonService;
 
     public boolean update(SalaryVO vo, UserVO user) {
         Optional<Salary> optional = salaryRepository.findById(vo.getId());
@@ -238,6 +238,8 @@ public class SalaryService {
                         sb.append(String.format("前置工资类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
+                // 计算工作天数，并扣除事假工资
+                salary.setWorkingDays(commonService.calcWorkdaysBetween(ldStartMonth, ldEndMonth.plusDays(-1), user.getUsername()));
                 sb.append(String.format("综合工资：%s \r\n", userSalarySum));
                 if (user.getCoverbase()) {
                     // 需要cover base
@@ -266,7 +268,7 @@ public class SalaryService {
                     salary.setSum(userSalarySum.add(commissionSum));
                 }
                 // 当月工资特殊项中 后置项累加到工资中
-                salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) &&  Strings.isNotBlank(s.getIsPre()) && "no".equals(s.getIsPre())).collect(Collectors.toList()).forEach(ss->{
+                salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && Strings.isNotBlank(s.getIsPre()) && "no".equals(s.getIsPre())).collect(Collectors.toList()).forEach(ss -> {
                     salary.setSum(salary.getSum().add(ss.getSum()));
                     sb.append(String.format("后置特殊项：%s %s \r\n", ss.getDescription(), ss.getSum()));
                 });

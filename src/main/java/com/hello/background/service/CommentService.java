@@ -1,7 +1,6 @@
 package com.hello.background.service;
 
 import com.hello.background.common.CommonUtils;
-import com.hello.background.constant.HolidayConstants;
 import com.hello.background.constant.KPIStandardConstants;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Candidate;
@@ -10,7 +9,6 @@ import com.hello.background.domain.Comment;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.CommentRepository;
-import com.hello.background.repository.SalaryRepository;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
@@ -23,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,7 +46,7 @@ public class CommentService {
     @Autowired
     private CaseRepository caseRepository;
     @Autowired
-    private SalaryRepository salaryRepository;
+    private CommonService commonService;
 
     /**
      * 通过id删除
@@ -163,44 +160,8 @@ public class CommentService {
         }
         kpiPersonList.sort(Comparator.comparing(KPIPerson::getUserId));
         // 计算KPI得分
-        Integer days = calcWorkdaysBetween(start, end);
-        kpiPersonList.forEach(k -> calcKPIFinishRate(k, days));
+        kpiPersonList.forEach(k -> calcKPIFinishRate(k, start, end));
         return kpiPersonList;
-    }
-
-    /**
-     * 计算开始日期到结束日期直接有多少个工作日
-     *
-     * @param start
-     * @param end
-     * @return
-     */
-    private int calcWorkdaysBetween(LocalDate start, LocalDate end) {
-        int workdays = 0;
-        while (true) {
-            // 计算当天的简单表示方法
-            String todayStr = String.format("%d月%d日", start.getMonthValue(), start.getDayOfMonth());
-            // 首先判断是否是周末
-            if (start.getDayOfWeek() == DayOfWeek.SATURDAY || start.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                //  如果当天是周末，判断是否是调休的工作日
-                if (HolidayConstants.workday2023.contains(todayStr)) {
-                    // 是周末的调休日，需要计算到工作天数中
-                    workdays += 1;
-                }
-            } else {
-                // 非周末，判断是否是公休
-                if (!HolidayConstants.holiday2023.contains(todayStr)) {
-                    // 不是公休，需要计算到工作天数中
-                    workdays += 1;
-                }
-            }
-            // 计算日期向后+1，如果超过结束日期就终止；
-            start = start.plusDays(1);
-            if (start.compareTo(end) > 0) {
-                break;
-            }
-        }
-        return workdays;
     }
 
     /**
@@ -208,11 +169,10 @@ public class CommentService {
      *
      * @param kpiPerson
      */
-    private void calcKPIFinishRate(KPIPerson kpiPerson, Integer days) {
-        // 读取顾问本月工作日
-//        Salary salary = salaryRepository.findByConsultantUserNameAndMonth(kpiPerson.getUserName(), String.format("%04d-%02d", LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
-//        BigDecimal workingDays = Optional.ofNullable(salary).map(s -> s.getWorkingDays()).filter(s -> s.compareTo(BigDecimal.ZERO) > 0).orElse(new BigDecimal(21.75));
-        BigDecimal workingDays = BigDecimal.valueOf(days);
+    private void calcKPIFinishRate(KPIPerson kpiPerson, LocalDate start, LocalDate end) {
+        // 计算顾问本月工作日
+        BigDecimal workingDays = commonService.calcWorkdaysBetween(start, end, kpiPerson.getUserName());
+        kpiPerson.setWorkDays(workingDays);
         // 读取顾问是AM还是Recruiter
         UserVO userVO = userService.findById(kpiPerson.getUserId());
         boolean isAM = userVO.getRoles().stream().anyMatch(r -> r.equals(RoleEnum.AM));

@@ -18,6 +18,10 @@ public class KPIPerson {
     private String userName;
     @ExcelProperty("姓名")
     private String realName;
+    @ExcelProperty("完成比例")
+    private BigDecimal finishRate;
+    @ExcelProperty("工作天数")
+    private BigDecimal workDays;
     @ExcelProperty("TI")
     private Integer ti;
     @ExcelProperty("TIIF")
@@ -36,8 +40,6 @@ public class KPIPerson {
     private Integer offerSigned;
     @ExcelProperty("On Board")
     private Integer onBoard;
-    @ExcelProperty("完成比例")
-    private BigDecimal finishRate;
 
     public KPIPerson() {
         this.ti = 0;
@@ -50,5 +52,6 @@ public class KPIPerson {
         this.offerSigned = 0;
         this.onBoard = 0;
         this.finishRate = BigDecimal.ZERO;
+        this.workDays = BigDecimal.ZERO;
     }
 }
