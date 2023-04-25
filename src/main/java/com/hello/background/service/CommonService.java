@@ -35,10 +35,8 @@ public class CommonService {
      *
      * @return
      */
-    public BigDecimal calcWorkdaysBetween(LocalDate start, LocalDate end, String userName) {
+    public BigDecimal calcWorkdaysBetween(LocalDate start, LocalDate end, List<Holiday> leaveList) {
         BigDecimal workdays = BigDecimal.ZERO;
-        // 查询请假情况
-        List<Holiday> leaveList = holidayRepository.findAllByHolidayDateBetweenAndUserNameAndApproveStatus(Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end), userName, HolidayApproveStatusEnum.APPROVED);
         while (true) {
             // 计算当天的简单表示方法
             String todayStr = String.format("%d月%d日", start.getMonthValue(), start.getDayOfMonth());
@@ -64,6 +62,17 @@ public class CommonService {
             }
         }
         return workdays;
+    }
+
+    /**
+     * 计算开始日期到结束日期扣除假期和请假后有多少个工作日。
+     *
+     * @return
+     */
+    public BigDecimal calcWorkdaysBetween(LocalDate start, LocalDate end, String userName) {
+        // 查询请假情况
+        List<Holiday> leaveList = holidayRepository.findAllByHolidayDateBetweenAndUserNameAndApproveStatus(Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end), userName, HolidayApproveStatusEnum.APPROVED);
+        return calcWorkdaysBetween(start, end, leaveList);
     }
 
     /**

@@ -1,12 +1,7 @@
 package com.hello.background.service;
 
-import com.hello.background.constant.JobTypeEnum;
-import com.hello.background.constant.RoleEnum;
-import com.hello.background.constant.SalarySpecialItemTypeEnum;
-import com.hello.background.domain.Salary;
-import com.hello.background.domain.SalarySpecialItem;
-import com.hello.background.domain.SuccessfulPerm;
-import com.hello.background.domain.User;
+import com.hello.background.constant.*;
+import com.hello.background.domain.*;
 import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
@@ -56,6 +51,8 @@ public class SalaryService {
     private UserRepository userRepository;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private HolidayRepository holidayRepository;
 
     public boolean update(SalaryVO vo, UserVO user) {
         Optional<Salary> optional = salaryRepository.findById(vo.getId());
@@ -228,8 +225,11 @@ public class SalaryService {
                     }
                 }
                 sb.append(String.format("综合提成：%s \r\n", commissionSum));
-                // 获取员工工资
-                BigDecimal userSalarySum = null != user.getSalarybase() ? user.getSalarybase() : BigDecimal.ZERO;
+                // 计算工作天数，并扣除事假工资
+                List<Holiday> leaveList = holidayRepository.findAllByHolidayDateBetweenAndUserNameAndApproveStatus(start, DateTimeUtil.localDate2Date(ldEndMonth.plusDays(-1)), user.getUsername(), HolidayApproveStatusEnum.APPROVED);
+                salary.setWorkingDays(commonService.calcWorkdaysBetween(ldStartMonth, ldEndMonth.plusDays(-1), leaveList));
+                // 通过请假调整基本薪资
+                BigDecimal userSalarySum = calcBaseSalary(user, sb, leaveList);
                 // 当月工资特殊项中 前置工资类型的计算项总和中
                 List<SalarySpecialItem> salarySpecialItemListForSalary = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.SALARY.equals(s.getType()) && Strings.isNotBlank(s.getIsPre()) && "yes".equals(s.getIsPre())).collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(salarySpecialItemListForSalary)) {
@@ -238,8 +238,6 @@ public class SalaryService {
                         sb.append(String.format("前置工资类型特殊项：%s %s \r\n", specialItem.getDescription(), specialItem.getSum()));
                     }
                 }
-                // 计算工作天数，并扣除事假工资
-                salary.setWorkingDays(commonService.calcWorkdaysBetween(ldStartMonth, ldEndMonth.plusDays(-1), user.getUsername()));
                 sb.append(String.format("综合工资：%s \r\n", userSalarySum));
                 if (user.getCoverbase()) {
                     // 需要cover base
@@ -279,6 +277,40 @@ public class SalaryService {
                 log.error("generateSalary", ex);
             }
         });
+    }
+
+    /**
+     * 计算基本薪资
+     *
+     * @param user
+     * @param sb
+     * @param leaveList
+     * @return
+     */
+    private BigDecimal calcBaseSalary(User user, StringBuilder sb, List<Holiday> leaveList) {
+        // 从员工薪资表中获取基本薪资
+        BigDecimal userSalarySum = null != user.getSalarybase() ? user.getSalarybase() : BigDecimal.ZERO;
+        // 通过请假情况，调整薪资
+        if (leaveList.size() > 0) {
+            // 事假
+            BigDecimal shiLeaveCount = BigDecimal.ZERO;
+            // 病假
+            BigDecimal bingLeaveCount = BigDecimal.ZERO;
+            for (Holiday holiday : leaveList) {
+                if (null != holiday.getHolidayType() && HolidayTypeEnum.SHI.equals(holiday.getHolidayType())) {
+                    shiLeaveCount = shiLeaveCount.add(holiday.getHolidayLong());
+                }
+                if (null != holiday.getHolidayType() && HolidayTypeEnum.BING.equals(holiday.getHolidayType())) {
+                    bingLeaveCount = bingLeaveCount.add(holiday.getHolidayLong());
+                }
+            }
+            if (shiLeaveCount.compareTo(BigDecimal.ZERO) > 0 || bingLeaveCount.compareTo(BigDecimal.ZERO) > 0) {
+                // 员工工资折算病假、事假 基本工资-(平均工资*(事假天数+病假*0.6))
+                userSalarySum = userSalarySum.subtract(userSalarySum.divide(new BigDecimal(21.75)).multiply(shiLeaveCount.add(bingLeaveCount.multiply(new BigDecimal(0.6)))));
+                sb.append(String.format("员工工资折算病假、事假 %d-(%d*(%d+%d*0.6)) \r\n", userSalarySum, userSalarySum.divide(new BigDecimal(21.75)), shiLeaveCount, bingLeaveCount));
+            }
+        }
+        return userSalarySum;
     }
 
     /**

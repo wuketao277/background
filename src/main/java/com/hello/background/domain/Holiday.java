@@ -1,6 +1,7 @@
 package com.hello.background.domain;
 
 import com.hello.background.constant.HolidayApproveStatusEnum;
+import com.hello.background.constant.HolidayTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -64,6 +65,11 @@ public class Holiday {
      */
     @Enumerated
     private HolidayApproveStatusEnum approveStatus;
+    /**
+     * 请假类型
+     */
+    @Enumerated
+    private HolidayTypeEnum holidayType;
     /**
      * 审批人ID
      */

@@ -1,6 +1,7 @@
 package com.hello.background.vo;
 
 import com.hello.background.constant.HolidayApproveStatusEnum;
+import com.hello.background.constant.HolidayTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,6 +52,10 @@ public class HolidayVO {
      * 假期申请审批状态
      */
     private HolidayApproveStatusEnum approveStatus;
+    /**
+     * 请假类型
+     */
+    private HolidayTypeEnum holidayType;
     /**
      * 审批人ID
      */
