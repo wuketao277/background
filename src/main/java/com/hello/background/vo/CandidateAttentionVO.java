@@ -2,6 +2,9 @@ package com.hello.background.vo;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 关注候选人
  *
@@ -35,4 +38,8 @@ public class CandidateAttentionVO {
      * 真实姓名
      */
     private String userRealName;
+    /**
+     * 标签集合
+     */
+    private List<String> labels = new ArrayList<>();
 }

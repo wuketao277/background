@@ -217,4 +217,10 @@ public class Candidate {
     @Column(length = 100)
     @Convert(converter = CandidateDoubleCheckEnumListStringAttrConverter.class)
     private List<CandidateDoubleCheckEnum> doubleCheck;
+
+    /**
+     * 标签集合
+     */
+    @Column(length = 500)
+    private String labels;
 }

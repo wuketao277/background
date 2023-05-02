@@ -1,12 +1,18 @@
 package com.hello.background.vo;
 
+import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.CandidateDoubleCheckEnum;
 import com.hello.background.constant.CandidateNotMatchReasonEnum;
 import com.hello.background.constant.GenderEnum;
+import com.hello.background.domain.Candidate;
+import com.hello.background.utils.TransferUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -179,4 +185,36 @@ public class CandidateVO {
      * 必要检查
      */
     private List<CandidateDoubleCheckEnum> doubleCheck;
+
+    /**
+     * 标签列表
+     */
+    private List<String> labels = new ArrayList<>();
+
+    /**
+     * 通过domain对象转换vo对象
+     *
+     * @param candidate
+     * @return
+     */
+    public static CandidateVO fromCandidate(Candidate candidate) {
+        CandidateVO vo = TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
+        if (Strings.isNotBlank(candidate.getLabels())) {
+            vo.setLabels(Arrays.asList(candidate.getLabels().split(",")));
+        }
+        return vo;
+    }
+
+    /**
+     * 通过vo对象转换domain对象
+     *
+     * @return
+     */
+    public Candidate toCandidate() {
+        Candidate candidate = TransferUtil.transferTo(this, Candidate.class);
+        if (null != this.getLabels() && this.getLabels().size() > 0) {
+            candidate.setLabels(Strings.join(this.getLabels(), ','));
+        }
+        return candidate;
+    }
 }

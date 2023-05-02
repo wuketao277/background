@@ -71,7 +71,7 @@ public class CandidateService {
         Optional<Candidate> candidateOptional = candidateRepository.findById(id);
         if (candidateOptional.isPresent()) {
             Candidate candidate = candidateOptional.get();
-            return TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
+            return CandidateVO.fromCandidate(candidate);
         }
         return null;
     }
@@ -83,7 +83,7 @@ public class CandidateService {
      * @return
      */
     public CandidateVO save(CandidateVO vo, UserVO user) {
-        Candidate candidate = TransferUtil.transferTo(vo, Candidate.class);
+        Candidate candidate = vo.toCandidate();
         // 如果没有id，表示是第一次新增。就增加创建用户。
         if (null == candidate.getId() || null == candidate.getCreateUserId()) {
             candidate.setCreateUserId(user.getId());
@@ -161,7 +161,7 @@ public class CandidateService {
             }
         };
         Page<Candidate> all = candidateRepository.findAll(specification, pageable);
-        Page<CandidateVO> map = all.map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class));
+        Page<CandidateVO> map = all.map(x -> CandidateVO.fromCandidate(x));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
@@ -216,7 +216,7 @@ public class CandidateService {
                 candidateList.add(candidateOptional.get());
             }
         }
-        return candidateList.stream().map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+        return candidateList.stream().map(x -> CandidateVO.fromCandidate(x)).collect(Collectors.toList());
     }
 
     /**
@@ -232,7 +232,7 @@ public class CandidateService {
             }
         };
         List<Candidate> all = candidateRepository.findAll(specification);
-        return all.stream().map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+        return all.stream().map(x -> CandidateVO.fromCandidate(x)).collect(Collectors.toList());
     }
 
     /**
@@ -419,7 +419,7 @@ public class CandidateService {
      */
     public List<CandidateVO> findByPhoneNo(String phoneNo) {
         List<Candidate> list = candidateRepository.findByPhoneNo(phoneNo);
-        return list.stream().map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+        return list.stream().map(x -> CandidateVO.fromCandidate(x)).collect(Collectors.toList());
     }
 
     /**
@@ -474,7 +474,16 @@ public class CandidateService {
      */
     public List<CandidateAttentionVO> queryCandidateAttentionListByUser(Integer userId) {
         List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByUserId(userId);
-        return candidateAttentionList.stream().map(x -> TransferUtil.transferTo(x, CandidateAttentionVO.class)).collect(Collectors.toList());
+        return candidateAttentionList.parallelStream().map(x -> {
+            CandidateAttentionVO vo = TransferUtil.transferTo(x, CandidateAttentionVO.class);
+            Optional<Candidate> optional = candidateRepository.findById(vo.getCandidateId());
+            if (optional.isPresent()) {
+                if (Strings.isNotBlank(optional.get().getLabels())) {
+                    vo.setLabels(Arrays.asList(optional.get().getLabels().split(",")));
+                }
+            }
+            return vo;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -531,7 +540,7 @@ public class CandidateService {
             stream = stream.filter(c -> checkFarthestPhase(c, conditionConvertForFarthestPhase(condition.getFarthestPhase())));
         }
         // 数据转换
-        List<CandidateVO> voList = stream.map(x -> TransferUtil.transferTo(CommonUtils.calcAge(x), CandidateVO.class)).collect(Collectors.toList());
+        List<CandidateVO> voList = stream.map(x -> CandidateVO.fromCandidate(x)).collect(Collectors.toList());
         return voList;
     }
 

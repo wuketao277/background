@@ -1,5 +1,6 @@
 package com.hello.background.utils;
 
+import com.hello.background.domain.Candidate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.PageImpl;
