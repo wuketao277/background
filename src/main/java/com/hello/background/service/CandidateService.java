@@ -13,6 +13,7 @@ import com.hello.background.domain.CandidateForCase;
 import com.hello.background.repository.CandidateAttentionRepository;
 import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.repository.CandidateRepository;
+import com.hello.background.repository.LabelRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateAttentionVO;
 import com.hello.background.vo.CandidateVO;
@@ -58,6 +59,8 @@ public class CandidateService {
     private CandidateAttentionRepository candidateAttentionRepository;
     @Autowired
     private CandidateForCaseRepository candidateForCaseRepository;
+    @Autowired
+    private LabelRepository labelRepository;
 
     private ThreadLocal<Integer> tlRowNumber = new ThreadLocal<>();
 
@@ -109,6 +112,11 @@ public class CandidateService {
                     candidateForCaseRepository.save(cfc);
                 }
             });
+            // 检查标签是否有效
+            if (Strings.isNotBlank(candidate.getLabels())) {
+                List<String> collect = Arrays.asList(candidate.getLabels().split(",")).stream().filter(x -> labelRepository.findByName(x).size() > 0).collect(Collectors.toList());
+                candidate.setLabels(Strings.join(collect, ','));
+            }
         }
         candidate = candidateRepository.save(candidate);
         return TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
