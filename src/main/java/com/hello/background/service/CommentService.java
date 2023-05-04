@@ -131,10 +131,10 @@ public class CommentService {
             switch (cnt.getPhase()) {
                 case "TI":
                     kpiPerson.setTi(kpiPerson.getTi() + 1);
-                    kpiPerson.setTiif(kpiPerson.getTiif() + 1);
+                    kpiPerson.setTicf(kpiPerson.getTicf() + 1);
                     break;
-                case "IF":
-                    kpiPerson.setTiif(kpiPerson.getTiif() + 1);
+                case "CF":
+                    kpiPerson.setTicf(kpiPerson.getTicf() + 1);
                     break;
                 case "VI":
                     kpiPerson.setVi(kpiPerson.getVi() + 1);
@@ -186,11 +186,11 @@ public class CommentService {
             kpiPerson.setFinishRate(viioiPoint.add(cvoPoint).add(int1Point));
         } else {
             // 计算Recuriter的KPI完成比例
-            BigDecimal tiifPoint = calcKPIPercent(new BigDecimal(kpiPerson.getTiif()), KPIStandardConstants.reTIIFCount, KPIStandardConstants.reTIIFPercent, workingDays);
+            BigDecimal ticfPoint = calcKPIPercent(new BigDecimal(kpiPerson.getTicf()), KPIStandardConstants.reTIIFCount, KPIStandardConstants.reTIIFPercent, workingDays);
             BigDecimal viioiPoint = calcKPIPercent(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.reVIIOICount, KPIStandardConstants.reVIIOIPercent, workingDays);
             BigDecimal cvoPoint = calcKPIPercent(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays);
             BigDecimal int1Point = calcKPIPercent(new BigDecimal(kpiPerson.getInterview1st()), KPIStandardConstants.re1stCount, KPIStandardConstants.re1stPercent, workingDays);
-            kpiPerson.setFinishRate(tiifPoint.add(viioiPoint).add(cvoPoint).add(int1Point));
+            kpiPerson.setFinishRate(ticfPoint.add(viioiPoint).add(cvoPoint).add(int1Point));
         }
     }
 

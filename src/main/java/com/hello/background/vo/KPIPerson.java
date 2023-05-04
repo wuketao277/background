@@ -24,8 +24,8 @@ public class KPIPerson {
     private BigDecimal workDays;
     @ExcelProperty("TI")
     private Integer ti;
-    @ExcelProperty("TIIF")
-    private Integer tiif;
+    @ExcelProperty("TICF")
+    private Integer ticf;
     @ExcelProperty("VI")
     private Integer vi;
     @ExcelProperty("IOI")
@@ -43,7 +43,7 @@ public class KPIPerson {
 
     public KPIPerson() {
         this.ti = 0;
-        this.tiif = 0;
+        this.ticf = 0;
         this.vi = 0;
         this.ioi = 0;
         this.viioi = 0;
