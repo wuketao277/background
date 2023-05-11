@@ -3,7 +3,9 @@ package com.hello.background.service;
 import com.hello.background.constant.HolidayApproveStatusEnum;
 import com.hello.background.constant.HolidayConstants;
 import com.hello.background.domain.Holiday;
+import com.hello.background.domain.User;
 import com.hello.background.repository.HolidayRepository;
+import com.hello.background.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.convert.Jsr310Converters;
@@ -29,6 +31,8 @@ public class CommonService {
 
     @Autowired
     private HolidayRepository holidayRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 计算开始日期到结束日期扣除假期和请假后有多少个工作日。
@@ -72,6 +76,18 @@ public class CommonService {
     public BigDecimal calcWorkdaysBetween(LocalDate start, LocalDate end, String userName) {
         // 查询请假情况
         List<Holiday> leaveList = holidayRepository.findAllByHolidayDateBetweenAndUserNameAndApproveStatus(Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end), userName, HolidayApproveStatusEnum.APPROVED);
+        // 查询顾问的入职时间和离职日期
+        User user = userRepository.findByUsername(userName);
+        if (null != user.getOnBoardDate()) {
+            // 入职日期和开始日期取大
+            LocalDate onBoardDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getOnBoardDate());
+            start = start.compareTo(onBoardDate) > 0 ? start : onBoardDate;
+        }
+        if (null != user.getDimissionDate()) {
+            // 离职日期和结束日期取小
+            LocalDate onDimissionDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getDimissionDate());
+            end = end.compareTo(onDimissionDate) < 0 ? end : onDimissionDate;
+        }
         return calcWorkdaysBetween(start, end, leaveList);
     }
 

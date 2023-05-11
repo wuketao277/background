@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 工资控制器
@@ -97,5 +101,61 @@ public class SalaryController {
         }
         salaryService.deleteById(id);
         return true;
+    }
+
+    /**
+     * 通过客户和base计算billing和gp
+     *
+     * @param base
+     * @param clientId
+     * @return
+     */
+    @GetMapping("calcBillingByBaseAndClient")
+    public List<BigDecimal> calcBillingByBaseAndClient(@RequestParam("base") BigDecimal base, @RequestParam("clientId") Integer clientId) {
+        BigDecimal billing = BigDecimal.ZERO;
+        BigDecimal gp = BigDecimal.ZERO;
+        if (null != base && null != clientId) {
+            switch (clientId) {
+                case 6: // 沃尔沃汽车销售（上海）有限公司
+                case 7: // 上海三菱电梯有限公司
+                case 73488: // 上海三菱电梯有限公司安徽分公司
+                case 8020: // 沃尔沃亚太-沃尔沃汽车技术（上海）有限公司
+                case 36827: // 沃尔沃亚太-沃尔沃汽车（亚太）投资控股有限公司
+                case 55711: // 大庆沃尔沃汽车制造有限公司
+                case 65013: // 亚欧汽车制造（台州）有限公司
+                    // 客户付税
+                    billing = base.multiply(BigDecimal.valueOf(12)).multiply(BigDecimal.valueOf(0.2)).multiply(BigDecimal.valueOf(1.06));
+                    break;
+                case 3585: // 领悦数字信息技术有限公司
+                case 3635: // 福特南京
+                case 11682: // 福特汽车金融（中国）有限公司
+                case 17479: // 宝马（中国）服务有限公司
+                case 45646: // 宝马汽车金融（中国）有限公司
+                case 46862: // 先锋国际融资租赁有限公司
+                case 50812: // 领悦数字信息技术有限公司南京分公司
+                case 84227: // 华晨宝马汽车有限公司北京分公司
+                case 20047: // 福特汽车（中国）有限公司
+                case 36998: // 福特汽车工程研究（南京）有限公司
+                    // 我们付税
+                    billing = base.multiply(BigDecimal.valueOf(12)).multiply(BigDecimal.valueOf(0.2));
+                    break;
+                case 10114: // 华晨宝马汽车有限公司沈阳
+                    // 我们付税并且需要特殊计算
+                    // 首先计算预付金额
+                    billing = base.multiply(BigDecimal.valueOf(12)).multiply(BigDecimal.valueOf(0.2));
+                    // 然后计算不含税的金额
+                    billing = billing.divide(BigDecimal.valueOf(1.06), 0, RoundingMode.DOWN);
+                    // 最后计算含税的金额
+                    billing = billing.multiply(BigDecimal.valueOf(1.06));
+                    break;
+
+            }
+            // 通过billing计算gp
+            gp = billing.divide(BigDecimal.valueOf(1.06)).subtract(billing.subtract(billing.divide(BigDecimal.valueOf(1.06))).multiply(BigDecimal.valueOf(0.07)));
+        }
+        ArrayList<BigDecimal> list = new ArrayList<>();
+        list.add(billing.setScale(2, RoundingMode.DOWN));
+        list.add(gp.setScale(2, RoundingMode.DOWN));
+        return list;
     }
 }
