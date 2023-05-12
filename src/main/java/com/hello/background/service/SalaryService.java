@@ -133,6 +133,7 @@ public class SalaryService {
                 List<SuccessfulPerm> consultantSuccessfulPermList = successfulPermList.stream()
                         .filter(s -> user.getUsername().equals(s.getBdUserName())
                                 || user.getUsername().equals(s.getCwUserName())
+                                || user.getUsername().equals(s.getLeaderUserName())
                                 || user.getUsername().equals(s.getConsultantUserName())
                                 || user.getUsername().equals(s.getConsultantUserName2())
                                 || user.getUsername().equals(s.getConsultantUserName3())
@@ -167,6 +168,12 @@ public class SalaryService {
                         BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getCwCommissionPercent())).divide(new BigDecimal(100));
                         commissionSum = commissionSum.add(i);
                         sb.append(String.format("%s CW:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getCwCommissionPercent()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
+                    }
+                    // 计算Leader
+                    if (user.getUsername().equals(perm.getLeaderUserName()) && null != perm.getLeaderCommissionPercent()) {
+                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getLeaderCommissionPercent())).divide(new BigDecimal(100));
+                        commissionSum = commissionSum.add(i);
+                        sb.append(String.format("%s Leader:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getLeaderCommissionPercent()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
                     }
                     // 计算顾问1
                     commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName(), perm.getConsultantCommissionPercent(), user.getUsername(), sb, perm));

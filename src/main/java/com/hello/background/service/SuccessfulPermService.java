@@ -142,6 +142,11 @@ public class SuccessfulPermService {
                     Predicate equal = criteriaBuilder.equal(path, search.getBdId());
                     list.add(criteriaBuilder.and(equal));
                 }
+                if (null != search.getLeaderId()) {
+                    Path<String> path = root.get("leaderId");
+                    Predicate equal = criteriaBuilder.equal(path, search.getLeaderId());
+                    list.add(criteriaBuilder.and(equal));
+                }
                 if (!StringUtils.isEmpty(search.getApproveStatus())) {
                     Path<String> path = root.get("approveStatus");
                     Predicate equal = criteriaBuilder.equal(path, search.getApproveStatus());

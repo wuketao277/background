@@ -125,6 +125,26 @@ public class SuccessfulPerm {
     @Column
     private Integer bdCommissionPercent;
     /**
+     * Leaderid
+     */
+    @Column
+    private Integer leaderId;
+    /**
+     * Leader登录名
+     */
+    @Column(length = 50)
+    private String leaderUserName;
+    /**
+     * Leader真实姓名
+     */
+    @Column(length = 50)
+    private String leaderRealName;
+    /**
+     * Leader提成比例
+     */
+    @Column
+    private Integer leaderCommissionPercent;
+    /**
      * 顾问id
      */
     @Column

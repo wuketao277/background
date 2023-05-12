@@ -98,6 +98,22 @@ public class SuccessfulPermVO implements Serializable {
      */
     private Integer bdCommissionPercent;
     /**
+     * Leaderid
+     */
+    private Integer leaderId;
+    /**
+     * Leader登录名
+     */
+    private String leaderUserName;
+    /**
+     * Leader真实姓名
+     */
+    private String leaderRealName;
+    /**
+     * Leader提成比例
+     */
+    private Integer leaderCommissionPercent;
+    /**
      * 顾问id
      */
     private Integer consultantId;

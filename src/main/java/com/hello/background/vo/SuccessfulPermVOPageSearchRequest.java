@@ -37,6 +37,10 @@ public class SuccessfulPermVOPageSearchRequest {
      */
     private Integer bdId;
     /**
+     * Leaderid
+     */
+    private Integer leaderId;
+    /**
      * 渠道
      */
     private String channel;
