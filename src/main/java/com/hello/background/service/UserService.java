@@ -136,6 +136,16 @@ public class UserService {
         return userList.stream().sorted(Comparator.comparing(User::getUsername)).map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
     }
 
+    /**
+     * 获取所有正常状态的全职员工
+     *
+     * @return
+     */
+    public List<UserVO> findAllEnabledFullTime() {
+        List<User> userList = userRepository.findByEnabled(true);
+        return userList.stream().filter(x -> JobTypeEnum.FULLTIME.equals(x.getJobType())).sorted(Comparator.comparing(User::getUsername)).map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
+    }
+
 
     /**
      * 查询分页
@@ -233,6 +243,9 @@ public class UserService {
         } else if ("shenyang".equals(scope)) {
             // 查看沈阳所有在职的全职人员pipeline情况
             userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shenyanghailuorencaifuwu)).collect(Collectors.toList());
+        } else if ("wuhan".equals(scope)) {
+            // 查看武汉所有在职的全职人员pipeline情况
+            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Wuhanhailuorencaifuwu)).collect(Collectors.toList());
         } else if ("beijing".equals(scope)) {
             // 查看北京所有在职的全职人员pipeline情况
             userList.add(userRepository.findByUsername("Victor"));

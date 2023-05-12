@@ -94,6 +94,16 @@ public class UserController {
     }
 
     /**
+     * 获取所有正常状态的全职员工
+     *
+     * @return
+     */
+    @GetMapping("findAllEnabledFullTime")
+    public List<UserVO> findAllEnabledFullTime() {
+        return userService.findAllEnabledFullTime();
+    }
+
+    /**
      * 查询分页
      *
      * @param search      搜索关键字

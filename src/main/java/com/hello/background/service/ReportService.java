@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -219,7 +220,7 @@ public class ReportService {
                     .add(Optional.ofNullable(s.getConsultantCommissionPercent20()).orElse(BigDecimal.ZERO));
             if (totalPercent.compareTo(BigDecimal.ZERO) > 0) {
                 BigDecimal personalGp = consultantCommissionPercent.divide(totalPercent, 6, BigDecimal.ROUND_DOWN).multiply(s.getGp());
-                personalGpMap.put(consultantName, personalGp.add((personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : BigDecimal.ZERO)));
+                personalGpMap.put(consultantName, personalGp.add((personalGpMap.get(consultantName) != null ? personalGpMap.get(consultantName) : BigDecimal.ZERO)).setScale(2, RoundingMode.DOWN));
             }
         }
     }
