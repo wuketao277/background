@@ -151,11 +151,27 @@ public class SalaryController {
 
             }
             // 通过billing计算gp
-            gp = billing.divide(BigDecimal.valueOf(1.06)).subtract(billing.subtract(billing.divide(BigDecimal.valueOf(1.06))).multiply(BigDecimal.valueOf(0.07)));
+            gp = billingToGp(billing);
         }
         ArrayList<BigDecimal> list = new ArrayList<>();
         list.add(billing.setScale(2, RoundingMode.DOWN));
         list.add(gp.setScale(2, RoundingMode.DOWN));
         return list;
+    }
+
+    /**
+     * 通过billing计算gp
+     *
+     * @param billing
+     * @return
+     */
+    @GetMapping("billingToGp")
+    public BigDecimal billingToGp(@RequestParam("billing") BigDecimal billing) {
+        // 首先计算增值税
+        BigDecimal vat = billing.multiply(new BigDecimal(0.06)).setScale(2, RoundingMode.DOWN);
+        // 计算增值税的附加税
+        BigDecimal vatAdd = vat.multiply(new BigDecimal(0.07)).setScale(2, RoundingMode.DOWN);
+        // gp=billing-增值税-增值税的附加税
+        return billing.subtract(vat).subtract(vatAdd).setScale(2, RoundingMode.DOWN);
     }
 }
