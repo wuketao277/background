@@ -239,7 +239,7 @@ public class UserService {
             userList = userRepository.findAll();
         } else if ("shanghai".equals(scope)) {
             // 查看上海所有在职的全职人员pipeline情况
-            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shanghaihailuorencaifuwu)).collect(Collectors.toList());
+            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shanghaihailuorencaifuwu)).filter(y -> !("Victor".equals(y.getUsername()) || "Ellen".equals(y.getUsername()))).collect(Collectors.toList());
         } else if ("shenyang".equals(scope)) {
             // 查看沈阳所有在职的全职人员pipeline情况
             userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shenyanghailuorencaifuwu)).collect(Collectors.toList());
