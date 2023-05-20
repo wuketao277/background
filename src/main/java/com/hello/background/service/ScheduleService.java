@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -40,6 +41,14 @@ public class ScheduleService {
     private CandidateRepository candidateRepository;
     @Autowired
     private CommentRepository commentRepository;
+
+    /**
+     * 候选人生日提醒
+     */
+    @Scheduled(cron = "0 0/1 * * * *")
+    public void generateCVORecommendationRemind() {
+
+    }
 
     /**
      * 候选人生日提醒

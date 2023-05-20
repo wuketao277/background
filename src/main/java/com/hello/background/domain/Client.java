@@ -46,13 +46,13 @@ public class Client {
     /**
      * 地址
      */
-    @Column(length = 200)
+    @Column(length = 1000)
     private String address;
 
     /**
      * 客户信息
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String information;
 
     /**
@@ -64,7 +64,7 @@ public class Client {
     /**
      * 查重要求
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String duplicateCheck;
 
     /**
@@ -82,13 +82,13 @@ public class Client {
     /**
      * 推荐理由
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String recommendationReason;
 
     /**
      * 面试准备
      */
-    @Column(length = 500)
+    @Column(length = 1000)
     private String interviewPrepare;
 
     /**

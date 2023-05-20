@@ -6,10 +6,7 @@ import com.hello.background.repository.*;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.SalaryInfoVO;
-import com.hello.background.vo.SalaryVO;
-import com.hello.background.vo.SalaryVODownload;
-import com.hello.background.vo.UserVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,7 @@ import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +51,8 @@ public class SalaryService {
     private CommonService commonService;
     @Autowired
     private HolidayRepository holidayRepository;
+    @Autowired
+    private CommentService commentService;
 
     public boolean update(SalaryVO vo, UserVO user) {
         Optional<Salary> optional = salaryRepository.findById(vo.getId());
@@ -116,6 +116,8 @@ public class SalaryService {
         // 屏蔽体验账号
         userList = userList.stream().filter(user -> null != user.getJobType()
                 && !JobTypeEnum.EXPERIENCE.equals(user.getJobType())).collect(Collectors.toList());
+        // 查询所有用户kpi达成率
+        List<KPIPerson> kpiPersonList = commentService.calcKPI(ldStartMonth, ldEndMonth.plusDays(-1), "all", null);
         userList.stream().forEach(user -> {
             try {
                 Salary salary = new Salary();
@@ -246,6 +248,27 @@ public class SalaryService {
                     }
                 }
                 sb.append(String.format("综合工资：%s \r\n", userSalarySum));
+                // 判断是否考核kpi
+                if (user.getCheckKPI()) {
+                    sb.append("需要考核KPI" + "\r\n");
+                    Optional<KPIPerson> kpiPerson = kpiPersonList.stream().filter(k -> k.getUserName().equals(user.getUsername())).findFirst();
+                    if (kpiPerson.isPresent() && null != kpiPerson.get().getFinishRate()) {
+                        sb.append("KPI得分" + kpiPerson.get().getFinishRate() + "\r\n");
+                        if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
+                            userSalarySum = userSalarySum.multiply(kpiPerson.get().getFinishRate()).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+                            sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
+                        }
+                        if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
+                            commissionSum = commissionSum.multiply(kpiPerson.get().getFinishRate()).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+                            sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
+                        }
+                    } else {
+                        sb.append("没有KPI得分，KPI达成率按100计算。" + "\r\n");
+                    }
+                } else {
+                    sb.append("不需要考核KPI" + "\r\n");
+                }
+                // 判断是否需要cover base
                 if (user.getCoverbase()) {
                     // 需要cover base
                     sb.append("需要cover base" + "\r\n");

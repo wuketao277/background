@@ -8,10 +8,7 @@ import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.MyNewsVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,7 +87,8 @@ public class MyNewsService {
      * @return
      */
     public Page<MyNewsVO> queryNewsPage(String search, Integer currentPage, Integer pageSize) {
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, sort);
         Page<MyNews> myNewsPage = null;
         long total = 0;
         if (Strings.isNullOrEmpty(search)) {
