@@ -161,19 +161,19 @@ public class SalaryService {
                 for (SuccessfulPerm perm : consultantSuccessfulPermList) {
                     // 计算BD
                     if (user.getUsername().equals(perm.getBdUserName()) && null != perm.getBdCommissionPercent()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getBdCommissionPercent())).divide(new BigDecimal(100));
+                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getBdCommissionPercent())).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
                         commissionSum = commissionSum.add(i);
                         sb.append(String.format("%s BD:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getBdCommissionPercent()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
                     }
                     // 计算CW
                     if (user.getUsername().equals(perm.getCwUserName()) && null != perm.getCwCommissionPercent()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getCwCommissionPercent())).divide(new BigDecimal(100));
+                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getCwCommissionPercent())).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
                         commissionSum = commissionSum.add(i);
                         sb.append(String.format("%s CW:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getCwCommissionPercent()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
                     }
                     // 计算Leader
                     if (user.getUsername().equals(perm.getLeaderUserName()) && null != perm.getLeaderCommissionPercent()) {
-                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getLeaderCommissionPercent())).divide(new BigDecimal(100));
+                        BigDecimal i = perm.getGp().multiply(new BigDecimal(perm.getLeaderCommissionPercent())).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
                         commissionSum = commissionSum.add(i);
                         sb.append(String.format("%s Leader:%s*%s=%s \r\n", perm.getCandidateChineseName(), perm.getGp(), BigDecimal.valueOf(perm.getLeaderCommissionPercent()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), i));
                     }
@@ -253,14 +253,20 @@ public class SalaryService {
                     sb.append("需要考核KPI" + "\r\n");
                     Optional<KPIPerson> kpiPerson = kpiPersonList.stream().filter(k -> k.getUserName().equals(user.getUsername())).findFirst();
                     if (kpiPerson.isPresent() && null != kpiPerson.get().getFinishRate()) {
-                        sb.append("KPI得分" + kpiPerson.get().getFinishRate() + "\r\n");
-                        if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
-                            userSalarySum = userSalarySum.multiply(kpiPerson.get().getFinishRate()).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-                            sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
-                        }
-                        if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
-                            commissionSum = commissionSum.multiply(kpiPerson.get().getFinishRate()).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-                            sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
+                        BigDecimal finishRate = kpiPerson.get().getFinishRate();
+                        sb.append("KPI得分" + finishRate + "\r\n");
+                        if (finishRate.compareTo(new BigDecimal(90)) < 0) {
+                            // kpi 达成率小于90
+                            if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
+                                commissionSum = commissionSum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+                                sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
+                            }
+                            if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
+                                userSalarySum = userSalarySum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+                                sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
+                            }
+                        } else {
+                            sb.append("KPI大于等于90%，不用折算工资。\r\n");
                         }
                     } else {
                         sb.append("没有KPI得分，KPI达成率按100计算。" + "\r\n");
@@ -353,8 +359,8 @@ public class SalaryService {
         // 当前用户和成功case中的顾问名称一致，且提成比例不为空
         if (currentUserName.equals(consultantUserName)
                 && (null != consultantCommissionPercent && consultantCommissionPercent.compareTo(BigDecimal.ZERO) > 0)) {
-            commission = perm.getGp().multiply(consultantCommissionPercent).divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_DOWN);
-            msgSB.append(String.format("%s %s:%s*%s=%s \r\n", perm.getCandidateChineseName(), consultantUserName, perm.getGp(), consultantCommissionPercent.divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_DOWN), commission));
+            commission = perm.getGp().multiply(consultantCommissionPercent).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
+            msgSB.append(String.format("%s %s:%s*%s=%s \r\n", perm.getCandidateChineseName(), consultantUserName, perm.getGp(), consultantCommissionPercent.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), commission));
         }
         return commission;
     }
