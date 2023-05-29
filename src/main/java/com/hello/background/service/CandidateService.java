@@ -592,6 +592,8 @@ public class CandidateService {
                 return "3rd Interview";
             case "interview4":
                 return "4th Interview";
+            case "interview5":
+                return "5th Interview";
             case "finalInterview":
                 return "Final Interview";
             case "offerSigned":
@@ -690,18 +692,20 @@ public class CandidateService {
                 return 3;
             case "4th Interview":
                 return 4;
-            case "Final Interview":
+            case "5th Interview":
                 return 5;
-            case "Offer Signed":
+            case "Final Interview":
                 return 6;
-            case "On Board":
+            case "Offer Signed":
                 return 7;
-            case "Invoice":
+            case "On Board":
                 return 8;
-            case "Payment":
+            case "Invoice":
                 return 9;
-            case "Successful":
+            case "Payment":
                 return 10;
+            case "Successful":
+                return 11;
         }
         return -1;
     }

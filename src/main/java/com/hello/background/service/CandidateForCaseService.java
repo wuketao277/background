@@ -180,7 +180,7 @@ public class CandidateForCaseService {
     public void updateLastPhase(Integer candidateId, Integer caseId, String newPhase) {
         // 只有有效的阶段才进行储存
         List<String> phaseList = Arrays.asList("IOI", "VI", "CVO"
-                , "1st Interview", "2nd Interview", "3rd Interview", "4th Interview",
+                , "1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "5th Interview",
                 "Final Interview", "Offer Signed", "On Board", "Invoice", "Payment", "END", "Successful");
         if (phaseList.contains(newPhase)) {
             // 通过候选人Id和职位Id，查询关联关系
@@ -212,7 +212,7 @@ public class CandidateForCaseService {
     public void updateFarthestPhase(Integer candidateId, Integer caseId, String newPhase) {
         // 只有有效的阶段才进行储存
         List<String> phaseList = Arrays.asList("CVO"
-                , "1st Interview", "2nd Interview", "3rd Interview", "4th Interview",
+                , "1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "5th Interview",
                 "Final Interview", "Offer Signed", "On Board", "Invoice", "Payment", "Successful");
         if (phaseList.contains(newPhase)) {
             // 通过候选人Id和职位Id，查询关联关系
