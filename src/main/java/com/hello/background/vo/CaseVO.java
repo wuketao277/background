@@ -126,6 +126,11 @@ public class CaseVO {
     private String description;
 
     /**
+     * 面试准备题
+     */
+    private String question;
+
+    /**
      * 状态
      */
     private CaseStatusEnum status;

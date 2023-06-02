@@ -2,8 +2,10 @@ package com.hello.background.domain;
 
 import com.hello.background.constant.CandidateDoubleCheckEnum;
 import com.hello.background.constant.CandidateNotMatchReasonEnum;
+import com.hello.background.constant.CandidateSpecialItemEnum;
 import com.hello.background.constant.GenderEnum;
 import com.hello.background.converter.CandidateDoubleCheckEnumListStringAttrConverter;
+import com.hello.background.converter.CandidateSpecialItemEnumListStringAttrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -217,6 +219,13 @@ public class Candidate {
     @Column(length = 100)
     @Convert(converter = CandidateDoubleCheckEnumListStringAttrConverter.class)
     private List<CandidateDoubleCheckEnum> doubleCheck;
+
+    /**
+     * 特殊项
+     */
+    @Column(length = 500)
+    @Convert(converter = CandidateSpecialItemEnumListStringAttrConverter.class)
+    private List<CandidateSpecialItemEnum> specialItem;
 
     /**
      * 标签集合

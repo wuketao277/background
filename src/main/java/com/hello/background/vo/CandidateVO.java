@@ -3,6 +3,7 @@ package com.hello.background.vo;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.CandidateDoubleCheckEnum;
 import com.hello.background.constant.CandidateNotMatchReasonEnum;
+import com.hello.background.constant.CandidateSpecialItemEnum;
 import com.hello.background.constant.GenderEnum;
 import com.hello.background.domain.Candidate;
 import com.hello.background.utils.TransferUtil;
@@ -185,6 +186,11 @@ public class CandidateVO {
      * 必要检查
      */
     private List<CandidateDoubleCheckEnum> doubleCheck;
+
+    /**
+     * 特殊项
+     */
+    private List<CandidateSpecialItemEnum> specialItem;
 
     /**
      * 标签列表

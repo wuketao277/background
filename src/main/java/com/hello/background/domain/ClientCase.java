@@ -153,6 +153,12 @@ public class ClientCase {
     private String description;
 
     /**
+     * 面试准备题
+     */
+    @Column(length = 2000)
+    private String question;
+
+    /**
      * 状态
      */
     @Enumerated

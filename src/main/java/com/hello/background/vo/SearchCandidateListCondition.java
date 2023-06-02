@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.CandidateSpecialItemEnum;
 import com.hello.background.constant.GenderEnum;
 import lombok.Data;
 
@@ -43,4 +44,9 @@ public class SearchCandidateListCondition {
      * 最远阶段
      */
     private String farthestPhase;
+
+    /**
+     * 特殊项
+     */
+    private List<CandidateSpecialItemEnum> specialItem;
 }

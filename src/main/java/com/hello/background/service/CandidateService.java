@@ -547,6 +547,10 @@ public class CandidateService {
         if (Strings.isNotBlank(condition.getFarthestPhase()) && !condition.getFarthestPhase().equals("无")) {
             stream = stream.filter(c -> checkFarthestPhase(c, conditionConvertForFarthestPhase(condition.getFarthestPhase())));
         }
+        // 特殊项
+        if (null != condition.getSpecialItem() && condition.getSpecialItem().size() > 0) {
+            stream = stream.filter(c -> !Collections.disjoint(c.getSpecialItem(), condition.getSpecialItem()));
+        }
         // 数据转换
         List<CandidateVO> voList = stream.map(x -> CandidateVO.fromCandidate(x)).collect(Collectors.toList());
         return voList;
