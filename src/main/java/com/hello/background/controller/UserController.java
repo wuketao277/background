@@ -103,6 +103,17 @@ public class UserController {
         return userService.findAllEnabledFullTime();
     }
 
+
+    /**
+     * 获取所有正常状态的全职员工和实习生
+     *
+     * @return
+     */
+    @GetMapping("findAllEnabledFullTimeAndIntern")
+    public List<UserVO> findAllEnabledFullTimeAndIntern() {
+        return userService.findAllEnabledFullTimeAndIntern();
+    }
+
     /**
      * 查询分页
      *

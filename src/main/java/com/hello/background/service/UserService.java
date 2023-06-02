@@ -146,6 +146,16 @@ public class UserService {
         return userList.stream().filter(x -> JobTypeEnum.FULLTIME.equals(x.getJobType())).sorted(Comparator.comparing(User::getUsername)).map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
     }
 
+    /**
+     * 获取所有正常状态的全职员工和实习生
+     *
+     * @return
+     */
+    public List<UserVO> findAllEnabledFullTimeAndIntern() {
+        List<User> userList = userRepository.findByEnabled(true);
+        return userList.stream().filter(x -> (JobTypeEnum.FULLTIME.equals(x.getJobType()) || JobTypeEnum.INTERN.equals(x.getJobType()))).sorted(Comparator.comparing(User::getUsername)).map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
+    }
+
 
     /**
      * 查询分页
