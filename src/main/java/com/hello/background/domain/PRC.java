@@ -1,5 +1,6 @@
 package com.hello.background.domain;
 
+import com.hello.background.constant.ConstellationEnum;
 import com.hello.background.constant.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,8 +48,8 @@ public class PRC {
     /**
      * 星座
      */
-    @Column(length = 20)
-    private String constellation;
+    @Enumerated
+    private ConstellationEnum constellation;
 
     /**
      * 电话

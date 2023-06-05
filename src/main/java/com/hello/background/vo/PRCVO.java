@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.ConstellationEnum;
 import com.hello.background.constant.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,7 +40,7 @@ public class PRCVO {
     /**
      * 星座
      */
-    private String constellation;
+    private ConstellationEnum constellation;
 
     /**
      * 电话
