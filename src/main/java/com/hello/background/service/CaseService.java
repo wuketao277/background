@@ -132,6 +132,10 @@ public class CaseService {
                         if (null != request.getSearch().getStatus()) {
                             list.add(criteriaBuilder.equal(root.get("status"), request.getSearch().getStatus()));
                         }
+//                        if (!CollectionUtils.isEmpty(request.getSearch().getShow4JobType())) {
+////                            list.add(root.<JobTypeEnum>get("show4JobType").in(request.getSearch().getShow4JobType()));
+//                            list.add(criteriaBuilder.(root.get("show4JobType"), "EXPERIENCE"));
+//                        }
                     }
                     Predicate[] p = new Predicate[list.size()];
                     return criteriaBuilder.and(list.toArray(p));

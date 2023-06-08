@@ -154,4 +154,9 @@ public class CaseVO {
      * 该职位对哪些人可见
      */
     private List<JobTypeEnum> show4JobType;
+
+    /**
+     * sourcingMap
+     */
+    private String sourcingMap;
 }

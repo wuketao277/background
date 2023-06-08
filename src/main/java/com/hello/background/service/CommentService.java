@@ -116,7 +116,9 @@ public class CommentService {
         List<UserVO> userVOList = userService.findByScope(scope, userVO);
         // 获取该时间段内指定用户所有评论
         List<Comment> commentList = commentRepository.findByInputTimeBetweenAndUsernameIn(startDT, endDT, userVOList.stream().map(u -> u.getUsername()).collect(Collectors.toList()));
+        // 创建一个kpi对象集合
         List<KPIPerson> kpiPersonList = new ArrayList<>();
+        // 遍历评论，计算kpi
         for (Comment cnt : commentList) {
             KPIPerson kpiPerson = new KPIPerson();
             Optional<KPIPerson> first = kpiPersonList.stream().filter(kpi -> kpi.getUserName().equals(cnt.getUsername())).findFirst();
@@ -150,6 +152,21 @@ public class CommentService {
                 case "1st Interview":
                     kpiPerson.setInterview1st(kpiPerson.getInterview1st() + 1);
                     break;
+                case "2nd Interview":
+                    kpiPerson.setInterview2nd(kpiPerson.getInterview2nd() + 1);
+                    break;
+                case "3rd Interview":
+                    kpiPerson.setInterview3rd(kpiPerson.getInterview3rd() + 1);
+                    break;
+                case "4th Interview":
+                    kpiPerson.setInterview4th(kpiPerson.getInterview4th() + 1);
+                    break;
+                case "5th Interview":
+                    kpiPerson.setInterview5th(kpiPerson.getInterview5th() + 1);
+                    break;
+                case "Final Interview":
+                    kpiPerson.setInterviewFinal(kpiPerson.getInterviewFinal() + 1);
+                    break;
                 case "Offer Signed":
                     kpiPerson.setOfferSigned(kpiPerson.getOfferSigned() + 1);
                     break;
@@ -158,9 +175,10 @@ public class CommentService {
                     break;
             }
         }
-        kpiPersonList.sort(Comparator.comparing(KPIPerson::getUserId));
         // 计算KPI得分
         kpiPersonList.forEach(k -> calcKPIFinishRate(k, start, end));
+        // 按照KPI得分排序
+        kpiPersonList.sort(Comparator.comparing(KPIPerson::getFinishRate));
         return kpiPersonList;
     }
 
@@ -180,39 +198,72 @@ public class CommentService {
         // 读取各项指标数据，计算得分
         if (isAM) {
             //  计算AM的KPI完成比例
-            BigDecimal viioiPoint = calcKPIPercent(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays);
-            BigDecimal cvoPoint = calcKPIPercent(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays);
-            BigDecimal int1Point = calcKPIPercent(new BigDecimal(kpiPerson.getInterview1st()), KPIStandardConstants.am1stCount, KPIStandardConstants.am1stPercent, workingDays);
-            kpiPerson.setFinishRate(viioiPoint.add(cvoPoint).add(int1Point));
+            BigDecimal viioiPoint = calcKPIPoint(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.amVIIOIPoint, KPIStandardConstants.amVIIOIPercent, workingDays);
+            BigDecimal cvoPoint = calcKPIPoint(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.amCVOPoint, KPIStandardConstants.amCVOPercent, workingDays);
+            BigDecimal interviewPoint = calcKPIPointForInterview(kpiPerson, true, workingDays);
+            kpiPerson.setFinishRate(viioiPoint.add(cvoPoint).add(interviewPoint).divide(workingDays, 2, RoundingMode.HALF_UP));
         } else {
             // 计算Recuriter的KPI完成比例
-            BigDecimal ticfPoint = calcKPIPercent(new BigDecimal(kpiPerson.getTicf()), KPIStandardConstants.reTIIFCount, KPIStandardConstants.reTIIFPercent, workingDays);
-            BigDecimal viioiPoint = calcKPIPercent(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.reVIIOICount, KPIStandardConstants.reVIIOIPercent, workingDays);
-            BigDecimal cvoPoint = calcKPIPercent(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays);
-            BigDecimal int1Point = calcKPIPercent(new BigDecimal(kpiPerson.getInterview1st()), KPIStandardConstants.re1stCount, KPIStandardConstants.re1stPercent, workingDays);
-            kpiPerson.setFinishRate(ticfPoint.add(viioiPoint).add(cvoPoint).add(int1Point));
+            BigDecimal ticfPoint = calcKPIPoint(new BigDecimal(kpiPerson.getTicf()), KPIStandardConstants.reTICFPoint, KPIStandardConstants.reTICFPercent, workingDays);
+            BigDecimal viioiPoint = calcKPIPoint(new BigDecimal(kpiPerson.getViioi()), KPIStandardConstants.reVIIOIPoint, KPIStandardConstants.reVIIOIPercent, workingDays);
+            BigDecimal cvoPoint = calcKPIPoint(new BigDecimal(kpiPerson.getCvo()), KPIStandardConstants.reCVOPoint, KPIStandardConstants.reCVOPercent, workingDays);
+            BigDecimal interviewPoint = calcKPIPointForInterview(kpiPerson, false, workingDays);
+            kpiPerson.setFinishRate(ticfPoint.add(viioiPoint).add(cvoPoint).add(interviewPoint).divide(workingDays, 2, RoundingMode.HALF_UP));
         }
     }
 
     /**
      * 计算KPI各考核项的占比得分
      *
-     * @param actualCount   实际完成情况
-     * @param standardCount 每天标准完成情况
-     * @param workdays      工作天数
-     * @param percent       该考核项的占比得分
+     * @param actualCount 实际完成情况
+     * @param pointPer    单项得分
+     * @param workdays    工作天数
+     * @param percent     该考核项的占比得分
      * @return
      */
-    private BigDecimal calcKPIPercent(BigDecimal actualCount, BigDecimal standardCount, BigDecimal percent, BigDecimal workdays) {
-        if (null == actualCount || null == standardCount || null == workdays || null == percent) {
+    private BigDecimal calcKPIPoint(BigDecimal actualCount, BigDecimal pointPer, BigDecimal percent, BigDecimal workdays) {
+        if (null == actualCount || null == pointPer || null == workdays || null == percent) {
             return BigDecimal.ZERO;
         }
-        // 该项得分= 实际发生/(每天标准*天数)
-        BigDecimal point = actualCount.divide(standardCount.multiply(workdays), 2, RoundingMode.HALF_DOWN);
-        // 如果得分大于1就取1
-        point = point.compareTo(BigDecimal.ONE) >= 0 ? BigDecimal.ONE : point;
-        // 最后乘以该项的占比
-        return point.multiply(percent);
+        // 该项总得分=实际发生数*单项得分
+        BigDecimal point = actualCount.multiply(pointPer);
+        // 单项最大得分=单项占比*天数*100
+        BigDecimal pointMax = percent.multiply(workdays).multiply(new BigDecimal(100));
+        // 取该项总得分与单项最大得分中小的值
+        return point.compareTo(pointMax) > 0 ? pointMax : point;
+    }
+
+    /**
+     * 计算面试KPI得分
+     *
+     * @param kpiPerson
+     * @param isAM
+     * @param workdays
+     * @return
+     */
+    private BigDecimal calcKPIPointForInterview(KPIPerson kpiPerson, boolean isAM, BigDecimal workdays) {
+        // 面试实际得分
+        BigDecimal point = BigDecimal.ZERO;
+        // 面试最大得分
+        BigDecimal pointMax = BigDecimal.ZERO;
+        if (isAM) {
+            point = new BigDecimal(kpiPerson.getInterview1st()).multiply(KPIStandardConstants.am1stPoint)
+                    .add(new BigDecimal(kpiPerson.getInterview2nd()).multiply(KPIStandardConstants.am2ndPoint))
+                    .add(new BigDecimal(kpiPerson.getInterview3rd()).multiply(KPIStandardConstants.am3rdPoint))
+                    .add(new BigDecimal(kpiPerson.getInterview4th()).multiply(KPIStandardConstants.am4thPoint))
+                    .add(new BigDecimal(kpiPerson.getInterview5th()).multiply(KPIStandardConstants.am5thPoint))
+                    .add(new BigDecimal(kpiPerson.getInterviewFinal()).multiply(KPIStandardConstants.amFinalPoint));
+            pointMax = workdays.multiply(KPIStandardConstants.amInterviewPercent).multiply(new BigDecimal(100));
+        } else {
+            point = new BigDecimal(kpiPerson.getInterview1st()).multiply(KPIStandardConstants.re1stPoint)
+                    .add(new BigDecimal(kpiPerson.getInterview2nd()).multiply(KPIStandardConstants.re2ndPoint))
+                    .add(new BigDecimal(kpiPerson.getInterview3rd()).multiply(KPIStandardConstants.re3rdPoint))
+                    .add(new BigDecimal(kpiPerson.getInterview4th()).multiply(KPIStandardConstants.re4thPoint))
+                    .add(new BigDecimal(kpiPerson.getInterview5th()).multiply(KPIStandardConstants.re5thPoint))
+                    .add(new BigDecimal(kpiPerson.getInterviewFinal()).multiply(KPIStandardConstants.reFinalPoint));
+            pointMax = workdays.multiply(KPIStandardConstants.reInterviewPercent).multiply(new BigDecimal(100));
+        }
+        return point.compareTo(pointMax) > 0 ? pointMax : point;
     }
 
     /**

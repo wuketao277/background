@@ -188,4 +188,10 @@ public class ClientCase {
     @Column(length = 100)
     @Convert(converter = JobTypeEnumListStringAttrConverter.class)
     private List<JobTypeEnum> show4JobType;
+
+    /**
+     * Sourcing Map
+     */
+    @Column(length = 2000)
+    private String sourcingMap;
 }
