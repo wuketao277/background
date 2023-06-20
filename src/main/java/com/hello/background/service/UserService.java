@@ -85,6 +85,7 @@ public class UserService {
         user.setCheckKPI(vo.getCheckKPI());
         user.setRemainHolidayThing(vo.getRemainHolidayThing());
         user.setRemainHolidayIll(vo.getRemainHolidayIll());
+        user.setTeamLeaderUserName(vo.getTeamLeaderUserName());
         // 更新数据库
         User returnUser = userRepository.save(user);
         UserVO returnUserVO = new UserVO();
@@ -195,7 +196,6 @@ public class UserService {
         return map;
     }
 
-
     /**
      * 查询
      *
@@ -210,6 +210,16 @@ public class UserService {
             BeanUtils.copyProperties(pojo, vo);
             return vo;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 查询正常状态的用户
+     *
+     * @param search 搜索关键字
+     * @return
+     */
+    public List<UserVO> queryEnabled(String search) {
+        return query(search).stream().filter(u -> u.getEnabled()).collect(Collectors.toList());
     }
 
     /**

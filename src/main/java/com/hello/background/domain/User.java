@@ -219,4 +219,9 @@ public class User {
      */
     @Column(length = 15)
     private String emergencyTelephoneNo;
+    /**
+     * 团队leader登录名
+     */
+    @Column(length = 50)
+    private String teamLeaderUserName;
 }

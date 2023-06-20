@@ -185,4 +185,8 @@ public class UserVO implements Serializable {
      * 紧急联系电话
      */
     private String emergencyTelephoneNo;
+    /**
+     * 团队leader登录名
+     */
+    private String teamLeaderUserName;
 }

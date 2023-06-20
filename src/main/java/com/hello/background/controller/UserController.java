@@ -141,6 +141,18 @@ public class UserController {
     }
 
     /**
+     * 查询
+     *
+     * @param search 搜索关键字
+     * @return
+     */
+    @GetMapping("queryEnabled")
+    public List<UserVO> queryEnabled(String search) {
+        search = "%" + search + "%";
+        return userService.queryEnabled(search);
+    }
+
+    /**
      * 更新用户密码
      *
      * @param updatePassword
