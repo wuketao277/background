@@ -20,6 +20,10 @@ public class KPIPerson {
     private String userName;
     @ExcelProperty(value = "达成率", index = 4)
     private BigDecimal finishRate;
+    private BigDecimal finishRateTICF;
+    private BigDecimal finishRateVIIOI;
+    private BigDecimal finishRateCVO;
+    private BigDecimal finishRateInterview;
     @ExcelProperty(value = "工作天数", index = 5)
     private BigDecimal workDays;
     @ExcelProperty(value = "CVO", index = 6)
