@@ -13,7 +13,7 @@ public class KPIStandardConstants {
     /**
      * KPI增加系数
      */
-    public static BigDecimal plusRate = new BigDecimal(1.11);
+    public static BigDecimal plusRate = new BigDecimal(1.1111);
     /**
      * AM KPI得分计算
      * 1周KPI计算：VI+CVO+面试=总分 1周5天，每天100分，总共500分
@@ -28,7 +28,7 @@ public class KPIStandardConstants {
     /**
      * AM VI+IOI 每天数量
      */
-    public static BigDecimal amVIIOICount = new BigDecimal(2);
+    public static BigDecimal amVIIOICount = new BigDecimal(1.6);
     /**
      * AM 每个VI+IOI 得分
      */
@@ -126,7 +126,7 @@ public class KPIStandardConstants {
     /**
      * Recruiter VI+IOI 每天数量
      */
-    public static BigDecimal reVIIOICount = new BigDecimal(2);
+    public static BigDecimal reVIIOICount = new BigDecimal(1.6);
     /**
      * Recruiter 每个VI+IOI 得分
      */
