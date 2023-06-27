@@ -71,7 +71,7 @@ public class CandidateForCaseController {
     }
 
     /**
-     * 保存 候选人与职位关联 信息
+     * 职位下，从旧case拷贝候选人到新case
      *
      * @param vo
      * @return

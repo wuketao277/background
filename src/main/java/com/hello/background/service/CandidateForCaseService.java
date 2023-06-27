@@ -1,7 +1,9 @@
 package com.hello.background.service;
 
 import com.hello.background.domain.CandidateForCase;
+import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.CandidateForCaseRepository;
+import com.hello.background.repository.CaseRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CandidateForCaseVO;
 import com.hello.background.vo.ClientVO;
@@ -9,13 +11,11 @@ import com.hello.background.vo.CommentVO;
 import com.hello.background.vo.CopyFromOldCaseVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -40,6 +40,8 @@ public class CandidateForCaseService {
     private ClientService clientService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private CaseRepository caseRepository;
 
     /**
      * 保存候选人
@@ -62,13 +64,16 @@ public class CandidateForCaseService {
     public void copyFromOldCase(CopyFromOldCaseVO vo) {
         List<CandidateForCase> oldCaseCandidateList = candidateForCaseRepository.findByCaseId(vo.getOldCaseId());
         List<CandidateForCase> curCaseCandidateList = candidateForCaseRepository.findByCaseId(vo.getCurCaseId());
+        ClientCase curCase = caseRepository.findById(vo.getCurCaseId()).get();
         for (CandidateForCase old : oldCaseCandidateList) {
             if (curCaseCandidateList.stream().filter(x -> old.getCandidateId().equals(x.getCandidateId())).count() == 0) {
                 CandidateForCase record = new CandidateForCase();
-                BeanUtils.copyProperties(old, record);
-                record.setId(null);
-                record.setCaseId(vo.getCurCaseId());
-                record.setCreateTime(LocalDateTime.now());
+                record.setCandidateId(old.getCandidateId());
+                record.setChineseName(old.getChineseName());
+                record.setEnglishName(old.getEnglishName());
+                record.setClientId(curCase.getClientId());
+                record.setCaseId(curCase.getId());
+                record.setTitle(curCase.getTitle());
                 candidateForCaseRepository.save(record);
             }
         }
