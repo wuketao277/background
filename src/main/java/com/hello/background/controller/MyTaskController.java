@@ -80,7 +80,7 @@ public class MyTaskController {
     }
 
     /**
-     * 通过后续人id查询
+     * 通过候选人id查询
      *
      * @param relativeCandidateId
      * @return

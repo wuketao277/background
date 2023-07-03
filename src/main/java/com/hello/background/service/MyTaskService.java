@@ -97,7 +97,7 @@ public class MyTaskService {
         UserVO user = (UserVO) session.getAttribute("user");
         List<Sort.Order> orderList = new ArrayList<>();
         orderList.add(new Sort.Order(Sort.Direction.ASC, "finished"));
-        orderList.add(new Sort.Order(Sort.Direction.ASC, "executeDate"));
+        orderList.add(new Sort.Order(Sort.Direction.DESC, "executeDate"));
         Pageable pageable = new PageRequest(queryVO.getCurrentPage() - 1, queryVO.getPageSize(), new Sort(orderList));
         Specification<MyTask> specification = new Specification<MyTask>() {
             @Override
