@@ -1,7 +1,8 @@
 package com.hello.background.repository;
 
 import com.hello.background.domain.Comment;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.List;
  * @Description
  */
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Integer> {
+public interface CommentRepository extends JpaSpecificationExecutor<Comment>, PagingAndSortingRepository<Comment, Integer> {
     List<Comment> findAllByCandidateId(Integer candidateId);
 
     /**

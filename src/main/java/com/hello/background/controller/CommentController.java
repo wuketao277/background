@@ -4,6 +4,7 @@ import com.hello.background.service.CandidateForCaseService;
 import com.hello.background.service.CommentService;
 import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -132,5 +133,19 @@ public class CommentController {
     public List<InterviewPlanVO> queryInterviewPlan(@RequestParam("range") String range, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         return commentService.queryInterviewPlan(range, userVO);
+    }
+
+
+    /**
+     * 面试分页查询
+     *
+     * @param search      搜索关键字
+     * @param currentPage 当前页
+     * @param pageSize    页尺寸
+     * @return
+     */
+    @GetMapping("queryInterviewPage")
+    public Page<InterviewVO> queryInterviewPage(String search, Integer currentPage, Integer pageSize) {
+        return commentService.queryInterviewPage(search, currentPage, pageSize);
     }
 }

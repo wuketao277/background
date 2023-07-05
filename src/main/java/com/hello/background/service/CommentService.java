@@ -13,11 +13,18 @@ import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -446,8 +453,12 @@ public class CommentService {
             }
             vo.setDistanceDays(calcDistanceDays(c.getInterviewTime()));
             // 通过公司、职位、候选人、第几轮、时间 来去重。
-            if (list.stream().filter(x -> x.getClientId().equals(vo.getClientId()) && x.getCaseId().equals(vo.getCaseId()) && x.getCandidateId().equals(vo.getCandidateId()) && x.getPhase().equals(vo.getPhase()) && x.getInterviewTime().equals(vo.getInterviewTime())).collect(Collectors.toList()).size() == 0) {
+            List<InterviewPlanVO> subList = list.stream().filter(x -> x.getClientId().equals(vo.getClientId()) && x.getCaseId().equals(vo.getCaseId()) && x.getCandidateId().equals(vo.getCandidateId()) && x.getPhase().equals(vo.getPhase()) && x.getInterviewTime().equals(vo.getInterviewTime())).collect(Collectors.toList());
+            if (subList.size() == 0) {
                 list.add(vo);
+            } else {
+                InterviewPlanVO interviewPlanVO = subList.get(0);
+                interviewPlanVO.setUsername(interviewPlanVO.getUsername() + "&" + vo.getUsername());
             }
         });
         return list;
@@ -505,5 +516,53 @@ public class CommentService {
         } else {
             return (int) Duration.between(LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth(), 0, 0, 0), interviewDay).toDays();
         }
+    }
+
+    /**
+     * 面试安排分页查询
+     *
+     * @param search
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    public Page<InterviewVO> queryInterviewPage(String search, Integer currentPage, Integer pageSize) {
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
+        Specification<Comment> specification = new Specification<Comment>() {
+            @Override
+            public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (Strings.isNotBlank(search)) {
+                    list.add(criteriaBuilder.and(criteriaBuilder.or(
+//                            if (Integer.parseInt(search) > 0) {
+//                                criteriaBuilder.like(root.get("candidateId"), search),
+//                            }
+                            criteriaBuilder.like(root.get("clientName"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("caseTitle"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("phase"), "%" + search + "%")
+                    )));
+                }
+                // 用面试时间非空作为面试阶段的标志
+                list.add(criteriaBuilder.isNotNull(root.get("interviewTime")));
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        Page<Comment> all = commentRepository.findAll(specification, pageable);
+        Page<InterviewVO> map = all.map(x -> TransferUtil.transferTo(x, InterviewVO.class));
+        map.getContent().parallelStream().forEach(i -> {
+            i.setInterviewTimeStr(analysisInterviewDate(i.getInterviewTime()));
+            if (null != i.getCandidateId()) {
+                Optional<Candidate> optional = candidateRepository.findById(i.getCandidateId());
+                if (optional.isPresent()) {
+                    i.setCandidateName(optional.get().getChineseName());
+                }
+            }
+        });
+        map = new PageImpl<>(map.getContent(),
+                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
+                all.getTotalElements());
+        return map;
     }
 }
