@@ -112,10 +112,11 @@ public class SalaryService {
         // 查找所有当月工资特殊项
         List<SalarySpecialItem> salarySpecialItemList = salarySpecialItemRepository.findByMonth(month);
         // 查找开启状态的所有人
-        List<User> userList = userRepository.findByEnabled(true);
-        // 屏蔽体验账号
-        userList = userList.stream().filter(user -> null != user.getJobType()
-                && !JobTypeEnum.EXPERIENCE.equals(user.getJobType())).collect(Collectors.toList());
+        // 屏蔽体验账号，屏蔽入职日期晚于计算工资月的账号
+        List<User> userList = userRepository.findByEnabled(true).stream()
+                .filter(user -> null != user.getJobType() && !JobTypeEnum.EXPERIENCE.equals(user.getJobType()))
+                .filter(x -> null != x.getOnBoardDate() && x.getOnBoardDate().compareTo(end) <= 0)
+                .collect(Collectors.toList());
         // 查询所有用户kpi达成率
         List<KPIPerson> kpiPersonList = commentService.calcKPI(ldStartMonth, ldEndMonth.plusDays(-1), "all", null);
         userList.stream().forEach(user -> {
