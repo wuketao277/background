@@ -1,6 +1,5 @@
 package com.hello.background.utils;
 
-import com.hello.background.domain.Candidate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +25,9 @@ public class TransferUtil {
      * @param target 目标对象
      */
     public static void transfer(Object source, Object target) {
+        if (null == source || null == target) {
+            return;
+        }
         Field[] sourceFields = source.getClass().getDeclaredFields();
         Field[] targetFields = target.getClass().getDeclaredFields();
         Method[] targetMethods = target.getClass().getDeclaredMethods();

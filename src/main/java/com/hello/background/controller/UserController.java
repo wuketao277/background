@@ -56,6 +56,9 @@ public class UserController {
     public UserVO findSelf(HttpSession session) {
         // 获取当前用户
         UserVO user = (UserVO) session.getAttribute("user");
+        if (null == user) {
+            return null;
+        }
         return userService.findById(user.getId());
     }
 
