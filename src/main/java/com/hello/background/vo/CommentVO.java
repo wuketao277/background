@@ -68,6 +68,11 @@ public class CommentVO {
     private String phase;
 
     /**
+     * 是否是终面
+     */
+    private Boolean isFinal;
+
+    /**
      * 面试时间
      */
     private LocalDateTime interviewTime;

@@ -38,17 +38,19 @@ public class KPIPerson {
     private Integer interview4th;
     @ExcelProperty(value = "5th", index = 11)
     private Integer interview5th;
-    @ExcelProperty(value = "Final", index = 12)
+    @ExcelProperty(value = "6th", index = 12)
+    private Integer interview6th;
+    @ExcelProperty(value = "Final", index = 13)
     private Integer interviewFinal;
-    @ExcelProperty(value = "VI+IOI", index = 13)
+    @ExcelProperty(value = "VI+IOI", index = 14)
     private Integer viioi;
-    @ExcelProperty(value = "VI", index = 14)
+    @ExcelProperty(value = "VI", index = 15)
     private Integer vi;
-    @ExcelProperty(value = "IOI", index = 15)
+    @ExcelProperty(value = "IOI", index = 16)
     private Integer ioi;
-    @ExcelProperty(value = "TI+CF", index = 16)
+    @ExcelProperty(value = "TI+CF", index = 17)
     private Integer ticf;
-    @ExcelProperty(value = "TI", index = 17)
+    @ExcelProperty(value = "TI", index = 18)
     private Integer ti;
     @ExcelProperty("Offer Signed")
     private Integer offerSigned;
@@ -67,6 +69,7 @@ public class KPIPerson {
         this.interview3rd = 0;
         this.interview4th = 0;
         this.interview5th = 0;
+        this.interview6th = 0;
         this.interviewFinal = 0;
         this.offerSigned = 0;
         this.onBoard = 0;

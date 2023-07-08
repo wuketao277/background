@@ -80,6 +80,12 @@ public class Comment {
     private String phase;
 
     /**
+     * 是否是终面
+     */
+    @Column
+    private Boolean isFinal;
+
+    /**
      * 面试时间
      */
     private LocalDateTime interviewTime;

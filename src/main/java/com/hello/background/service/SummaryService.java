@@ -104,6 +104,7 @@ public class SummaryService {
                         pipelineCaseVO.getOfferCandidateList().add(new PipelineCandidateVO(c.getCandidateId(), c.getChineseName()));
                         break;
                     case "Final Interview":
+                    case "6th Interview":
                     case "5th Interview":
                     case "4th Interview":
                     case "3rd Interview":

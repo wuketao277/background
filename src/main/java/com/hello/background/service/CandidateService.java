@@ -598,6 +598,8 @@ public class CandidateService {
                 return "4th Interview";
             case "interview5":
                 return "5th Interview";
+            case "interview6":
+                return "6th Interview";
             case "finalInterview":
                 return "Final Interview";
             case "offerSigned":

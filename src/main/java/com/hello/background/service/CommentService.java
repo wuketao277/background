@@ -171,6 +171,9 @@ public class CommentService {
                 case "5th Interview":
                     kpiPerson.setInterview5th(kpiPerson.getInterview5th() + 1);
                     break;
+                case "6th Interview":
+                    kpiPerson.setInterview6th(kpiPerson.getInterview6th() + 1);
+                    break;
                 case "Final Interview":
                     kpiPerson.setInterviewFinal(kpiPerson.getInterviewFinal() + 1);
                     break;
@@ -422,7 +425,7 @@ public class CommentService {
     public List<InterviewPlanVO> queryInterviewPlan(String range, UserVO userVO) {
         List<InterviewPlanVO> list = new ArrayList<>();
         // 组装数据
-        List<String> phaseList = Arrays.asList("1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "5th Interview", "Final Interview");
+        List<String> phaseList = Arrays.asList("1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "5th Interview", "6th Interview", "Final Interview");
         LocalDate ld = LocalDate.now();
         LocalDateTime ldt = LocalDateTime.of(ld.getYear(), ld.getMonthValue(), ld.getDayOfMonth(), 0, 0, 0);
         List<String> usernameList = userService.findByScope(range, userVO).stream().map(u -> u.getUsername()).collect(Collectors.toList());
@@ -443,7 +446,7 @@ public class CommentService {
             if (candidateOptional.isPresent()) {
                 vo.setCandidateName(candidateOptional.get().getChineseName());
             }
-            vo.setPhase(c.getPhase().split(" ")[0]);
+            vo.setPhase(c.getPhase().split(" ")[0] + (c.getIsFinal() ? " (F)" : ""));
             vo.setUsername(c.getUsername());
             vo.setInterviewTime(analysisInterviewDate(c.getInterviewTime()));
             vo.setContent(c.getContent());
@@ -558,6 +561,12 @@ public class CommentService {
                 if (optional.isPresent()) {
                     i.setCandidateName(optional.get().getChineseName());
                 }
+            }
+            // 处理面试阶段
+            i.setPhase(i.getPhase().split(" ")[0]);
+            // 处理是否是Final
+            if (Optional.ofNullable(i.getIsFinal()).orElse(false)){
+                i.setPhase(i.getPhase() + " (F)");
             }
         });
         map = new PageImpl<>(map.getContent(),
