@@ -95,4 +95,15 @@ public class SecurityController {
             return false;
         }
     }
+
+    /**
+     * 检查版本
+     *
+     * @param version
+     * @return
+     */
+    @RequestMapping("checkVersion")
+    public boolean checkVersion(String version) {
+        return "1.0.0".equals(version);
+    }
 }
