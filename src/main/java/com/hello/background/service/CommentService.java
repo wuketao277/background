@@ -446,7 +446,7 @@ public class CommentService {
             if (candidateOptional.isPresent()) {
                 vo.setCandidateName(candidateOptional.get().getChineseName());
             }
-            vo.setPhase(c.getPhase().split(" ")[0] + (c.getIsFinal() ? " (F)" : ""));
+            vo.setPhase(c.getPhase().split(" ")[0] + (null != c.getIsFinal() && c.getIsFinal() ? " (F)" : ""));
             vo.setUsername(c.getUsername());
             vo.setInterviewTime(analysisInterviewDate(c.getInterviewTime()));
             vo.setContent(c.getContent());
