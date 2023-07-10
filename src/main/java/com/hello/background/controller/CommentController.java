@@ -1,5 +1,6 @@
 package com.hello.background.controller;
 
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.CandidateForCaseService;
 import com.hello.background.service.CommentService;
 import com.hello.background.vo.*;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wuketao
@@ -83,8 +85,13 @@ public class CommentController {
     @PostMapping("calcKPI")
     public List<KPIPerson> calcKPI(@RequestBody CalcKPIRequest request, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
-        // 拿到前台传入的日期要进行+1操作。因为前端给的日期是差1天。
-        return commentService.calcKPI(request.getStartDate(), request.getEndDate(), request.getScope(), user);
+        List<KPIPerson> kpiPersonList = commentService.calcKPI(request.getStartDate(), request.getEndDate(), request.getScope(), user);
+        // 离职人员特殊处理
+        if (user.getRoles().stream().filter(x -> RoleEnum.ADMIN == x).count() == 0) {
+            // 非管理员，排除Mike和Victor
+            kpiPersonList = kpiPersonList.stream().filter(k -> !k.getUserName().equals("Victor") && !k.getUserName().equals("Mike")).collect(Collectors.toList());
+        }
+        return kpiPersonList;
     }
 
     /**
