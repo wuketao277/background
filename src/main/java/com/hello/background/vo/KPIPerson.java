@@ -20,38 +20,42 @@ public class KPIPerson {
     private String userName;
     @ExcelProperty(value = "达成率", index = 4)
     private BigDecimal finishRate;
+    @ExcelProperty(value = "TI达成率", index = 5)
     private BigDecimal finishRateTICF;
+    @ExcelProperty(value = "VI+IOI达成率", index = 6)
     private BigDecimal finishRateVIIOI;
+    @ExcelProperty(value = "CVO达成率", index = 7)
     private BigDecimal finishRateCVO;
+    @ExcelProperty(value = "面试达成率", index = 8)
     private BigDecimal finishRateInterview;
-    @ExcelProperty(value = "工作天数", index = 5)
-    private BigDecimal workDays;
-    @ExcelProperty(value = "CVO", index = 6)
-    private Integer cvo;
-    @ExcelProperty(value = "1st", index = 7)
-    private Integer interview1st;
-    @ExcelProperty(value = "2nd", index = 8)
-    private Integer interview2nd;
-    @ExcelProperty(value = "3rd", index = 9)
-    private Integer interview3rd;
-    @ExcelProperty(value = "4th", index = 10)
-    private Integer interview4th;
-    @ExcelProperty(value = "5th", index = 11)
-    private Integer interview5th;
-    @ExcelProperty(value = "6th", index = 12)
-    private Integer interview6th;
-    @ExcelProperty(value = "Final", index = 13)
-    private Integer interviewFinal;
-    @ExcelProperty(value = "VI+IOI", index = 14)
-    private Integer viioi;
-    @ExcelProperty(value = "VI", index = 15)
-    private Integer vi;
-    @ExcelProperty(value = "IOI", index = 16)
-    private Integer ioi;
-    @ExcelProperty(value = "TI+CF", index = 17)
+    @ExcelProperty(value = "TI+CF", index = 9)
     private Integer ticf;
-    @ExcelProperty(value = "TI", index = 18)
+    @ExcelProperty(value = "VI+IOI", index = 10)
+    private Integer viioi;
+    @ExcelProperty(value = "CVO", index = 11)
+    private Integer cvo;
+    @ExcelProperty(value = "1st", index = 12)
+    private Integer interview1st;
+    @ExcelProperty(value = "2nd", index = 13)
+    private Integer interview2nd;
+    @ExcelProperty(value = "3rd", index = 14)
+    private Integer interview3rd;
+    @ExcelProperty(value = "4th", index = 15)
+    private Integer interview4th;
+    @ExcelProperty(value = "5th", index = 16)
+    private Integer interview5th;
+    @ExcelProperty(value = "6th", index = 17)
+    private Integer interview6th;
+    @ExcelProperty(value = "Final", index = 18)
+    private Integer interviewFinal;
+    @ExcelProperty(value = "VI", index = 19)
+    private Integer vi;
+    @ExcelProperty(value = "IOI", index = 20)
+    private Integer ioi;
+    @ExcelProperty(value = "TI", index = 21)
     private Integer ti;
+    @ExcelProperty(value = "工作天数", index = 22)
+    private BigDecimal workDays;
     @ExcelProperty("Offer Signed")
     private Integer offerSigned;
     @ExcelProperty("On Board")
