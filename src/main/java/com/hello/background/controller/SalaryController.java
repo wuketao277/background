@@ -64,8 +64,9 @@ public class SalaryController {
                                   @RequestParam(value = "month", required = false) String month,
                                   @RequestParam(value = "pretaxIncome", required = false) String pretaxIncome,
                                   @RequestParam(value = "netPay", required = false) String netPay,
+                                  @RequestParam(value = "company", required = false) String company,
                                   @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize, HttpSession session) {
-        return salaryService.queryPage(session, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
+        return salaryService.queryPage(session, loginName, userName, month, pretaxIncome, netPay, company, currentPage, pageSize);
     }
 
     /**
@@ -79,11 +80,12 @@ public class SalaryController {
                                @RequestParam(value = "month", required = false) String month,
                                @RequestParam(value = "pretaxIncome", required = false) String pretaxIncome,
                                @RequestParam(value = "netPay", required = false) String netPay,
+                               @RequestParam(value = "company", required = false) String company,
                                @RequestParam("currentPage") Integer currentPage,
                                @RequestParam("pageSize") Integer pageSize,
                                HttpSession session,
                                HttpServletResponse response) {
-        salaryService.downloadSalary(session, response, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
+        salaryService.downloadSalary(session, response, loginName, userName, month, pretaxIncome, netPay, company, currentPage, pageSize);
     }
 
     /**

@@ -373,7 +373,7 @@ public class SalaryService {
      * @param pageSize    页尺寸
      * @return
      */
-    private Page<Salary> queryPageData(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
+    private Page<Salary> queryPageData(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, String company, Integer currentPage, Integer pageSize) {
         // 获取用户
         UserVO user = (UserVO) session.getAttribute("user");
         List<Sort.Order> orderList = new ArrayList<>();
@@ -421,6 +421,18 @@ public class SalaryService {
                 if (Strings.isNotBlank(netPay)) {
                     list.add(criteriaBuilder.equal(root.get("finalSum"), new BigDecimal(netPay.trim())));
                 }
+                if (Strings.isNotBlank(company)) {
+                    // 通过公司来过滤
+                    CriteriaBuilder.In<Object> consultantUserNameIn = criteriaBuilder.in(root.get("consultantUserName"));
+                    CompanyEnum companyEnum = CompanyEnum.valueOf(company);
+                    List<User> userList = userRepository.findAllByCompany(companyEnum);
+                    if (userList.size() > 0) {
+                        for (User user : userList) {
+                            consultantUserNameIn.value(user.getUsername());
+                        }
+                        list.add(consultantUserNameIn);
+                    }
+                }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
             }
@@ -436,9 +448,9 @@ public class SalaryService {
      * @param pageSize    页尺寸
      * @return
      */
-    public SalaryInfoVO queryPage(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
+    public SalaryInfoVO queryPage(HttpSession session, String loginName, String userName, String month, String pretaxIncome, String netPay, String company, Integer currentPage, Integer pageSize) {
         SalaryInfoVO vo = new SalaryInfoVO();
-        Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
+        Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, company, currentPage, pageSize);
         PageImpl<SalaryVO> salaryVOPage = new PageImpl<>(salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVO.class)).collect(Collectors.toList()),
                 new PageRequest(salaryPage.getPageable().getPageNumber(), salaryPage.getPageable().getPageSize()),
                 salaryPage.getTotalElements());
@@ -458,8 +470,8 @@ public class SalaryService {
     /**
      * 下载薪资
      */
-    public void downloadSalary(HttpSession session, HttpServletResponse response, String loginName, String userName, String month, String pretaxIncome, String netPay, Integer currentPage, Integer pageSize) {
-        Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, currentPage, pageSize);
+    public void downloadSalary(HttpSession session, HttpServletResponse response, String loginName, String userName, String month, String pretaxIncome, String netPay, String company, Integer currentPage, Integer pageSize) {
+        Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, company, currentPage, pageSize);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "薪资", null, salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
     }
