@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +32,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -131,6 +131,26 @@ public class CandidateService {
     public void deleteById(Integer id) {
         candidateRepository.deleteById(id);
     }
+
+//    public void copyData() {
+//        Pageable pageable = new PageRequest(0, 20000, Sort.Direction.ASC, "id");
+//        Page<Candidate> all = candidateRepository.findAll(pageable);
+//        for (Candidate c : all.getContent()) {
+//            Candidate n = new Candidate();
+//            n.setBirthDay(c.getBirthDay());
+//            n.setChineseName(c.getChineseName());
+//            n.setCompanyName(c.getCompanyName());
+//            n.setDepartment(c.getDepartment());
+//            n.setTitle(c.getTitle());
+//            n.setPhoneNo(c.getPhoneNo());
+//            n.setHometown(c.getHometown());
+//            n.setCurrentAddress(c.getCurrentAddress());
+//            n.setFutureAddress(c.getFutureAddress());
+//            n.setSchoolName(c.getSchoolName());
+//            n.setRemark("备注");
+//            candidateRepository.save(n);
+//        }
+//    }
 
     /**
      * 查询分页

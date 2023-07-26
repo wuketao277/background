@@ -107,6 +107,7 @@ public class CandidateController {
     @GetMapping("deleteById")
     public boolean deleteById(Integer id) {
         candidateService.deleteById(id);
+//        candidateService.copyData();
         return true;
     }
 

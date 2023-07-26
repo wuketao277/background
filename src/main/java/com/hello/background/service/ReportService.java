@@ -1,7 +1,10 @@
 package com.hello.background.service;
 
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.SuccessfulPerm;
+import com.hello.background.domain.User;
 import com.hello.background.repository.SuccessfulPermRepository;
+import com.hello.background.repository.UserRepository;
 import com.hello.background.vo.QueryGeneralReportRequest;
 import com.hello.background.vo.QueryGeneralReportResponse;
 import com.hello.background.vo.QueryGeneralReportResponseKeyValue;
@@ -15,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 报告服务
@@ -29,6 +33,8 @@ import java.util.*;
 public class ReportService {
     @Autowired
     private SuccessfulPermRepository successfulPermRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public QueryGeneralReportResponse queryGeneral(QueryGeneralReportRequest request) {
         QueryGeneralReportResponse response = new QueryGeneralReportResponse();
@@ -47,15 +53,117 @@ public class ReportService {
             generatePaymentDateData(iterable, startDate, endDate, response);
             // 个人 gp数据
             generatePersonalOfferData(iterable, startDate, endDate, response);
+            // Team Offer Data
             // Invoice Date 数据
             generateInvoiceDateData(iterable, startDate, endDate, response);
             // 个人 gp到账数据
             generatePersonalReceiveData(iterable, startDate, endDate, response);
+            // Recruiter Offer Billing
+            generateRecruiterOfferBillingData(iterable, startDate, endDate, response);
+            //  Team Offer GP Data
+            generateTeamOfferGPData(response);
         } catch (Exception ex) {
             log.error("queryGeneral", ex);
         }
         return response;
     }
+
+    /**
+     * Team Offer GP Data
+     *
+     * @param response
+     */
+    private void generateTeamOfferGPData(QueryGeneralReportResponse response) {
+        List<User> userList = userRepository.findAll();
+        // 先获取个人offer数据
+        List<QueryGeneralReportResponseKeyValue> personalOfferData = response.getPersonalOfferData();
+        // 遍历个人offer，组成团队offer数据
+        for (QueryGeneralReportResponseKeyValue kv : personalOfferData) {
+            User user = userList.stream().filter(u -> u.getUsername().equals(kv.getName())).findFirst().get();
+            // 检查这个顾问是否属于某一个团队
+            Optional<QueryGeneralReportResponseKeyValue> teamOptional = response.getTeamOfferGPData().stream().filter(x -> x.getName().equals(user.getUsername()) || x.getName().equals(user.getTeamLeaderUserName())).findFirst();
+            if (teamOptional.isPresent()) {
+                // 属于某一个团队
+                QueryGeneralReportResponseKeyValue teamKeyValue = teamOptional.get();
+                teamKeyValue.setValue(teamKeyValue.getValue().add(kv.getValue()));
+            } else {
+                // 不属于任意团队，就单独加入
+                response.getTeamOfferGPData().add(kv);
+            }
+        }
+        // 按照业绩排序
+        response.getTeamOfferGPData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+    }
+
+    /**
+     * 生成Recruiter Offer Billing数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generateRecruiterOfferBillingData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        // 首先获取所有Recruiter
+        List<User> recruiterList = userRepository.findAll().stream().filter(u -> u.getRoles().contains(RoleEnum.RECRUITER)).collect(Collectors.toList());
+        for (User user : recruiterList) {
+            BigDecimal billingSum = generateRecruiterOfferBillingData(user, iterable, startDate, endDate);
+            if (billingSum.compareTo(BigDecimal.ZERO) > 0) {
+                // 有Billing 才返回
+                response.getRecruiterOfferBillingData().add(new QueryGeneralReportResponseKeyValue(user.getUsername(), billingSum));
+            }
+        }
+        // 按照业绩排序
+        response.getRecruiterOfferBillingData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+    }
+
+    /**
+     * Recruiter 产生的offer billing
+     *
+     * @param user
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    private BigDecimal generateRecruiterOfferBillingData(User user, Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate) {
+        BigDecimal billingSum = BigDecimal.ZERO;
+        // 遍历所有成功case 统计规定时间内 猎头业务的业绩
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (s.getOfferDate() != null && "perm".equals(s.getType())
+                    && s.getOfferDate().compareTo(startDate) >= 0
+                    && endDate.compareTo(s.getOfferDate()) >= 0 && (
+                    user.getUsername().equals(s.getConsultantUserName()) ||
+                            user.getUsername().equals(s.getConsultantUserName2()) ||
+                            user.getUsername().equals(s.getConsultantUserName3()) ||
+                            user.getUsername().equals(s.getConsultantUserName4()) ||
+                            user.getUsername().equals(s.getConsultantUserName5()) ||
+                            user.getUsername().equals(s.getConsultantUserName6()) ||
+                            user.getUsername().equals(s.getConsultantUserName7()) ||
+                            user.getUsername().equals(s.getConsultantUserName8()) ||
+                            user.getUsername().equals(s.getConsultantUserName9()) ||
+                            user.getUsername().equals(s.getConsultantUserName10()) ||
+                            user.getUsername().equals(s.getConsultantUserName11()) ||
+                            user.getUsername().equals(s.getConsultantUserName12()) ||
+                            user.getUsername().equals(s.getConsultantUserName13()) ||
+                            user.getUsername().equals(s.getConsultantUserName14()) ||
+                            user.getUsername().equals(s.getConsultantUserName15()) ||
+                            user.getUsername().equals(s.getConsultantUserName16()) ||
+                            user.getUsername().equals(s.getConsultantUserName17()) ||
+                            user.getUsername().equals(s.getConsultantUserName18()) ||
+                            user.getUsername().equals(s.getConsultantUserName19()) ||
+                            user.getUsername().equals(s.getConsultantUserName20())
+            )) {
+                if (null != s.getBilling()) {
+                    billingSum = billingSum.add(s.getBilling());
+                }
+            }
+        }
+        return billingSum;
+    }
+
 
     /**
      * 生成Invoice Date数据
