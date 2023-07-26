@@ -118,7 +118,7 @@ public class SalaryService {
                 .filter(x -> null != x.getOnBoardDate() && x.getOnBoardDate().compareTo(end) <= 0)
                 .collect(Collectors.toList());
         // 查询所有用户kpi达成率
-        List<KPIPerson> kpiPersonList = commentService.calcKPI(ldStartMonth, ldEndMonth.plusDays(-1), "all", null);
+        List<KPIPerson> kpiPersonList = commentService.calcKPI(ldStartMonth, ldEndMonth.plusDays(-1), "all", null, false);
         userList.stream().forEach(user -> {
             try {
                 Salary salary = new Salary();

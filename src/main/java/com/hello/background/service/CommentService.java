@@ -115,12 +115,16 @@ public class CommentService {
      * @param end   结束日期
      * @return
      */
-    public List<KPIPerson> calcKPI(LocalDate start, LocalDate end, String scope, UserVO userVO) {
+    public List<KPIPerson> calcKPI(LocalDate start, LocalDate end, String scope, UserVO userVO, boolean kpiOnlyShowCheck) {
         // 获取计算时间段
         LocalDateTime startDT = LocalDateTime.of(start.getYear(), start.getMonthValue(), start.getDayOfMonth(), 0, 0, 0);
         LocalDateTime endDT = LocalDateTime.of(end.getYear(), end.getMonthValue(), end.getDayOfMonth(), 23, 59, 59);
         // 通过Scope获取用户集合
         List<UserVO> userVOList = userService.findByScope(scope, userVO);
+        // 判断是否只检查考核KPI人员的数据
+        if (kpiOnlyShowCheck) {
+            userVOList = userVOList.stream().filter(u -> u.getCheckKPI()).collect(Collectors.toList());
+        }
         // 获取该时间段内指定用户所有评论
         List<Comment> commentList = commentRepository.findByInputTimeBetweenAndUsernameIn(startDT, endDT, userVOList.stream().map(u -> u.getUsername()).collect(Collectors.toList()));
         // 创建一个kpi对象集合
@@ -314,11 +318,11 @@ public class CommentService {
      *
      * @param response
      */
-    public void downloadKPI(List<String> dates, String scope, UserVO userVO, HttpServletResponse response) {
+    public void downloadKPI(List<String> dates, String scope, UserVO userVO, HttpServletResponse response, boolean kpiOnlyShowCheck) {
         // 获取业务数据
         LocalDate start = LocalDate.parse(dates.get(0).substring(0, 10));
         LocalDate end = LocalDate.parse(dates.get(1).substring(0, 10));
-        List<KPIPerson> kpiList = calcKPI(start, end, scope, userVO);
+        List<KPIPerson> kpiList = calcKPI(start, end, scope, userVO, kpiOnlyShowCheck);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "kpi", null, kpiList, KPIPerson.class);
     }
@@ -565,7 +569,7 @@ public class CommentService {
             // 处理面试阶段
             i.setPhase(i.getPhase().split(" ")[0]);
             // 处理是否是Final
-            if (Optional.ofNullable(i.getIsFinal()).orElse(false)){
+            if (Optional.ofNullable(i.getIsFinal()).orElse(false)) {
                 i.setPhase(i.getPhase() + " (F)");
             }
         });

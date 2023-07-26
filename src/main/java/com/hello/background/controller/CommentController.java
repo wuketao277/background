@@ -85,7 +85,7 @@ public class CommentController {
     @PostMapping("calcKPI")
     public List<KPIPerson> calcKPI(@RequestBody CalcKPIRequest request, HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
-        List<KPIPerson> kpiPersonList = commentService.calcKPI(request.getStartDate(), request.getEndDate(), request.getScope(), user);
+        List<KPIPerson> kpiPersonList = commentService.calcKPI(request.getStartDate(), request.getEndDate(), request.getScope(), user, request.isKpiOnlyShowCheck());
         // 离职人员特殊处理
         if (user.getRoles().stream().filter(x -> RoleEnum.ADMIN == x).count() == 0) {
             // 非管理员，排除Mike和Victor
@@ -100,9 +100,9 @@ public class CommentController {
      * @param response
      */
     @GetMapping("downloadKPI")
-    public void downloadKPI(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String scope, HttpSession session, HttpServletResponse response) {
+    public void downloadKPI(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String scope, @RequestParam boolean kpiOnlyShowCheck, HttpSession session, HttpServletResponse response) {
         UserVO user = (UserVO) session.getAttribute("user");
-        commentService.downloadKPI(Arrays.asList(startDate, endDate), scope, user, response);
+        commentService.downloadKPI(Arrays.asList(startDate, endDate), scope, user, response, kpiOnlyShowCheck);
     }
 
     /**

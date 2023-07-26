@@ -14,4 +14,5 @@ public class CalcKPIRequest {
     private LocalDate startDate;
     private LocalDate endDate;
     private String scope;
+    private boolean kpiOnlyShowCheck;
 }
