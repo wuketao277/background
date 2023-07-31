@@ -88,7 +88,8 @@ public class ReportService {
                 teamKeyValue.setValue(teamKeyValue.getValue().add(kv.getValue()));
             } else {
                 // 不属于任意团队，就单独加入
-                response.getTeamOfferGPData().add(kv);
+                QueryGeneralReportResponseKeyValue newKV = new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue());
+                response.getTeamOfferGPData().add(newKV);
             }
         }
         // 按照业绩排序
