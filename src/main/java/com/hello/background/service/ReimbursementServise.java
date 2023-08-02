@@ -231,7 +231,7 @@ public class ReimbursementServise {
             paymentMonth, String sum, Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         User user = userRepository.findByUsername(userVO.getUsername());
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "userName");
+        Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "paymentMonth", "company", "userName");
         Specification<ReimbursementSummary> specification = new Specification<ReimbursementSummary>() {
             @Override
             public Predicate toPredicate(Root<ReimbursementSummary> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
