@@ -256,8 +256,8 @@ public class SalaryService {
                     if (kpiPerson.isPresent() && null != kpiPerson.get().getFinishRate()) {
                         BigDecimal finishRate = kpiPerson.get().getFinishRate();
                         sb.append("KPI得分" + finishRate + "\r\n");
-                        if (finishRate.compareTo(new BigDecimal(90)) < 0) {
-                            // kpi 达成率小于90
+                        if (finishRate.compareTo(new BigDecimal(99)) < 0) {
+                            // kpi 达成率小于99
                             if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
                                 commissionSum = commissionSum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
                                 sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
@@ -267,7 +267,7 @@ public class SalaryService {
                                 sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
                             }
                         } else {
-                            sb.append("KPI大于等于90%，不用折算工资。\r\n");
+                            sb.append("KPI大于等于99%，不用折算工资。\r\n");
                         }
                     } else {
                         sb.append("没有KPI得分，KPI达成率按100计算。" + "\r\n");
