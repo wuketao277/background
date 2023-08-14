@@ -34,6 +34,14 @@ public class SalaryVO {
      */
     private String consultantRealName;
     /**
+     * 公司名称
+     */
+    private String companyName;
+    /**
+     * 公司英文名称
+     */
+    private String company;
+    /**
      * 所属月份
      */
     private String month;

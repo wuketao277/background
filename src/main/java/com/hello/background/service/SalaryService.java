@@ -125,6 +125,8 @@ public class SalaryService {
                 salary.setConsultantId(user.getId());
                 salary.setConsultantUserName(user.getUsername());
                 salary.setConsultantRealName(user.getRealname());
+                salary.setCompanyName(user.getCompany().getName());
+                salary.setCompany(user.getCompany().toString());
                 salary.setMonth(month);
                 salary.setUpdateTime(new Date());
                 salary.setUpdateUserName(updateUserId);
@@ -378,6 +380,7 @@ public class SalaryService {
         UserVO user = (UserVO) session.getAttribute("user");
         List<Sort.Order> orderList = new ArrayList<>();
         orderList.add(new Sort.Order(Sort.Direction.DESC, "month"));
+        orderList.add(new Sort.Order(Sort.Direction.DESC, "companyName"));
         orderList.add(new Sort.Order(Sort.Direction.DESC, "sum"));
         orderList.add(new Sort.Order(Sort.Direction.ASC, "historyDebt"));
         orderList.add(new Sort.Order(Sort.Direction.ASC, "consultantId"));

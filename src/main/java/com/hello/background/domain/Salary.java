@@ -47,6 +47,16 @@ public class Salary {
     @Column(length = 50)
     private String consultantRealName;
     /**
+     * 公司英文名称
+     */
+    @Column(length = 50)
+    private String company;
+    /**
+     * 公司名称
+     */
+    @Column(length = 50)
+    private String companyName;
+    /**
      * 所属月份
      */
     @Column(length = 10)
