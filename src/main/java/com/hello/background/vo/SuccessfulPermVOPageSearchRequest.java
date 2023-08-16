@@ -108,4 +108,8 @@ public class SuccessfulPermVOPageSearchRequest {
      * 到期未付款
      */
     private Boolean nonPaymentDue;
+    /**
+     * 岗位名称
+     */
+    private String title;
 }
