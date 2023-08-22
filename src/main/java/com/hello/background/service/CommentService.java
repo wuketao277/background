@@ -93,6 +93,16 @@ public class CommentService {
      * @param candidateId
      * @return
      */
+    public List<CommentVO> findAllByCandidateIdAndUsername(Integer candidateId, String username) {
+        List<Comment> allByCandidateId = commentRepository.findAllByCandidateIdAndUsername(candidateId, username);
+        return allByCandidateId.stream().map(comment -> TransferUtil.transferTo(comment, CommentVO.class)).collect(Collectors.toList());
+    }
+    /**
+     * 通过候选人ID查询所有评论
+     *
+     * @param candidateId
+     * @return
+     */
     public List<CommentVO> findAllByCandidateIdOrderByDesc(Integer candidateId) {
         List<Comment> allByCandidateId = commentRepository.findAllByCandidateIdOrderByInputTimeDesc(candidateId);
         return allByCandidateId.stream().map(comment -> TransferUtil.transferTo(comment, CommentVO.class)).collect(Collectors.toList());

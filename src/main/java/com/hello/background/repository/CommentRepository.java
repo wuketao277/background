@@ -18,6 +18,13 @@ public interface CommentRepository extends JpaSpecificationExecutor<Comment>, Pa
     List<Comment> findAllByCandidateId(Integer candidateId);
 
     /**
+     * 通过候选人id和顾问登录名来查询
+     * @param candidateId
+     * @param username
+     * @return
+     */
+    List<Comment> findAllByCandidateIdAndUsername(Integer candidateId, String username);
+    /**
      * 通过候选人ID和职位ID查询
      *
      * @param candidateId

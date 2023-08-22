@@ -571,6 +571,10 @@ public class CandidateService {
         if (null != condition.getSpecialItem() && condition.getSpecialItem().size() > 0) {
             stream = stream.filter(c -> !Collections.disjoint(c.getSpecialItem(), condition.getSpecialItem()));
         }
+        // 顾问过滤
+        if (Strings.isNotBlank(condition.getUserName())) {
+            stream = stream.filter(c -> commentService.findAllByCandidateIdAndUsername(c.getId(), condition.getUserName()).size() > 0);
+        }
         // 数据转换
         List<CandidateVO> voList = stream.map(x -> CandidateVO.fromCandidate(x)).collect(Collectors.toList());
         return voList;

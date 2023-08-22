@@ -49,4 +49,9 @@ public class SearchCandidateListCondition {
      * 特殊项
      */
     private List<CandidateSpecialItemEnum> specialItem;
+
+    /**
+     * 顾问登录名
+     */
+    private String userName;
 }
