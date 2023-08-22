@@ -1,7 +1,9 @@
 package com.hello.background.service;
 
 import com.hello.background.constant.RoleEnum;
+import com.hello.background.domain.Candidate;
 import com.hello.background.domain.SuccessfulPerm;
+import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.TransferUtil;
@@ -36,6 +38,8 @@ public class SuccessfulPermService {
 
     @Autowired
     private SuccessfulPermRepository successfulPermRepository;
+    @Autowired
+    private CandidateRepository candidateRepository;
 
     /**
      * 保存
@@ -302,7 +306,16 @@ public class SuccessfulPermService {
             }
         };
         Page<SuccessfulPerm> all = successfulPermRepository.findAll(specification, pageable);
-        Page<SuccessfulPermVO> map = all.map(x -> TransferUtil.transferTo(x, SuccessfulPermVO.class));
+        Page<SuccessfulPermVO> map = all.map(x -> {
+            SuccessfulPermVO successfulPermVO = TransferUtil.transferTo(x, SuccessfulPermVO.class);
+            // 获取候选人信息
+            Optional<Candidate> optionalCandidate = candidateRepository.findById(x.getCandidateId());
+            // 设置候选人性别
+            if(optionalCandidate.isPresent() && null != optionalCandidate.get().getGender()) {
+                successfulPermVO.setGender(optionalCandidate.get().getGender().getDescribe());
+            }
+            return successfulPermVO;
+        });
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());

@@ -45,6 +45,11 @@ public class SuccessfulPerm {
     @Column(length = 100)
     private String clientName;
     /**
+     * 部门
+     */
+    @Column(length = 100)
+    private String department;
+    /**
      * 职位id
      */
     @Column
@@ -565,6 +570,11 @@ public class SuccessfulPerm {
     @Column
     private BigDecimal billing;
     /**
+     * 到面日期
+     */
+    @Column
+    private Date interviewDate;
+    /**
      * 入职日期
      */
     @Column
@@ -575,17 +585,17 @@ public class SuccessfulPerm {
     @Column
     private Date guaranteeDate;
     /**
-     *
+     * offer日期
      */
     @Column
     private Date offerDate;
     /**
-     *
+     * 付款日期
      */
     @Column
     private Date paymentDate;
     /**
-     *
+     * 开票日期
      */
     @Column
     private Date invoiceDate;

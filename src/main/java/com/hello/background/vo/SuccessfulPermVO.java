@@ -34,6 +34,10 @@ public class SuccessfulPermVO implements Serializable {
      */
     private String approveStatus;
     /**
+     * 部门
+     */
+    private String department;
+    /**
      * 职位id
      */
     private Integer caseId;
@@ -65,6 +69,10 @@ public class SuccessfulPermVO implements Serializable {
      * 候选人中文名字
      */
     private String candidateChineseName;
+    /**
+     * 性别
+     */
+    private String gender;
     /**
      * CWid
      */
@@ -458,15 +466,19 @@ public class SuccessfulPermVO implements Serializable {
      */
     private Date guaranteeDate;
     /**
-     *
+     * 到面日期
+     */
+    private Date interviewDate;
+    /**
+     * offer日期
      */
     private Date offerDate;
     /**
-     *
+     * 付款日期
      */
     private Date paymentDate;
     /**
-     *
+     * 开票日期
      */
     private Date invoiceDate;
     /**

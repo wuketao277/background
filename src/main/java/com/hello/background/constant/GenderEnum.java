@@ -23,4 +23,12 @@ public enum GenderEnum {
         this.code = _code;
         this.describe = _describe;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getDescribe() {
+        return describe;
+    }
 }
