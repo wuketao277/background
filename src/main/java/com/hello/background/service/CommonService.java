@@ -90,11 +90,12 @@ public class CommonService {
             LocalDate onDimissionDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getDimissionDate());
             end = end.compareTo(onDimissionDate) < 0 ? end : onDimissionDate;
         }
+        // 因为between查询方法是左闭右开，所以结束时间要加一天。
         // 查询请假情况
-        List<Holiday> leaveList = holidayRepository.findAllByHolidayDateBetweenAndUserNameAndApproveStatus(Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end), userName, HolidayApproveStatusEnum.APPROVED);
+        List<Holiday> leaveList = holidayRepository.findAllByHolidayDateBetweenAndUserNameAndApproveStatus(Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end.plusDays(1)), userName, HolidayApproveStatusEnum.APPROVED);
         BigDecimal workdays = calcWorkdaysBetween(start, end, leaveList);
         // 计算KPI工作日调整
-        List<KPIWorkDaysAdjust> kpiWorkDaysAdjustList = kpiWorkDaysAdjustRepository.findByUserNameAndAdjustDateBetween(userName, Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end));
+        List<KPIWorkDaysAdjust> kpiWorkDaysAdjustList = kpiWorkDaysAdjustRepository.findByUserNameAndAdjustDateBetween(userName, Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(start), Jsr310Converters.LocalDateToDateConverter.INSTANCE.convert(end.plusDays(1)));
         for (KPIWorkDaysAdjust adjust : kpiWorkDaysAdjustList) {
             workdays = workdays.add(adjust.getAdjustDays());
         }
