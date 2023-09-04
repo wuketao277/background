@@ -28,7 +28,7 @@ public class KPIStandardConstants {
     /**
      * AM VI+IOI 每天数量
      */
-    public static BigDecimal amVIIOICount = new BigDecimal(1.6);
+    public static BigDecimal amVIIOICount = new BigDecimal(1);
     /**
      * AM 每个VI+IOI 得分
      */
@@ -126,7 +126,7 @@ public class KPIStandardConstants {
     /**
      * Recruiter VI+IOI 每天数量
      */
-    public static BigDecimal reVIIOICount = new BigDecimal(1.6);
+    public static BigDecimal reVIIOICount = new BigDecimal(1);
     /**
      * Recruiter 每个VI+IOI 得分
      */

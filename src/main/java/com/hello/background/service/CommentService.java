@@ -97,6 +97,7 @@ public class CommentService {
         List<Comment> allByCandidateId = commentRepository.findAllByCandidateIdAndUsername(candidateId, username);
         return allByCandidateId.stream().map(comment -> TransferUtil.transferTo(comment, CommentVO.class)).collect(Collectors.toList());
     }
+
     /**
      * 通过候选人ID查询所有评论
      *
@@ -225,24 +226,26 @@ public class CommentService {
         // 读取各项指标数据，计算得分
         if (isAM) {
             //  计算AM的KPI完成比例
-            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays);
+            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays, true);
             kpiPerson.setFinishRateVIIOI(viioiPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays);
+            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays, true);
             kpiPerson.setFinishRateCVO(cvoPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal interviewPercent = calcKPIPercentForInterview(kpiPerson, true, workingDays);
             kpiPerson.setFinishRateInterview(interviewPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             kpiPerson.setFinishRate(viioiPercent.add(cvoPercent).add(interviewPercent).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
         } else {
-            // 计算Recuriter的KPI完成比例
-            BigDecimal ticfPercent = calcKPIPercent(kpiPerson.getTicf(), KPIStandardConstants.reTICFCount, KPIStandardConstants.reTICFPercent, workingDays);
+            // 计算Recruiter的KPI完成比例
+            BigDecimal ticfPercent = calcKPIPercent(kpiPerson.getTicf(), KPIStandardConstants.reTICFCount, KPIStandardConstants.reTICFPercent, workingDays, false);
             kpiPerson.setFinishRateTICF(ticfPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.reVIIOICount, KPIStandardConstants.reVIIOIPercent, workingDays);
+            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.reVIIOICount, KPIStandardConstants.reVIIOIPercent, workingDays, true);
             kpiPerson.setFinishRateVIIOI(viioiPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays);
+            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays, true);
             kpiPerson.setFinishRateCVO(cvoPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal interviewPercent = calcKPIPercentForInterview(kpiPerson, false, workingDays);
             kpiPerson.setFinishRateInterview(interviewPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            kpiPerson.setFinishRate(ticfPercent.add(viioiPercent).add(cvoPercent).add(interviewPercent).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
+            // Recruiter的ti+vi总和不能超过0.2
+            BigDecimal tivi = ticfPercent.add(viioiPercent).compareTo(new BigDecimal(0.2)) > 0 ? new BigDecimal(0.2) : ticfPercent.add(viioiPercent);
+            kpiPerson.setFinishRate(tivi.add(cvoPercent).add(interviewPercent).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
         }
     }
 
@@ -255,12 +258,12 @@ public class CommentService {
      * @param percent     该考核项的占比
      * @return
      */
-    private BigDecimal calcKPIPercent(Integer actualCount, BigDecimal planCount, BigDecimal percent, BigDecimal workdays) {
+    private BigDecimal calcKPIPercent(Integer actualCount, BigDecimal planCount, BigDecimal percent, BigDecimal workdays, boolean limit) {
         if (null == actualCount || null == planCount || null == workdays || null == percent) {
             return BigDecimal.ZERO;
         }
         // 如果 实际完成数*KPI增加系数 大于 单日目标数*工作日进行比较 就取1，否则取 ((实际完成数*KPI增加系数)/(单日目标数*工作日进行比较))*该考核项的占比
-        return compareFinishPercent(actualCount, planCount, workdays).multiply(percent).setScale(4, RoundingMode.HALF_UP);
+        return calcFinishPercent(actualCount, planCount, workdays, limit).multiply(percent).setScale(4, RoundingMode.HALF_UP);
     }
 
     /**
@@ -279,22 +282,22 @@ public class CommentService {
         BigDecimal percent5;
         BigDecimal percent6;
         if (isAM) {
-            percent1 = compareFinishPercent(kpiPerson.getInterview1st(), KPIStandardConstants.am1stCount, workdays);
-            percent2 = compareFinishPercent(kpiPerson.getInterview2nd(), KPIStandardConstants.am2ndCount, workdays);
-            percent3 = compareFinishPercent(kpiPerson.getInterview3rd(), KPIStandardConstants.am3rdCount, workdays);
-            percent4 = compareFinishPercent(kpiPerson.getInterview4th(), KPIStandardConstants.am4thCount, workdays);
-            percent5 = compareFinishPercent(kpiPerson.getInterview5th(), KPIStandardConstants.am5thCount, workdays);
-            percent6 = compareFinishPercent(kpiPerson.getInterviewFinal(), KPIStandardConstants.am6thCount, workdays);
+            percent1 = calcFinishPercent(kpiPerson.getInterview1st(), KPIStandardConstants.am1stCount, workdays, false);
+            percent2 = calcFinishPercent(kpiPerson.getInterview2nd(), KPIStandardConstants.am2ndCount, workdays, false);
+            percent3 = calcFinishPercent(kpiPerson.getInterview3rd(), KPIStandardConstants.am3rdCount, workdays, false);
+            percent4 = calcFinishPercent(kpiPerson.getInterview4th(), KPIStandardConstants.am4thCount, workdays, false);
+            percent5 = calcFinishPercent(kpiPerson.getInterview5th(), KPIStandardConstants.am5thCount, workdays, false);
+            percent6 = calcFinishPercent(kpiPerson.getInterviewFinal(), KPIStandardConstants.am6thCount, workdays, false);
             // 把6轮面试完成率加在一起
             BigDecimal sum = percent1.add(percent2).add(percent3).add(percent4).add(percent5).add(percent6);
             return sum.compareTo(BigDecimal.ONE) > 0 ? BigDecimal.ONE.multiply(KPIStandardConstants.amInterviewPercent) : sum.multiply(KPIStandardConstants.amInterviewPercent);
         } else {
-            percent1 = compareFinishPercent(kpiPerson.getInterview1st(), KPIStandardConstants.re1stCount, workdays);
-            percent2 = compareFinishPercent(kpiPerson.getInterview2nd(), KPIStandardConstants.re2ndCount, workdays);
-            percent3 = compareFinishPercent(kpiPerson.getInterview3rd(), KPIStandardConstants.re3rdCount, workdays);
-            percent4 = compareFinishPercent(kpiPerson.getInterview4th(), KPIStandardConstants.re4thCount, workdays);
-            percent5 = compareFinishPercent(kpiPerson.getInterview5th(), KPIStandardConstants.re5thCount, workdays);
-            percent6 = compareFinishPercent(kpiPerson.getInterviewFinal(), KPIStandardConstants.re6thCount, workdays);
+            percent1 = calcFinishPercent(kpiPerson.getInterview1st(), KPIStandardConstants.re1stCount, workdays, false);
+            percent2 = calcFinishPercent(kpiPerson.getInterview2nd(), KPIStandardConstants.re2ndCount, workdays, false);
+            percent3 = calcFinishPercent(kpiPerson.getInterview3rd(), KPIStandardConstants.re3rdCount, workdays, false);
+            percent4 = calcFinishPercent(kpiPerson.getInterview4th(), KPIStandardConstants.re4thCount, workdays, false);
+            percent5 = calcFinishPercent(kpiPerson.getInterview5th(), KPIStandardConstants.re5thCount, workdays, false);
+            percent6 = calcFinishPercent(kpiPerson.getInterviewFinal(), KPIStandardConstants.re6thCount, workdays, false);
             // 把6轮面试完成率加在一起
             BigDecimal sum = percent1.add(percent2).add(percent3).add(percent4).add(percent5).add(percent6);
             return sum.compareTo(BigDecimal.ONE) > 0 ? BigDecimal.ONE.multiply(KPIStandardConstants.reInterviewPercent) : sum.multiply(KPIStandardConstants.reInterviewPercent);
@@ -302,23 +305,31 @@ public class CommentService {
     }
 
     /**
-     * 比较完成比例
+     * 计算完成比例
      *
-     * @param actualCount
-     * @param planCount
-     * @param workdays
+     * @param actualCount 实际完成数量
+     * @param planCount   计划完成数量
+     * @param workdays    工作天数
+     * @param limit       是否限制完成比例
      * @return
      */
-    private BigDecimal compareFinishPercent(Integer actualCount, BigDecimal planCount, BigDecimal workdays) {
+    private BigDecimal calcFinishPercent(Integer actualCount, BigDecimal planCount, BigDecimal workdays, boolean limit) {
         if (null == actualCount || null == planCount || null == workdays) {
             return BigDecimal.ZERO;
         }
-        // 实际完成数*KPI增加系数 与 计划完成数*工作天数 进行比较
-        if (new BigDecimal(actualCount).multiply(KPIStandardConstants.plusRate).compareTo(planCount.multiply(workdays)) > 0) {
-            // 如果实际完成数*KPI增加系数 大于 计划完成数*工作天数 就返回1
-            return BigDecimal.ONE;
+        if (limit) {
+            // 需要限制完成比例
+            // 实际完成数*KPI增加系数 与 计划完成数*工作天数 进行比较
+            if (new BigDecimal(actualCount).multiply(KPIStandardConstants.plusRate).compareTo(planCount.multiply(workdays)) > 0) {
+                // 如果实际完成数*KPI增加系数 大于 计划完成数*工作天数 就返回1
+                return BigDecimal.ONE;
+            } else {
+                // 如果实际完成数*KPI增加系数 小于 计划完成数*工作天数 就返回实际完成数*KPI增加系数 除 计划完成数*工作天数
+                return new BigDecimal(actualCount).multiply(KPIStandardConstants.plusRate).divide(planCount.multiply(workdays), 4, RoundingMode.HALF_UP);
+            }
         } else {
-            // 如果实际完成数*KPI增加系数 小于 计划完成数*工作天数 就返回实际完成数*KPI增加系数 除 计划完成数*工作天数
+            // 不需要限制完成比例
+            // 实际完成数*KPI增加系数 除以 计划完成数量*工作天数
             return new BigDecimal(actualCount).multiply(KPIStandardConstants.plusRate).divide(planCount.multiply(workdays), 4, RoundingMode.HALF_UP);
         }
     }
