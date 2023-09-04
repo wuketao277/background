@@ -96,6 +96,41 @@ public class SalaryService {
     }
 
     /**
+     * 判断用户是否有成功case
+     *
+     * @param successfulPermList
+     * @param userName
+     * @return
+     */
+    private boolean hasSuccessfulPerm(List<SuccessfulPerm> successfulPermList, String userName) {
+        return successfulPermList.stream()
+                .anyMatch(s -> userName.equals(s.getBdUserName())
+                        || userName.equals(s.getCwUserName())
+                        || userName.equals(s.getLeaderUserName())
+                        || userName.equals(s.getConsultantUserName())
+                        || userName.equals(s.getConsultantUserName2())
+                        || userName.equals(s.getConsultantUserName3())
+                        || userName.equals(s.getConsultantUserName4())
+                        || userName.equals(s.getConsultantUserName5())
+                        || userName.equals(s.getConsultantUserName6())
+                        || userName.equals(s.getConsultantUserName7())
+                        || userName.equals(s.getConsultantUserName8())
+                        || userName.equals(s.getConsultantUserName9())
+                        || userName.equals(s.getConsultantUserName10())
+                        || userName.equals(s.getConsultantUserName11())
+                        || userName.equals(s.getConsultantUserName12())
+                        || userName.equals(s.getConsultantUserName13())
+                        || userName.equals(s.getConsultantUserName14())
+                        || userName.equals(s.getConsultantUserName15())
+                        || userName.equals(s.getConsultantUserName16())
+                        || userName.equals(s.getConsultantUserName17())
+                        || userName.equals(s.getConsultantUserName18())
+                        || userName.equals(s.getConsultantUserName19())
+                        || userName.equals(s.getConsultantUserName20())
+                );
+    }
+
+    /**
      * 生成工资
      *
      * @param month
@@ -112,10 +147,11 @@ public class SalaryService {
         // 查找所有当月工资特殊项
         List<SalarySpecialItem> salarySpecialItemList = salarySpecialItemRepository.findByMonth(month);
         // 查找开启状态的所有人
-        // 屏蔽体验账号，屏蔽入职日期晚于计算工资月的账号
+        // 屏蔽体验账号，屏蔽入职日期晚于计算工资月的账号，屏蔽兼职账号且没有成功case
         List<User> userList = userRepository.findByEnabled(true).stream()
                 .filter(user -> null != user.getJobType() && !JobTypeEnum.EXPERIENCE.equals(user.getJobType()))
                 .filter(x -> null != x.getOnBoardDate() && x.getOnBoardDate().compareTo(end) <= 0)
+                .filter(z->z.getJobType() != JobTypeEnum.PARTTIME || hasSuccessfulPerm(successfulPermList, z.getUsername()))
                 .collect(Collectors.toList());
         // 查询所有用户kpi达成率
         List<KPIPerson> kpiPersonList = commentService.calcKPI(ldStartMonth, ldStartMonth.plusMonths(1).plusDays(-1), "all", null, false);
