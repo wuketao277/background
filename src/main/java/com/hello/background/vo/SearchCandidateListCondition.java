@@ -1,5 +1,6 @@
 package com.hello.background.vo;
 
+import com.hello.background.constant.CandidateSearchQuickItemEnum;
 import com.hello.background.constant.CandidateSpecialItemEnum;
 import com.hello.background.constant.GenderEnum;
 import lombok.Data;
@@ -49,6 +50,11 @@ public class SearchCandidateListCondition {
      * 特殊项
      */
     private List<CandidateSpecialItemEnum> specialItem;
+
+    /**
+     * 快捷项
+     */
+    private List<CandidateSearchQuickItemEnum> quickItem;
 
     /**
      * 顾问登录名

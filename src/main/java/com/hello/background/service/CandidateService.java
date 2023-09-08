@@ -6,6 +6,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
+import com.hello.background.constant.CandidateSearchQuickItemEnum;
 import com.hello.background.constant.SchoolConstant;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.CandidateAttention;
@@ -545,6 +546,11 @@ public class CandidateService {
                 }
                 if (null != condition.getGender()) {
                     list.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("gender"), condition.getGender())));
+                }
+                if (null != condition.getQuickItem() && condition.getQuickItem().contains(CandidateSearchQuickItemEnum.HAVETELEPHONE)){
+                    list.add(criteriaBuilder.and(criteriaBuilder.isNotNull(root.get("phoneNo"))));
+                    list.add(criteriaBuilder.and(criteriaBuilder.notEqual(root.get("phoneNo"), "")));
+                    list.add(criteriaBuilder.and(criteriaBuilder.notEqual(root.get("phoneNo"), "空")));
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
