@@ -27,4 +27,5 @@ public class QueryGeneralReportResponse {
     private List<QueryGeneralReportResponseKeyValue> personalReceiveData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> recruiterOfferBillingData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> teamOfferGPData = new ArrayList<>();
+    private List<QueryGeneralReportResponseKeyValue> avgOfferData = new ArrayList<>();
 }

@@ -11,12 +11,15 @@ import com.hello.background.vo.QueryGeneralReportResponseKeyValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,8 +63,10 @@ public class ReportService {
             generatePersonalReceiveData(iterable, startDate, endDate, response);
             // Recruiter Offer Billing
             generateRecruiterOfferBillingData(iterable, startDate, endDate, response);
-            //  Team Offer GP Data
+            // Team Offer GP Data
             generateTeamOfferGPData(response);
+            // 计算月平均数据
+            generateAvgGPData(response, request);
         } catch (Exception ex) {
             log.error("queryGeneral", ex);
         }
@@ -94,6 +99,40 @@ public class ReportService {
         }
         // 按照业绩排序
         response.getTeamOfferGPData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+    }
+
+
+    /**
+     * Avg GP Data
+     *
+     * @param response
+     */
+    private void generateAvgGPData(QueryGeneralReportResponse response, QueryGeneralReportRequest request) {
+        List<User> userList = userRepository.findAll();
+        // 先获取个人offer数据
+        List<QueryGeneralReportResponseKeyValue> personalOfferData = response.getPersonalOfferData();
+        // 遍历个人offer，计算平均值
+        for (QueryGeneralReportResponseKeyValue kv : personalOfferData) {
+            User user = userList.stream().filter(u -> u.getUsername().equals(kv.getName())).findFirst().get();
+            // 计算工作了多少个月
+            // 开始日期、入职日期，选大的
+            LocalDate start = request.getStartDate();
+            if (null != user.getOnBoardDate()) {
+                LocalDate onBoardLocalDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getOnBoardDate());
+                start = start.compareTo(onBoardLocalDate) > 0 ? start : onBoardLocalDate;
+            }
+            // 结束日期、离职日期、当前时间，选小的
+            LocalDate end = request.getEndDate();
+            if (null != user.getDimissionDate()) {
+                LocalDate dimissionLocalDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getDimissionDate());
+                end = end.compareTo(dimissionLocalDate) > 0 ? dimissionLocalDate : end;
+            }
+            end = end.compareTo(LocalDate.now()) > 0 ? LocalDate.now() : end;
+            int months = Period.between(start, end).getMonths() + 1;
+            response.getAvgOfferData().add(new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue().divide(new BigDecimal(months), 2, RoundingMode.DOWN)));
+        }
+        // 按照业绩排序
+        response.getAvgOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
     }
 
     /**
