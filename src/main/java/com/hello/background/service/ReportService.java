@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,7 +114,7 @@ public class ReportService {
         // 遍历个人offer，计算平均值
         for (QueryGeneralReportResponseKeyValue kv : personalOfferData) {
             User user = userList.stream().filter(u -> u.getUsername().equals(kv.getName())).findFirst().get();
-            // 计算工作了多少个月
+            // 计算工作了多少天
             // 开始日期、入职日期，选大的
             LocalDate start = request.getStartDate();
             if (null != user.getOnBoardDate()) {
@@ -128,8 +128,8 @@ public class ReportService {
                 end = end.compareTo(dimissionLocalDate) > 0 ? dimissionLocalDate : end;
             }
             end = end.compareTo(LocalDate.now()) > 0 ? LocalDate.now() : end;
-            int months = Period.between(start, end).getMonths() + 1;
-            response.getAvgOfferData().add(new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue().divide(new BigDecimal(months), 2, RoundingMode.DOWN)));
+            long days = start.until(end, ChronoUnit.DAYS) + 1L;
+            response.getAvgOfferData().add(new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue().multiply(BigDecimal.valueOf(30)).divide(new BigDecimal(days), 2, RoundingMode.DOWN)));
         }
         // 按照业绩排序
         response.getAvgOfferData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
