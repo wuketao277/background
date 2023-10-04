@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface CandidateForCaseRepository extends JpaRepository<CandidateForCase, Integer> {
     /**
-     * 通过职位id获取所有职位推荐候选人信息
+     * 通过职位id获取所有推荐候选人信息
      *
      * @param caseId 职位id
      * @return 职位推荐候选人信息
@@ -24,7 +24,7 @@ public interface CandidateForCaseRepository extends JpaRepository<CandidateForCa
     List<CandidateForCase> findByCaseId(Integer caseId);
 
     /**
-     * 通过职位id和关注状态获取所有职位推荐候选人信息
+     * 通过职位id和关注状态获取推荐候选人信息
      *
      * @param caseId 职位id
      * @return 职位推荐候选人信息

@@ -120,6 +120,17 @@ public class CandidateForCaseService {
     }
 
     /**
+     * 通过职位id获取所有职位推荐候选人信息
+     *
+     * @param caseId 职位id
+     * @return 职位推荐候选人信息
+     */
+    public List<CandidateForCaseVO> findAttentionByCaseId(Integer caseId) {
+        List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseIdAndAttention(caseId, true);
+        return convertToVOList(candidateForCaseList);
+    }
+
+    /**
      * 通过候选人id获取所有职位推荐候选人信息
      *
      * @param candidateId

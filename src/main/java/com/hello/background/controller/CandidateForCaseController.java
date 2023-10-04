@@ -127,7 +127,7 @@ public class CandidateForCaseController {
     }
 
     /**
-     * 通过职位id获取所有职位推荐候选人信息
+     * 通过职位id获取所有推荐的候选人信息
      *
      * @param caseId 职位id
      * @return 职位推荐候选人信息
@@ -135,14 +135,21 @@ public class CandidateForCaseController {
     @GetMapping("findByCaseId")
     public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId) {
         List<CandidateForCaseVO> voList = candidateForCaseService.findByCaseId(caseId);
-//        voList.forEach(c -> {
-//            // IOI VI END 三个阶段在候选人列表中不用展示
-//            if ("IOI".equals(c.getLastPhase()) || "VI".equals(c.getLastPhase()) || "END".equals(c.getLastPhase())) {
-//                c.setLastPhase(null);
-//            }
-//        });
         voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
         voList.sort(Comparator.comparing(CandidateForCaseVO::getAttention).reversed());
+        return voList;
+    }
+
+    /**
+     * 通过职位id获取关联推荐候选人信息
+     *
+     * @param caseId 职位id
+     * @return 职位推荐候选人信息
+     */
+    @GetMapping("findAttentionByCaseId")
+    public List<CandidateForCaseVO> findAttentionByCaseId(@RequestParam Integer caseId) {
+        List<CandidateForCaseVO> voList = candidateForCaseService.findAttentionByCaseId(caseId);
+        voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
         return voList;
     }
 
