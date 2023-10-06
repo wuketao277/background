@@ -60,6 +60,8 @@ public class KPIPerson {
     private Integer offerSigned;
     @ExcelProperty("On Board")
     private Integer onBoard;
+    @ExcelProperty("New Candidate")
+    private Integer newCandidates;
 
     public KPIPerson() {
         this.ti = 0;
@@ -79,5 +81,6 @@ public class KPIPerson {
         this.onBoard = 0;
         this.finishRate = BigDecimal.ZERO;
         this.workDays = BigDecimal.ZERO;
+        this.newCandidates = 0;
     }
 }

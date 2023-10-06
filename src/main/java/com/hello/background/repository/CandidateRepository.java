@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,4 +87,13 @@ public interface CandidateRepository extends PagingAndSortingRepository<Candidat
      * @return
      */
     List<Candidate> findAllByBirthDayIsNotNull(Pageable pageable);
+
+    /**
+     * 通过创建时间查询
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    List<Candidate> findByCreateTimeGreaterThanEqualAndCreateTimeLessThanEqual(Date start, Date end);
 }

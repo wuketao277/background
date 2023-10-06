@@ -189,4 +189,14 @@ public class CandidateController {
         UserVO userVO = (UserVO) session.getAttribute("user");
         return candidateService.queryCandidateAttentionListByUser(userVO.getId());
     }
+
+    /**
+     * 通过创建时间和用户查询
+     *
+     * @return
+     */
+    @PostMapping("queryByCreateTimeAndCreateUser")
+    public List<CandidateVO> queryByCreateTimeAndCreateUser(@RequestBody CandidateQueryRequest request) {
+        return candidateService.queryByCreateTimeAndCreateUser(request.getStartDate(), request.getEndDate(), request.getCreateUser());
+    }
 }

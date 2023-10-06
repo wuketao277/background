@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -204,6 +205,13 @@ public class CommentService {
         kpiPersonList.forEach(k -> calcKPIFinishRate(k, start, end));
         // 按照KPI得分排序
         kpiPersonList.sort(Comparator.comparing(KPIPerson::getFinishRate));
+
+        // 统计新增的候选人数据
+        List<Candidate> newCandidateList = candidateRepository.findByCreateTimeGreaterThanEqualAndCreateTimeLessThanEqual(Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(startDT), Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(endDT));
+        kpiPersonList.forEach(k -> {
+            k.setNewCandidates(
+                    newCandidateList.stream().filter(c -> Strings.isNotBlank(c.getCreateUserName()) && c.getCreateUserName().equals(k.getUserName())).collect(Collectors.toList()).size());
+        });
         return kpiPersonList;
     }
 

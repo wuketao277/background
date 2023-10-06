@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -212,6 +213,12 @@ public class Candidate {
      */
     @Column(length = 50)
     private String createRealName;
+
+    /**
+     * 创建时间
+     */
+    @Column
+    private Date createTime;
 
     /**
      * 必要检查

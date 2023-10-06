@@ -23,6 +23,7 @@ import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -93,6 +96,7 @@ public class CandidateService {
             candidate.setCreateUserId(user.getId());
             candidate.setCreateUserName(user.getUsername());
             candidate.setCreateRealName(user.getRealname());
+            candidate.setCreateTime(new Date());
         } else {
             // 对于已经存在的候选人
             // 更新关注候选人
@@ -547,7 +551,7 @@ public class CandidateService {
                 if (null != condition.getGender()) {
                     list.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("gender"), condition.getGender())));
                 }
-                if (null != condition.getQuickItem() && condition.getQuickItem().contains(CandidateSearchQuickItemEnum.HAVETELEPHONE)){
+                if (null != condition.getQuickItem() && condition.getQuickItem().contains(CandidateSearchQuickItemEnum.HAVETELEPHONE)) {
                     list.add(criteriaBuilder.and(criteriaBuilder.isNotNull(root.get("phoneNo"))));
                     list.add(criteriaBuilder.and(criteriaBuilder.notEqual(root.get("phoneNo"), "")));
                     list.add(criteriaBuilder.and(criteriaBuilder.notEqual(root.get("phoneNo"), "空")));
@@ -744,5 +748,26 @@ public class CandidateService {
                 return 11;
         }
         return -1;
+    }
+
+    /**
+     * 通过创建时间和创建用户来查询
+     *
+     * @param start
+     * @param end
+     * @param createUser
+     * @return
+     */
+    public List<CandidateVO> queryByCreateTimeAndCreateUser(LocalDate start, LocalDate end, String createUser) {
+        // 获取计算时间段
+        LocalDateTime startDT = LocalDateTime.of(start.getYear(), start.getMonthValue(), start.getDayOfMonth(), 0, 0, 0);
+        LocalDateTime endDT = LocalDateTime.of(end.getYear(), end.getMonthValue(), end.getDayOfMonth(), 23, 59, 59);
+        List<Candidate> candidateList = candidateRepository.findByCreateTimeGreaterThanEqualAndCreateTimeLessThanEqual(Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(startDT), Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(endDT));
+        if (Strings.isNotBlank(createUser)) {
+            candidateList = candidateList.stream().filter(c -> createUser.equals(c.getCreateUserName())).collect(Collectors.toList());
+        }
+        List<CandidateVO> voList = candidateList.stream().map(c -> CandidateVO.fromCandidate(c)).collect(Collectors.toList());
+        voList.forEach(v -> v.calcInformationScore());
+        return voList;
     }
 }

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -198,6 +199,16 @@ public class CandidateVO {
     private List<String> labels = new ArrayList<>();
 
     /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 信息完整性得分
+     */
+    private Integer informationScore = 0;
+
+    /**
      * 通过domain对象转换vo对象
      *
      * @param candidate
@@ -222,5 +233,50 @@ public class CandidateVO {
             candidate.setLabels(Strings.join(this.getLabels(), ','));
         }
         return candidate;
+    }
+
+    /**
+     * 计算候选人信息完整性得分
+     */
+    public void calcInformationScore() {
+        if (Strings.isNotBlank(this.birthDay)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.phoneNo)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.email)) {
+            this.informationScore += 1;
+        }
+        if (null != this.gender) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.englishLevel)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.hometown)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.currentAddress)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.futureAddress)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.family)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.companyName)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.currentMoney)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.futureMoney)) {
+            this.informationScore += 1;
+        }
+        if (Strings.isNotBlank(this.schoolName)) {
+            this.informationScore += 1;
+        }
     }
 }
