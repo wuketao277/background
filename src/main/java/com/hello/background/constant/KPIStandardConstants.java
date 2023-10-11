@@ -100,7 +100,7 @@ public class KPIStandardConstants {
 
 
     /**
-     * AM KPI得分计算
+     * Recruiter KPI得分计算
      * 1周KPI计算：TI+VI+CVO+面试=总分 1周5天，每天100分，总共500分
      * TI占10%，总分是50分，要求100个，所以每个IT得0.5分
      * VI占10%，总分是50分，要求10个，所以每个VI得5分
@@ -138,7 +138,7 @@ public class KPIStandardConstants {
     /**
      * Recruiter CVO 每天数量
      */
-    public static BigDecimal reCVOCount = new BigDecimal(0.6);
+    public static BigDecimal reCVOCount = new BigDecimal(0.4);
     /**
      * Recruiter 每个CVO 得分
      */
@@ -150,27 +150,27 @@ public class KPIStandardConstants {
     /**
      * Recruiter 第一轮面试 每天数量
      */
-    public static BigDecimal re1stCount = new BigDecimal(0.4);
+    public static BigDecimal re1stCount = new BigDecimal(0.3);
     /**
      * Recruiter 第二轮面试 每天数量
      */
-    public static BigDecimal re2ndCount = new BigDecimal(0.8);
+    public static BigDecimal re2ndCount = new BigDecimal(0.6);
     /**
      * Recruiter 第三轮面试 每天数量
      */
-    public static BigDecimal re3rdCount = new BigDecimal(1.6);
+    public static BigDecimal re3rdCount = new BigDecimal(1.2);
     /**
      * Recruiter 第四轮面试 每天数量
      */
-    public static BigDecimal re4thCount = new BigDecimal(3.2);
+    public static BigDecimal re4thCount = new BigDecimal(2.4);
     /**
      * Recruiter 第五轮面试 每天数量
      */
-    public static BigDecimal re5thCount = new BigDecimal(6.4);
+    public static BigDecimal re5thCount = new BigDecimal(4.8);
     /**
      * Recruiter 第六轮面试 每天数量
      */
-    public static BigDecimal re6thCount = new BigDecimal(12.8);
+    public static BigDecimal re6thCount = new BigDecimal(9.6);
 //    /**
 //     * Recruiter 每个第一轮面试 得分
 //     */

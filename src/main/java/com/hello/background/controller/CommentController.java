@@ -88,6 +88,16 @@ public class CommentController {
     }
 
     /**
+     * 保存KPI
+     *
+     * @return
+     */
+    @PostMapping("saveKPI")
+    public void saveKPI(@RequestBody SaveKPIRequest request) {
+        commentService.saveKPI(request.getMonth());
+    }
+
+    /**
      * 下载KPI Excel文件
      *
      * @param response

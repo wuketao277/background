@@ -6,6 +6,7 @@ import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.domain.Comment;
+import com.hello.background.domain.KPI;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.CommentRepository;
@@ -32,6 +33,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +57,8 @@ public class CommentService {
     private CaseRepository caseRepository;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private KPIService kpiService;
 
     /**
      * 通过id删除
@@ -118,6 +122,32 @@ public class CommentService {
      */
     public List<Comment> findByContentLikeOrderByCandidateIdAscIdAsc(String content) {
         return commentRepository.findByContentLikeOrderByCandidateIdAscIdAsc(content);
+    }
+
+    /**
+     * 保存KPI
+     *
+     * @param monthLD
+     */
+    public void saveKPI(LocalDate monthLD) {
+        // 转换日期字符串格式
+        String month = monthLD.format(DateTimeFormatter.ofPattern("YYYY-MM"));
+        // 删除旧数据
+        kpiService.deleteByMonth(month);
+        // 计算新的KPI
+        List<KPIPerson> kpiPersonList = calcKPI(monthLD, monthLD.plusMonths(1).plusDays(-1), "all", null, false);
+        List<UserVO> userVOList = userService.findByEnabled(true);
+        // 保存进数据库
+        kpiPersonList.forEach(k -> {
+            KPI kpi = new KPI();
+            kpi.setMonth(month);
+            // 获取用户当月是否考核KPI
+            Optional<UserVO> userOp = userVOList.stream().filter(u -> u.getUsername().equals(k.getUserName())).findFirst();
+            boolean checkKPI = userOp.isPresent() ? userOp.get().getCheckKPI() : false;
+            kpi.setCheckKPI(checkKPI);
+            TransferUtil.transfer(k, kpi);
+            kpiService.save(kpi);
+        });
     }
 
     /**

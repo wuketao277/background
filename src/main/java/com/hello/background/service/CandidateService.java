@@ -137,26 +137,6 @@ public class CandidateService {
         candidateRepository.deleteById(id);
     }
 
-//    public void copyData() {
-//        Pageable pageable = new PageRequest(0, 20000, Sort.Direction.ASC, "id");
-//        Page<Candidate> all = candidateRepository.findAll(pageable);
-//        for (Candidate c : all.getContent()) {
-//            Candidate n = new Candidate();
-//            n.setBirthDay(c.getBirthDay());
-//            n.setChineseName(c.getChineseName());
-//            n.setCompanyName(c.getCompanyName());
-//            n.setDepartment(c.getDepartment());
-//            n.setTitle(c.getTitle());
-//            n.setPhoneNo(c.getPhoneNo());
-//            n.setHometown(c.getHometown());
-//            n.setCurrentAddress(c.getCurrentAddress());
-//            n.setFutureAddress(c.getFutureAddress());
-//            n.setSchoolName(c.getSchoolName());
-//            n.setRemark("备注");
-//            candidateRepository.save(n);
-//        }
-//    }
-
     /**
      * 查询分页
      *

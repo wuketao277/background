@@ -53,6 +53,8 @@ public class SalaryService {
     private HolidayRepository holidayRepository;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private KPIService kpiService;
 
     public boolean update(SalaryVO vo, UserVO user) {
         Optional<Salary> optional = salaryRepository.findById(vo.getId());
@@ -151,10 +153,9 @@ public class SalaryService {
         List<User> userList = userRepository.findByEnabled(true).stream()
                 .filter(user -> null != user.getJobType() && !JobTypeEnum.EXPERIENCE.equals(user.getJobType()))
                 .filter(x -> null != x.getOnBoardDate() && x.getOnBoardDate().compareTo(end) <= 0)
-                .filter(z->z.getJobType() != JobTypeEnum.PARTTIME || hasSuccessfulPerm(successfulPermList, z.getUsername()))
+                .filter(z -> z.getJobType() != JobTypeEnum.PARTTIME || hasSuccessfulPerm(successfulPermList, z.getUsername()))
                 .collect(Collectors.toList());
-        // 查询所有用户kpi达成率
-        List<KPIPerson> kpiPersonList = commentService.calcKPI(ldStartMonth, ldStartMonth.plusMonths(1).plusDays(-1), "all", null, false);
+        // 遍历用户，计算每人的业绩
         userList.stream().forEach(user -> {
             try {
                 Salary salary = new Salary();
@@ -287,28 +288,24 @@ public class SalaryService {
                     }
                 }
                 sb.append(String.format("综合工资：%s \r\n", userSalarySum));
-                // 判断是否考核kpi
-                if (user.getCheckKPI()) {
+                // 判断是否考核kpi，从KPI历史记录中获取用户的当月数据
+                KPI kpi = kpiService.findByMonthAndUserName(month, user.getUsername());
+                if (Optional.ofNullable(kpi).map(k -> k.getCheckKPI()).orElse(user.getCheckKPI())) {
                     sb.append("需要考核KPI" + "\r\n");
-                    Optional<KPIPerson> kpiPerson = kpiPersonList.stream().filter(k -> k.getUserName().equals(user.getUsername())).findFirst();
-                    if (kpiPerson.isPresent() && null != kpiPerson.get().getFinishRate()) {
-                        BigDecimal finishRate = kpiPerson.get().getFinishRate();
-                        sb.append("KPI得分" + finishRate + "\r\n");
-                        if (finishRate.compareTo(new BigDecimal(99)) < 0) {
-                            // kpi 达成率小于99
-                            if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
-                                commissionSum = commissionSum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-                                sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
-                            }
-                            if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
-                                userSalarySum = userSalarySum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-                                sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
-                            }
-                        } else {
-                            sb.append("KPI大于等于99%，不用折算工资。\r\n");
+                    BigDecimal finishRate = kpi.getFinishRate();
+                    sb.append("KPI得分" + finishRate + "\r\n");
+                    if (finishRate.compareTo(new BigDecimal(99)) < 0) {
+                        // kpi 达成率小于99
+                        if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
+                            commissionSum = commissionSum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+                            sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
+                        }
+                        if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
+                            userSalarySum = userSalarySum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+                            sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
                         }
                     } else {
-                        sb.append("没有KPI得分，KPI达成率按100计算。" + "\r\n");
+                        sb.append("KPI大于等于99%，不用折算工资。\r\n");
                     }
                 } else {
                     sb.append("不需要考核KPI" + "\r\n");
