@@ -592,25 +592,36 @@ public class CommentService {
      * @param pageSize
      * @return
      */
-    public Page<InterviewVO> queryInterviewPage(String search, Integer currentPage, Integer pageSize) {
+    public Page<InterviewVO> queryInterviewPage(QueryInterviewSearchRequest search, Integer currentPage, Integer pageSize) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
         Specification<Comment> specification = new Specification<Comment>() {
             @Override
             public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                if (Strings.isNotBlank(search)) {
-                    list.add(criteriaBuilder.and(criteriaBuilder.or(
-//                            if (Integer.parseInt(search) > 0) {
-//                                criteriaBuilder.like(root.get("candidateId"), search),
-//                            }
-                            criteriaBuilder.like(root.get("clientName"), "%" + search + "%"),
-                            criteriaBuilder.like(root.get("username"), "%" + search + "%"),
-                            criteriaBuilder.like(root.get("caseTitle"), "%" + search + "%"),
-                            criteriaBuilder.like(root.get("phase"), "%" + search + "%")
-                    )));
+                if (null != search) {
+                    if (Strings.isNotBlank(search.getClientName())) {
+                        list.add(criteriaBuilder.equal(root.get("clientName"), search.getClientName()));
+                    }
+                    if (Strings.isNotBlank(search.getTitle())) {
+                        list.add(criteriaBuilder.like(root.get("caseTitle"), "%" + search.getTitle() + "%"));
+                    }
+                    if (Strings.isNotBlank(search.getLoginName())) {
+                        list.add(criteriaBuilder.equal(root.get("username"), search.getLoginName()));
+                    }
+                    if (Strings.isNotBlank(search.getPhase())) {
+                        // 指定某个阶段
+                        list.add(criteriaBuilder.equal(root.get("phase"), search.getPhase()));
+                    } else if (Optional.ofNullable(search).map(s -> s.getAllInterview()).orElse(true)) {
+                        // 未指定某个阶段，并且勾选了全部面试
+                        list.add(criteriaBuilder.isNotNull(root.get("interviewTime")));
+                    }
+                    if (null != search.getStartDate()) {
+                        list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("inputTime"), LocalDateTime.of(search.getStartDate().getYear(), search.getStartDate().getMonthValue(), search.getStartDate().getDayOfMonth(), 0, 0, 0)));
+                    }
+                    if (null != search.getEndDate()) {
+                        list.add(criteriaBuilder.lessThanOrEqualTo(root.get("inputTime"), LocalDateTime.of(search.getEndDate().getYear(), search.getEndDate().getMonthValue(), search.getEndDate().getDayOfMonth(), 0, 0, 0)));
+                    }
                 }
-                // 用面试时间非空作为面试阶段的标志
-                list.add(criteriaBuilder.isNotNull(root.get("interviewTime")));
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
             }

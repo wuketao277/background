@@ -149,13 +149,10 @@ public class CommentController {
     /**
      * 面试分页查询
      *
-     * @param search      搜索关键字
-     * @param currentPage 当前页
-     * @param pageSize    页尺寸
-     * @return
+     * @returnost
      */
-    @GetMapping("queryInterviewPage")
-    public Page<InterviewVO> queryInterviewPage(String search, Integer currentPage, Integer pageSize) {
-        return commentService.queryInterviewPage(search, currentPage, pageSize);
+    @PostMapping("queryInterviewPage")
+    public Page<InterviewVO> queryInterviewPage(@RequestBody QueryInterviewRequest request) {
+        return commentService.queryInterviewPage(request.getSearch(), request.getCurrentPage(), request.getPageSize());
     }
 }
