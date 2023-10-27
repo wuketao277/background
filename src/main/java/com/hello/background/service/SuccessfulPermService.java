@@ -75,10 +75,22 @@ public class SuccessfulPermService {
                     Predicate like = criteriaBuilder.like(path, "%" + search.getChannel() + "%");
                     list.add(criteriaBuilder.and(like));
                 }
-                if (null != search.getClientId()) {
-                    Path<String> path = root.get("clientId");
-                    Predicate equal = criteriaBuilder.equal(path, search.getClientId());
-                    list.add(criteriaBuilder.and(equal));
+                if (null != search.getClientName()) {
+                    if (search.getClientName().equals("理想-集团")) {
+                        list.add(criteriaBuilder.like(root.get("clientName"), "%理想%"));
+                    } else if (search.getClientName().equals("一汽-集团")) {
+                        list.add(criteriaBuilder.like(root.get("clientName"), "%一汽%"));
+                    } else if (search.getClientName().equals("宝马-集团")) {
+                        list.add(criteriaBuilder.or(
+                                criteriaBuilder.like(root.get("clientName"), "%宝马%")
+                                , criteriaBuilder.like(root.get("clientName"), "%领悦%")));
+                    } else if (search.getClientName().equals("沃尔沃-集团")) {
+                        list.add(criteriaBuilder.or(
+                                criteriaBuilder.like(root.get("clientName"), "%沃尔沃%")
+                                , criteriaBuilder.equal(root.get("clientName"), "亚欧汽车制造（台州）有限公司")));
+                    } else {
+                        list.add(criteriaBuilder.equal(root.get("clientName"), search.getClientName()));
+                    }
                 }
                 if (Strings.isNotBlank(search.getTitle())) {
                     Path<String> path = root.get("title");
@@ -311,7 +323,7 @@ public class SuccessfulPermService {
             // 获取候选人信息
             Optional<Candidate> optionalCandidate = candidateRepository.findById(x.getCandidateId());
             // 设置候选人性别
-            if(optionalCandidate.isPresent() && null != optionalCandidate.get().getGender()) {
+            if (optionalCandidate.isPresent() && null != optionalCandidate.get().getGender()) {
                 successfulPermVO.setGender(optionalCandidate.get().getGender().getDescribe());
             }
             return successfulPermVO;

@@ -600,7 +600,21 @@ public class CommentService {
                 List<Predicate> list = new ArrayList<>();
                 if (null != search) {
                     if (Strings.isNotBlank(search.getClientName())) {
-                        list.add(criteriaBuilder.equal(root.get("clientName"), search.getClientName()));
+                        if (search.getClientName().equals("理想-集团")) {
+                            list.add(criteriaBuilder.like(root.get("clientName"), "%理想%"));
+                        } else if (search.getClientName().equals("一汽-集团")) {
+                            list.add(criteriaBuilder.like(root.get("clientName"), "%一汽%"));
+                        } else if (search.getClientName().equals("宝马-集团")) {
+                            list.add(criteriaBuilder.or(
+                                    criteriaBuilder.like(root.get("clientName"), "%宝马%")
+                                    , criteriaBuilder.like(root.get("clientName"), "%领悦%")));
+                        } else if (search.getClientName().equals("沃尔沃-集团")) {
+                            list.add(criteriaBuilder.or(
+                                    criteriaBuilder.like(root.get("clientName"), "%沃尔沃%")
+                                    , criteriaBuilder.equal(root.get("clientName"), "亚欧汽车制造（台州）有限公司")));
+                        } else {
+                            list.add(criteriaBuilder.equal(root.get("clientName"), search.getClientName()));
+                        }
                     }
                     if (Strings.isNotBlank(search.getTitle())) {
                         list.add(criteriaBuilder.like(root.get("caseTitle"), "%" + search.getTitle() + "%"));

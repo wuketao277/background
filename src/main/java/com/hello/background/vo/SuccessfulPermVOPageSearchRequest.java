@@ -13,9 +13,9 @@ import java.util.Date;
 @Data
 public class SuccessfulPermVOPageSearchRequest {
     /**
-     * 客户id
+     * 客户名称
      */
-    private Integer clientId;
+    private String clientName;
     /**
      * 顾问id
      */
