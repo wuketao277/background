@@ -92,7 +92,7 @@ public class Salary {
     @Column
     private BigDecimal finalSum;
     /**
-     * 历史负债
+     * 起提点
      */
     @Column
     private BigDecimal historyDebt;

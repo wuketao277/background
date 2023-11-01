@@ -259,11 +259,11 @@ public class SalaryService {
                     commissionSum = commissionSum.add(calcPersonalCommission(perm.getConsultantUserName20(), perm.getConsultantCommissionPercent20(), user.getUsername(), sb, perm));
                 }
                 sb.append("成功case提成：" + commissionSum + "\r\n");
-                // 减去最近一个月工资的历史负债
+                // 减去最近一个月工资的起提点
                 List<Salary> salaryList = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername());
                 if (!CollectionUtils.isEmpty(salaryList) && Optional.ofNullable(salaryList.get(0)).map(s -> s.getHistoryDebt()).isPresent()) {
                     commissionSum = commissionSum.add(salaryList.get(0).getHistoryDebt());
-                    sb.append("历史负债：" + salaryList.get(0).getHistoryDebt() + "\r\n");
+                    sb.append("起提点：" + salaryList.get(0).getHistoryDebt() + "\r\n");
                 }
                 // 当月工资特殊项中 前置奖金类型的累加到奖金总和中
                 List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.COMMISSION.equals(s.getType()) && Strings.isNotBlank(s.getIsPre()) && "yes".equals(s.getIsPre())).collect(Collectors.toList());
@@ -289,27 +289,27 @@ public class SalaryService {
                 }
                 sb.append(String.format("综合工资：%s \r\n", userSalarySum));
                 // 判断是否考核kpi，从KPI历史记录中获取用户的当月数据
-                KPI kpi = kpiService.findByMonthAndUserName(month, user.getUsername());
-                if (Optional.ofNullable(kpi).map(k -> k.getCheckKPI()).orElse(user.getCheckKPI())) {
-                    sb.append("需要考核KPI" + "\r\n");
-                    BigDecimal finishRate = kpi.getFinishRate();
-                    sb.append("KPI得分" + finishRate + "\r\n");
-                    if (finishRate.compareTo(new BigDecimal(99)) < 0) {
-                        // kpi 达成率小于99
-                        if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
-                            commissionSum = commissionSum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-                            sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
-                        }
-                        if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
-                            userSalarySum = userSalarySum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-                            sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
-                        }
-                    } else {
-                        sb.append("KPI大于等于99%，不用折算工资。\r\n");
-                    }
-                } else {
-                    sb.append("不需要考核KPI" + "\r\n");
-                }
+//                KPI kpi = kpiService.findByMonthAndUserName(month, user.getUsername());
+//                if (Optional.ofNullable(kpi).map(k -> k.getCheckKPI()).orElse(user.getCheckKPI())) {
+//                    sb.append("需要考核KPI" + "\r\n");
+//                    BigDecimal finishRate = kpi.getFinishRate();
+//                    sb.append("KPI得分" + finishRate + "\r\n");
+//                    if (finishRate.compareTo(new BigDecimal(99)) < 0) {
+//                        // kpi 达成率小于99
+//                        if (commissionSum.compareTo(BigDecimal.ZERO) > 0) {
+//                            commissionSum = commissionSum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+//                            sb.append(String.format("综合提成*KPI达成率：%s \r\n", commissionSum));
+//                        }
+//                        if (userSalarySum.compareTo(BigDecimal.ZERO) > 0) {
+//                            userSalarySum = userSalarySum.multiply(finishRate).divide(new BigDecimal(100), 2, RoundingMode.DOWN);
+//                            sb.append(String.format("综合工资*KPI达成率：%s \r\n", userSalarySum));
+//                        }
+//                    } else {
+//                        sb.append("KPI大于等于99%，不用折算工资。\r\n");
+//                    }
+//                } else {
+//                    sb.append("不需要考核KPI" + "\r\n");
+//                }
                 // 判断是否需要cover base
                 if (user.getCoverbase()) {
                     // 需要cover base
@@ -317,7 +317,7 @@ public class SalaryService {
                     // 最后和底薪进行比较，取较大的值
                     sb.append(String.format("base:%s commission:%s\r\n", userSalarySum, commissionSum));
                     if (commissionSum.compareTo(userSalarySum) >= 0) {
-                        // 当月提成大于底薪。发提成，历史负债为0
+                        // 当月提成大于底薪。发提成，起提点为0
                         sb.append("commission多，按commission发：" + commissionSum + "\r\n");
                         salary.setSum(commissionSum);
                         salary.setHistoryDebt(BigDecimal.ZERO);
@@ -326,9 +326,9 @@ public class SalaryService {
                         // 实发薪资
                         sb.append("base多，按base发：" + userSalarySum + "\r\n");
                         salary.setSum(userSalarySum);
-                        // 实发薪资高于提成，历史负债为 实发薪资-底薪
+                        // 实发薪资高于提成，起提点为 实发薪资-底薪
                         BigDecimal newHistoryDebt = commissionSum.subtract(userSalarySum);
-                        sb.append(String.format("最新历史负债：%s\r\n", (newHistoryDebt)));
+                        sb.append(String.format("最新起提点：%s\r\n", (newHistoryDebt)));
                         salary.setHistoryDebt(newHistoryDebt);
                     }
                 } else {

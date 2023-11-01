@@ -70,7 +70,7 @@ public class SalaryVO {
      */
     private BigDecimal finalSum;
     /**
-     * 历史负债
+     * 起提点
      */
     private BigDecimal historyDebt;
     /**

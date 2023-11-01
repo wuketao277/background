@@ -39,7 +39,7 @@ public class SalaryVODownload {
     @ExcelProperty(value = "Working Days", index = 3)
     private BigDecimal workingDays;
     /**
-     * 历史负债
+     * 起提点
      */
     @ExcelProperty(value = "History Debt", index = 4)
     private BigDecimal historyDebt;
