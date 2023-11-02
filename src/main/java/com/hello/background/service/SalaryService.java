@@ -263,7 +263,7 @@ public class SalaryService {
                 List<Salary> salaryList = salaryRepository.findByConsultantUserNameOrderByMonthDesc(user.getUsername());
                 if (!CollectionUtils.isEmpty(salaryList) && Optional.ofNullable(salaryList.get(0)).map(s -> s.getHistoryDebt()).isPresent()) {
                     commissionSum = commissionSum.add(salaryList.get(0).getHistoryDebt());
-                    sb.append("起提点：" + salaryList.get(0).getHistoryDebt() + "\r\n");
+                    sb.append("历史起提点：" + salaryList.get(0).getHistoryDebt() + "\r\n");
                 }
                 // 当月工资特殊项中 前置奖金类型的累加到奖金总和中
                 List<SalarySpecialItem> salarySpecialItemListForUser = salarySpecialItemList.stream().filter(s -> user.getUsername().equals(s.getConsultantUserName()) && null != s.getType() && SalarySpecialItemTypeEnum.COMMISSION.equals(s.getType()) && Strings.isNotBlank(s.getIsPre()) && "yes".equals(s.getIsPre())).collect(Collectors.toList());

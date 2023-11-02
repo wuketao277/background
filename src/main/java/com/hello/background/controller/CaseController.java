@@ -141,4 +141,15 @@ public class CaseController {
     public String deleteById(@RequestBody DeleteCaseRequest request) {
         return caseService.deleteById(request.getId());
     }
+
+
+    /**
+     * 清空体验岗位
+     *
+     * @return
+     */
+    @GetMapping("clearExperience")
+    public void clearExperience() {
+        caseService.clearExperience();
+    }
 }

@@ -202,4 +202,18 @@ public class CaseService {
             return "信息不存在！";
         }
     }
+
+    /**
+     * 清空体验岗位
+     */
+    public void clearExperience() {
+        // 遍历所有职位，找到有体验选项的职位进行更新
+        List<ClientCase> allCaseList = caseRepository.findAll();
+        for (ClientCase cc : allCaseList) {
+            if (null != cc.getShow4JobType() && cc.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)) {
+                cc.getShow4JobType().remove(JobTypeEnum.EXPERIENCE);
+                caseRepository.save(cc);
+            }
+        }
+    }
 }
