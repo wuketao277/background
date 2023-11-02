@@ -86,6 +86,7 @@ public class UserService {
         user.setRemainHolidayThing(vo.getRemainHolidayThing());
         user.setRemainHolidayIll(vo.getRemainHolidayIll());
         user.setTeamLeaderUserName(vo.getTeamLeaderUserName());
+        user.setPassword(vo.getPassword());
         // 更新数据库
         User returnUser = userRepository.save(user);
         UserVO returnUserVO = new UserVO();
