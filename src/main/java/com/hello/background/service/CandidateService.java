@@ -91,13 +91,17 @@ public class CandidateService {
      */
     public CandidateVO save(CandidateVO vo, UserVO user) {
         Candidate candidate = vo.toCandidate();
-        // 如果没有id，表示是第一次新增。就增加创建用户。
-        if (null == candidate.getId() || null == candidate.getCreateUserId()) {
+        if (null == candidate.getCreateUserId()) {
+            // 增加创建人信息
             candidate.setCreateUserId(user.getId());
             candidate.setCreateUserName(user.getUsername());
             candidate.setCreateRealName(user.getRealname());
+        }
+        if (null == candidate.getCreateTime()) {
+            // 增加创建时间信息
             candidate.setCreateTime(new Date());
-        } else {
+        }
+        if (null != candidate.getId()) {
             // 对于已经存在的候选人
             // 更新关注候选人
             List<CandidateAttention> candidateAttentionList = candidateAttentionRepository.findByCandidateId(vo.getId());
