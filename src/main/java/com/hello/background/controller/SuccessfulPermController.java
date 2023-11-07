@@ -7,13 +7,11 @@ import com.hello.background.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -97,5 +95,15 @@ public class SuccessfulPermController {
     @PostMapping("deleteById")
     public String deleteById(@RequestBody DeleteSuccessfulPermRequest request) {
         return successfulPermService.deleteById(request.getId());
+    }
+
+    /**
+     * 当日入职列表
+     *
+     * @return
+     */
+    @GetMapping("todayOnboardList")
+    public List<TodayOnboardInfoVO> todayOnboardList() {
+        return successfulPermService.todayOnboardList();
     }
 }

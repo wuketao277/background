@@ -38,4 +38,11 @@ public interface SuccessfulPermRepository extends PagingAndSortingRepository<Suc
      * @return
      */
     List<SuccessfulPerm> findByCandidateIdAndCaseId(Integer candidateId, Integer caseId);
+
+    /**
+     * 通过入职日期和类型进行查询
+     *
+     * @return
+     */
+    List<SuccessfulPerm> findByTypeAndOnBoardDateBetween(String type, Date start, Date end);
 }

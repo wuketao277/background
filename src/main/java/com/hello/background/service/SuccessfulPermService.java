@@ -12,6 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,12 @@ import javax.persistence.criteria.*;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author wuketao
@@ -375,4 +378,18 @@ public class SuccessfulPermService {
             return "信息不存在！";
         }
     }
+
+    /**
+     * 当日入职列表
+     *
+     * @return
+     */
+    public List<TodayOnboardInfoVO> todayOnboardList() {
+        LocalDateTime startLDT = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDateTime.now().getDayOfMonth(), 0, 0, 0);
+        LocalDateTime endLDT = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDateTime.now().getDayOfMonth(), 23, 59, 59);
+        // 查询当天入职的猎头岗位
+        List<SuccessfulPerm> byOnBoardDate = successfulPermRepository.findByTypeAndOnBoardDateBetween("perm", Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(startLDT), Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(endLDT));
+        return byOnBoardDate.stream().map(s -> new TodayOnboardInfoVO(s)).collect(Collectors.toList());
+    }
+
 }
