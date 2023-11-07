@@ -128,7 +128,8 @@ public class CandidateService {
             }
         }
         candidate = candidateRepository.save(candidate);
-        return TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
+        CandidateVO candidateVO = TransferUtil.transferTo(CommonUtils.calcAge(candidate), CandidateVO.class);
+        return candidateVO;
     }
 
 
