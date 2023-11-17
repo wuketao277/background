@@ -2,6 +2,7 @@ package com.hello.background.service;
 
 import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.HolidayApproveStatusEnum;
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Holiday;
 import com.hello.background.repository.HolidayRepository;
 import com.hello.background.utils.TransferUtil;
@@ -103,7 +104,7 @@ public class HolidayService {
                     )));
                 }
                 // 如果不是管理员，只能查看自己的假期
-                if (!userVO.getRoleList().contains("admin")) {
+                if (!userVO.getRoles().contains(RoleEnum.ADMIN) && !userVO.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
                     list.add(criteriaBuilder.and(
                             getPredicate("userName", userVO.getUsername(), root, criteriaBuilder)
                     ));

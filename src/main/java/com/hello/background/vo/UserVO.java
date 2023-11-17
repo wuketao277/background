@@ -110,10 +110,6 @@ public class UserVO implements Serializable {
      */
     private boolean credentialsNonExpired;
     /**
-     * 角色集合
-     */
-    private List<String> roleList;
-    /**
      * 性别
      */
     private GenderEnum gender;
