@@ -6,6 +6,7 @@ import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.domain.User;
 import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.vo.SaveUserBasicInfoResponse;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +54,19 @@ public class UserService {
      * @param vo
      * @return
      */
-    public UserVO saveBaseInfo(UserVO vo) {
+    public SaveUserBasicInfoResponse saveBaseInfo(UserVO vo) {
+        SaveUserBasicInfoResponse response = new SaveUserBasicInfoResponse();
         User user = new User();
         if (null == vo.getId()) {
             // 没有id表示新建用户。
+            // 检查用户名是否重复
+            User existUser = userRepository.findByUsername(vo.getUsername());
+            if (existUser != null) {
+                // 如果用户存在，就返回“用户名已存在，请更换！”
+                response.setResult(false);
+                response.setMsg("用户名已存在，请更换！");
+                return response;
+            }
             // 设置默认密码是1
             user.setPassword("1");
             user.setCreateDate(new Date());
@@ -91,7 +101,9 @@ public class UserService {
         User returnUser = userRepository.save(user);
         UserVO returnUserVO = new UserVO();
         BeanUtils.copyProperties(returnUser, returnUserVO);
-        return returnUserVO;
+        response.setResult(true);
+        response.setUserVO(returnUserVO);
+        return response;
     }
 
     /**

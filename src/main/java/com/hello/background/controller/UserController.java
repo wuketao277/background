@@ -2,6 +2,7 @@ package com.hello.background.controller;
 
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.UserService;
+import com.hello.background.vo.SaveUserBasicInfoResponse;
 import com.hello.background.vo.UpdatePassword;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public class UserController {
      * @return
      */
     @PostMapping("saveBaseInfo")
-    public UserVO saveBaseInfo(@RequestBody UserVO vo) {
+    public SaveUserBasicInfoResponse saveBaseInfo(@RequestBody UserVO vo) {
         return userService.saveBaseInfo(vo);
     }
 
