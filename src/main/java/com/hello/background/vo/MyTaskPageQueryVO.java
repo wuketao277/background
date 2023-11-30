@@ -11,5 +11,5 @@ import lombok.Data;
 public class MyTaskPageQueryVO {
     private Integer currentPage;
     private Integer pageSize;
-    private MyTaskPageQuerySearchVO search;
+    private String search;
 }

@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 
 /**
  * 我的任务
+ *
  * @author wuketao
  * @date 2019/11/30
  * @Description
@@ -38,6 +39,12 @@ public class MyTask {
      */
     @Column
     private Integer relativeCandidateId;
+
+    /**
+     * 关联候选人中文名字
+     */
+    @Column(length = 50)
+    private String relativeCandidateChineseName;
 
     /**
      * 任务的标题

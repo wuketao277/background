@@ -4,7 +4,10 @@ import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.MyTask;
 import com.hello.background.repository.MyTaskRepository;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.*;
+import com.hello.background.vo.MyTaskPageQueryVO;
+import com.hello.background.vo.MyTaskUpdateVO;
+import com.hello.background.vo.MyTaskVO;
+import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpSession;
@@ -103,40 +105,40 @@ public class MyTaskService {
             @Override
             public Predicate toPredicate(Root<MyTask> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                MyTaskPageQuerySearchVO search = queryVO.getSearch();
+                String search = queryVO.getSearch();
                 if (null != search) {
-                    if (!StringUtils.isEmpty(search.getExecuteUserName())) {
-                        Path<String> path = root.get("executeUserName");
-                        Predicate equal = criteriaBuilder.equal(path, search.getExecuteUserName());
-                        list.add(criteriaBuilder.and(equal));
-                    }
-                    if ("FINISHED".equals(search.getFinished())) {
-                        Path<Boolean> path = root.get("finished");
-                        Predicate equal = criteriaBuilder.equal(path, Boolean.TRUE);
-                        list.add(criteriaBuilder.and(equal));
-                    } else if ("UNFINISHED".equals(search.getFinished())) {
-                        Path<Boolean> path = root.get("finished");
-                        Predicate equal = criteriaBuilder.equal(path, Boolean.FALSE);
-                        list.add(criteriaBuilder.and(equal));
-                    }
-                    if (!StringUtils.isEmpty(search.getTaskTitle())) {
-                        Path<String> path = root.get("taskTitle");
-                        Predicate like = criteriaBuilder.like(path, search.getTaskTitle());
-                        list.add(criteriaBuilder.and(like));
-                    }
-                    if (!StringUtils.isEmpty(search.getTaskContent())) {
-                        Path<String> path = root.get("taskContent");
-                        Predicate like = criteriaBuilder.like(path, search.getTaskContent());
-                        list.add(criteriaBuilder.and(like));
-                    }
-                    // 非管理员只能查询自己的任务或者是自己创建的任务
-                    if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
-                        Path<String> path = root.get("executeUserName");
-                        Predicate equal = criteriaBuilder.equal(path, user.getUsername());
-                        Path<String> path2 = root.get("createUserName");
-                        Predicate equal2 = criteriaBuilder.equal(path2, user.getUsername());
-                        list.add(criteriaBuilder.or(equal, equal2));
-                    }
+//                    if (!StringUtils.isEmpty(search.getExecuteUserName())) {
+//                        Path<String> path = root.get("executeUserName");
+//                        Predicate equal = criteriaBuilder.equal(path, search.getExecuteUserName());
+//                        list.add(criteriaBuilder.and(equal));
+//                    }
+//                    if ("FINISHED".equals(search.getFinished())) {
+//                        Path<Boolean> path = root.get("finished");
+//                        Predicate equal = criteriaBuilder.equal(path, Boolean.TRUE);
+//                        list.add(criteriaBuilder.and(equal));
+//                    } else if ("UNFINISHED".equals(search.getFinished())) {
+//                        Path<Boolean> path = root.get("finished");
+//                        Predicate equal = criteriaBuilder.equal(path, Boolean.FALSE);
+//                        list.add(criteriaBuilder.and(equal));
+//                    }
+//                    if (!StringUtils.isEmpty(search.getTaskTitle())) {
+//                        Path<String> path = root.get("taskTitle");
+//                        Predicate like = criteriaBuilder.like(path, search.getTaskTitle());
+//                        list.add(criteriaBuilder.and(like));
+//                    }
+//                    if (!StringUtils.isEmpty(search.getTaskContent())) {
+//                        Path<String> path = root.get("taskContent");
+//                        Predicate like = criteriaBuilder.like(path, search.getTaskContent());
+//                        list.add(criteriaBuilder.and(like));
+//                    }
+
+                }// 非管理员只能查询自己的任务或者是自己创建的任务
+                if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
+                    Path<String> path = root.get("executeUserName");
+                    Predicate equal = criteriaBuilder.equal(path, user.getUsername());
+                    Path<String> path2 = root.get("createUserName");
+                    Predicate equal2 = criteriaBuilder.equal(path2, user.getUsername());
+                    list.add(criteriaBuilder.or(equal, equal2));
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
