@@ -6,6 +6,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
+import com.hello.background.constant.CandidateDoubleCheckEnum;
 import com.hello.background.constant.CandidateSearchQuickItemEnum;
 import com.hello.background.constant.SchoolConstant;
 import com.hello.background.domain.Candidate;
@@ -754,5 +755,42 @@ public class CandidateService {
         List<CandidateVO> voList = candidateList.stream().map(c -> CandidateVO.fromCandidate(c)).collect(Collectors.toList());
         voList.forEach(v -> v.calcInformationScore());
         return voList;
+    }
+
+    /**
+     * 是否有必要检查
+     *
+     * @param doubleCheckStr
+     * @param id
+     * @return
+     */
+    public boolean hasDoubleCheck(String doubleCheckStr, Integer id) {
+        boolean has = false;
+        Optional<Candidate> candidateOptional = candidateRepository.findById(id);
+        if (candidateOptional.isPresent()) {
+            List<CandidateDoubleCheckEnum> doubleCheckList = candidateOptional.get().getDoubleCheck();
+            if (null != doubleCheckList && doubleCheckList.size() > 0) {
+                return doubleCheckList.contains(CandidateDoubleCheckEnum.valueOf(doubleCheckStr));
+            }
+        }
+        return has;
+    }
+
+    /**
+     * 完成全部必要检查
+     *
+     * @param id
+     * @return
+     */
+    public boolean finishAllDoubleCheck(Integer id) {
+        boolean finish = false;
+        Optional<Candidate> candidateOptional = candidateRepository.findById(id);
+        if (candidateOptional.isPresent()) {
+            List<CandidateDoubleCheckEnum> doubleCheckList = candidateOptional.get().getDoubleCheck();
+            if (null != doubleCheckList && doubleCheckList.size() > 0) {
+                return doubleCheckList.size() == CandidateDoubleCheckEnum.values().length;
+            }
+        }
+        return finish;
     }
 }

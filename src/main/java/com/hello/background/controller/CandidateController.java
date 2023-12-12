@@ -199,4 +199,20 @@ public class CandidateController {
     public List<CandidateVO> queryByCreateTimeAndCreateUser(@RequestBody CandidateQueryRequest request) {
         return candidateService.queryByCreateTimeAndCreateUser(request.getStartDate(), request.getEndDate(), request.getCreateUser());
     }
+
+    /**
+     * 必要检查
+     */
+    @GetMapping("hasDoubleCheck")
+    public boolean hasDoubleCheck(@RequestParam("doubleCheckStr") String doubleCheckStr, @RequestParam("id") Integer id) {
+        return candidateService.hasDoubleCheck(doubleCheckStr, id);
+    }
+
+    /**
+     * 完成所有必要检查
+     */
+    @GetMapping("finishAllDoubleCheck")
+    public boolean finishAllDoubleCheck(@RequestParam("id") Integer id) {
+        return candidateService.finishAllDoubleCheck(id);
+    }
 }

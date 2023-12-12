@@ -8,7 +8,14 @@ package com.hello.background.constant;
  * @Description
  */
 public enum CandidateDoubleCheckEnum {
-    RESUME("RESUME");
+    /**
+     * 简历内容真实准确
+     */
+    RESUME("RESUME"),
+    /**
+     * 竞业协议检查
+     */
+    PROHIBITION("PROHIBITION");
 
     /**
      * 描述

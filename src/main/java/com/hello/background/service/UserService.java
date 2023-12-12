@@ -140,6 +140,16 @@ public class UserService {
     }
 
     /**
+     * 获取所有用户
+     *
+     * @return
+     */
+    public List<UserVO> findAll() {
+        List<User> userList = userRepository.findAll();
+        return userList.stream().sorted(Comparator.comparing(User::getUsername)).map(user -> TransferUtil.transferTo(user, UserVO.class)).collect(Collectors.toList());
+    }
+
+    /**
      * 通过使能状态查找用户
      *
      * @param enabled

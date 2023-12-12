@@ -87,6 +87,17 @@ public class UserController {
         return userService.saveExtInfo(vo, user.getId());
     }
 
+
+    /**
+     * 获取所有用户
+     *
+     * @return
+     */
+    @GetMapping("findAll")
+    public List<UserVO> findAll() {
+        return userService.findAll();
+    }
+
     /**
      * 获取所有正常状态的用户
      *
