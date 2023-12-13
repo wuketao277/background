@@ -38,8 +38,13 @@ public class ReportService {
     private SuccessfulPermRepository successfulPermRepository;
     @Autowired
     private UserRepository userRepository;
+    /**
+     * 本地用户列表缓存
+     */
+    private List<User> userList = new ArrayList<>();
 
     public QueryGeneralReportResponse queryGeneral(QueryGeneralReportRequest request) {
+        userList = userRepository.findAll();
         QueryGeneralReportResponse response = new QueryGeneralReportResponse();
         try {
             List<String> approveStatusList = new ArrayList<>();
@@ -63,6 +68,8 @@ public class ReportService {
             generatePersonalReceiveData(iterable, startDate, endDate, response);
             // Recruiter Offer Billing
             generateRecruiterOfferBillingData(iterable, startDate, endDate, response);
+            // 生成Recruiter 月均 Offer Billing数据
+            generateRecruiterMonthlyOfferBillingData(response, request);
             // Team Offer GP Data
             generateTeamOfferGPData(response);
             // 计算月平均数据
@@ -79,7 +86,6 @@ public class ReportService {
      * @param response
      */
     private void generateTeamOfferGPData(QueryGeneralReportResponse response) {
-        List<User> userList = userRepository.findAll();
         // 先获取个人offer数据
         List<QueryGeneralReportResponseKeyValue> personalOfferData = response.getPersonalOfferData();
         // 遍历个人offer，组成团队offer数据
@@ -101,6 +107,30 @@ public class ReportService {
         response.getTeamOfferGPData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
     }
 
+    /**
+     * 计算工作天数
+     *
+     * @param userName
+     * @param start
+     * @param end
+     * @return
+     */
+    private Long calcWorkDays(String userName, LocalDate start, LocalDate end) {
+        User user = userList.stream().filter(u -> u.getUsername().equals(userName)).findFirst().get();
+        // 计算工作了多少天
+        // 开始日期、入职日期，选大的
+        if (null != user.getOnBoardDate()) {
+            LocalDate onBoardLocalDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getOnBoardDate());
+            start = start.compareTo(onBoardLocalDate) > 0 ? start : onBoardLocalDate;
+        }
+        // 结束日期、离职日期、当前时间，选小的
+        if (null != user.getDimissionDate()) {
+            LocalDate dimissionLocalDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getDimissionDate());
+            end = end.compareTo(dimissionLocalDate) > 0 ? dimissionLocalDate : end;
+        }
+        end = end.compareTo(LocalDate.now()) > 0 ? LocalDate.now() : end;
+        return start.until(end, ChronoUnit.DAYS) + 1L;
+    }
 
     /**
      * Avg GP Data
@@ -108,27 +138,11 @@ public class ReportService {
      * @param response
      */
     private void generateAvgGPData(QueryGeneralReportResponse response, QueryGeneralReportRequest request) {
-        List<User> userList = userRepository.findAll();
         // 先获取个人offer数据
         List<QueryGeneralReportResponseKeyValue> personalOfferData = response.getPersonalOfferData();
         // 遍历个人offer，计算平均值
         for (QueryGeneralReportResponseKeyValue kv : personalOfferData) {
-            User user = userList.stream().filter(u -> u.getUsername().equals(kv.getName())).findFirst().get();
-            // 计算工作了多少天
-            // 开始日期、入职日期，选大的
-            LocalDate start = request.getStartDate();
-            if (null != user.getOnBoardDate()) {
-                LocalDate onBoardLocalDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getOnBoardDate());
-                start = start.compareTo(onBoardLocalDate) > 0 ? start : onBoardLocalDate;
-            }
-            // 结束日期、离职日期、当前时间，选小的
-            LocalDate end = request.getEndDate();
-            if (null != user.getDimissionDate()) {
-                LocalDate dimissionLocalDate = Jsr310Converters.DateToLocalDateConverter.INSTANCE.convert(user.getDimissionDate());
-                end = end.compareTo(dimissionLocalDate) > 0 ? dimissionLocalDate : end;
-            }
-            end = end.compareTo(LocalDate.now()) > 0 ? LocalDate.now() : end;
-            long days = start.until(end, ChronoUnit.DAYS) + 1L;
+            long days = calcWorkDays(kv.getName(), request.getStartDate(), request.getEndDate());
             response.getAvgOfferData().add(new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue().multiply(BigDecimal.valueOf(30)).divide(new BigDecimal(days), 2, RoundingMode.DOWN)));
         }
         // 按照业绩排序
@@ -145,7 +159,7 @@ public class ReportService {
      */
     private void generateRecruiterOfferBillingData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
         // 首先获取所有Recruiter
-        List<User> recruiterList = userRepository.findAll().stream().filter(u -> u.getRoles().contains(RoleEnum.RECRUITER)).collect(Collectors.toList());
+        List<User> recruiterList = userList.stream().filter(u -> u.getRoles().contains(RoleEnum.RECRUITER)).collect(Collectors.toList());
         for (User user : recruiterList) {
             BigDecimal billingSum = generateRecruiterOfferBillingData(user, iterable, startDate, endDate);
             if (billingSum.compareTo(BigDecimal.ZERO) > 0) {
@@ -155,6 +169,23 @@ public class ReportService {
         }
         // 按照业绩排序
         response.getRecruiterOfferBillingData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+    }
+
+    /**
+     * 生成Recruiter 月均 Offer Billing数据
+     *
+     * @param response
+     */
+    private void generateRecruiterMonthlyOfferBillingData(QueryGeneralReportResponse response, QueryGeneralReportRequest request) {
+        // 首先获取R的Billing总和数据
+        List<QueryGeneralReportResponseKeyValue> recruiterOfferBillingData = response.getRecruiterOfferBillingData();
+        // 遍历每一个数据，获取月均值
+        for (QueryGeneralReportResponseKeyValue kv : recruiterOfferBillingData) {
+            long days = calcWorkDays(kv.getName(), request.getStartDate(), request.getEndDate());
+            response.getRecruiterMonthlyOfferBillingData().add(new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue().multiply(BigDecimal.valueOf(30)).divide(new BigDecimal(days), 2, RoundingMode.DOWN)));
+        }
+        // 按照业绩排序
+        response.getRecruiterMonthlyOfferBillingData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
     }
 
     /**
