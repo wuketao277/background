@@ -72,6 +72,8 @@ public class ReportService {
             generateRecruiterMonthlyOfferBillingData(response, request);
             // Team Offer GP Data
             generateTeamOfferGPData(response);
+            // Team 月均 Offer GP Data
+            generateTeamMonthlyOfferGPData(response, request);
             // 计算月平均数据
             generateAvgGPData(response, request);
         } catch (Exception ex) {
@@ -105,6 +107,42 @@ public class ReportService {
         }
         // 按照业绩排序
         response.getTeamOfferGPData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+    }
+
+    /**
+     * Team 月均 Offer GP Data
+     *
+     * @param response
+     */
+    private void generateTeamMonthlyOfferGPData(QueryGeneralReportResponse response, QueryGeneralReportRequest request) {
+        // 团队人月总和
+        Map<String, Long> teamMonthCountMap = new HashMap<>();
+        // 先把团队leader放入map中
+        List<QueryGeneralReportResponseKeyValue> teamOfferGPData = response.getTeamOfferGPData();
+        for (QueryGeneralReportResponseKeyValue leader : teamOfferGPData) {
+            teamMonthCountMap.put(leader.getName(), calcWorkDays(leader.getName(), request.getStartDate(), request.getEndDate()));
+        }
+        // 获取个人offer数据
+        List<QueryGeneralReportResponseKeyValue> personalOfferData = response.getPersonalOfferData();
+        // 遍历个人offer，计算团队人月
+        for (QueryGeneralReportResponseKeyValue kv : personalOfferData) {
+            if (teamMonthCountMap.containsKey(kv.getName())) {
+                // 团队leader直接跳出本次循环，因为之前已经计算过了。
+                continue;
+            }
+            // 找到leader
+            User user = userList.stream().filter(u -> u.getUsername().equals(kv.getName())).findFirst().get();
+            if (Strings.isNotBlank(user.getTeamLeaderUserName())) {
+                // 更新团队人月总和，增加要计算的顾问
+                teamMonthCountMap.put(user.getTeamLeaderUserName(), teamMonthCountMap.get(user.getTeamLeaderUserName()) + calcWorkDays(user.getUsername(), request.getStartDate(), request.getEndDate()));
+            }
+        }
+        // 遍历团队数据，生成团队月均数据
+        for (QueryGeneralReportResponseKeyValue kv : teamOfferGPData) {
+            response.getTeamMonthlyOfferGPData().add(new QueryGeneralReportResponseKeyValue(kv.getName(), kv.getValue().multiply(new BigDecimal(30)).divide(new BigDecimal(teamMonthCountMap.get(kv.getName())), 2, RoundingMode.DOWN)));
+        }
+        // 按照业绩排序
+        response.getTeamMonthlyOfferGPData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
     }
 
     /**
