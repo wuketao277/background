@@ -534,19 +534,19 @@ public class TodayOnboardInfoVO implements Serializable {
         this.setCandidateId(s.getCandidateId());
         this.setCandidateChineseName(s.getCandidateChineseName());
         this.setAllUserName("Oscar");
-        if (Strings.isNotBlank(s.getCwUserName())) {
+        if (Strings.isNotBlank(s.getCwUserName()) && !this.getAllUserName().contains(s.getCwUserName())) {
             this.setAllUserName(this.getAllUserName() + "&" + s.getCwUserName());
         }
-        if (Strings.isNotBlank(s.getLeaderUserName())) {
+        if (Strings.isNotBlank(s.getLeaderUserName()) && !this.getAllUserName().contains(s.getLeaderUserName())) {
             this.setAllUserName(this.getAllUserName() + "&" + s.getLeaderUserName());
         }
-        if (Strings.isNotBlank(s.getConsultantUserName())) {
+        if (Strings.isNotBlank(s.getConsultantUserName()) && !this.getAllUserName().contains(s.getConsultantUserName())) {
             this.setAllUserName(this.getAllUserName() + "&" + s.getConsultantUserName());
         }
-        if (Strings.isNotBlank(s.getConsultantUserName2())) {
+        if (Strings.isNotBlank(s.getConsultantUserName2()) && !this.getAllUserName().contains(s.getConsultantUserName2())) {
             this.setAllUserName(this.getAllUserName() + "&" + s.getConsultantUserName2());
         }
-        if (Strings.isNotBlank(s.getConsultantUserName3())) {
+        if (Strings.isNotBlank(s.getConsultantUserName3()) && !this.getAllUserName().contains(s.getConsultantUserName3())) {
             this.setAllUserName(this.getAllUserName() + "&" + s.getConsultantUserName3());
         }
     }

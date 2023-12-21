@@ -282,13 +282,19 @@ public class UserService {
             userList = userRepository.findAll();
         } else if ("shanghai".equals(scope)) {
             // 查看上海所有在职的全职人员pipeline情况
-            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shanghaihailuorencaifuwu)).filter(y -> !("Victor".equals(y.getUsername()) || "Ellen".equals(y.getUsername()))).collect(Collectors.toList());
+            userList = userRepository.findAll().stream().filter(u ->
+                    null != u.getCompany()
+                            && (u.getCompany().equals(CompanyEnum.Shanghaihailuorencaifuwu) || u.getCompany().equals(CompanyEnum.Shanghaihailuorencaikeji)))
+                    .filter(y -> !("Victor".equals(y.getUsername()) || "Ellen".equals(y.getUsername()))).collect(Collectors.toList());
         } else if ("shenyang".equals(scope)) {
             // 查看沈阳所有在职的全职人员pipeline情况
             userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Shenyanghailuorencaifuwu)).collect(Collectors.toList());
         } else if ("wuhan".equals(scope)) {
             // 查看武汉所有在职的全职人员pipeline情况
             userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Wuhanhailuorencaifuwu)).collect(Collectors.toList());
+        } else if ("nanjing".equals(scope)) {
+            // 查看武汉所有在职的全职人员pipeline情况
+            userList = userRepository.findAll().stream().filter(u -> null != u.getCompany() && u.getCompany().equals(CompanyEnum.Nanjinghailuorencaifuwu)).collect(Collectors.toList());
         } else if ("beijing".equals(scope)) {
             // 查看北京所有在职的全职人员pipeline情况
             userList.add(userRepository.findByUsername("Victor"));
