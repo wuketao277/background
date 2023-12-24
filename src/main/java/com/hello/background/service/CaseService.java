@@ -111,7 +111,7 @@ public class CaseService {
         if (isExperience) {
             List<CaseVO> all = caseRepository.findAll().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).map(x -> fromDoToVo(x)).collect(Collectors.toList());
             map = new PageImpl<>(all,
-                    new PageRequest(1, all.size()),
+                    new PageRequest(0, all.size()),
                     all.size());
         } else {
             Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), Sort.Direction.DESC, "id");
