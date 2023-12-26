@@ -109,6 +109,14 @@ public class SuccessfulPermVOPageSearchRequest {
      */
     private Boolean nonPaymentDue;
     /**
+     * 未入职
+     */
+    private Boolean nonOnboard;
+    /**
+     * 还在保证期中
+     */
+    private Boolean guaranteePeriod;
+    /**
      * 岗位名称
      */
     private String title;

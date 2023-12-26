@@ -3,8 +3,10 @@ package com.hello.background.service;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.SuccessfulPerm;
+import com.hello.background.domain.User;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.SuccessfulPermRepository;
+import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
@@ -43,6 +45,8 @@ public class SuccessfulPermService {
     private SuccessfulPermRepository successfulPermRepository;
     @Autowired
     private CandidateRepository candidateRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 保存
@@ -309,12 +313,26 @@ public class SuccessfulPermService {
 //                    list.add(criteriaBuilder.and(startEqual));
                     // paymentDate小于等于今天
                     Path<Date> paymentDatePath = root.get("paymentDate");
-                    Predicate paymentDatePathPredicate = criteriaBuilder.lessThanOrEqualTo(paymentDatePath, new Date());
+                    Predicate paymentDatePathPredicate = criteriaBuilder.lessThanOrEqualTo(paymentDatePath, DateTimeUtil.getToday000());
                     list.add(criteriaBuilder.and(paymentDatePathPredicate));
                     // 且actualPaymentDate是空
                     Path<Date> actualPaymentDatePath = root.get("actualPaymentDate");
                     Predicate actualPaymentDatePredicate = criteriaBuilder.isNull(actualPaymentDatePath);
                     list.add(criteriaBuilder.and(actualPaymentDatePredicate));
+                }
+                // 还在保证期的
+                if (Optional.ofNullable(search).map(x -> x.getGuaranteePeriod()).orElse(false)) {
+                    // guaranteeDate大于等于今天
+                    Path<Date> guaranteeDatePath = root.get("guaranteeDate");
+                    Predicate guaranteeDatePathPredicate = criteriaBuilder.greaterThanOrEqualTo(guaranteeDatePath, DateTimeUtil.getToday000());
+                    list.add(criteriaBuilder.and(guaranteeDatePathPredicate));
+                }
+                // 还未入职的
+                if (Optional.ofNullable(search).map(x -> x.getNonOnboard()).orElse(false)) {
+                    // onBoardDate大于等于今天
+                    Path<Date> onBoardDatePath = root.get("onBoardDate");
+                    Predicate onBoardDatePathPredicate = criteriaBuilder.greaterThanOrEqualTo(onBoardDatePath, DateTimeUtil.getToday000());
+                    list.add(criteriaBuilder.and(onBoardDatePathPredicate));
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
@@ -389,7 +407,59 @@ public class SuccessfulPermService {
         LocalDateTime endLDT = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDateTime.now().getDayOfMonth(), 23, 59, 59);
         // 查询当天入职的猎头岗位
         List<SuccessfulPerm> byOnBoardDate = successfulPermRepository.findByTypeAndOnBoardDateBetween("perm", Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(startLDT), Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(endLDT));
-        return byOnBoardDate.stream().map(s -> new TodayOnboardInfoVO(s)).collect(Collectors.toList());
+        return byOnBoardDate.stream().map(s -> new TodayOnboardInfoVO(removeDimission(s))).collect(Collectors.toList());
+    }
+
+    /**
+     * 移除离职员工
+     *
+     * @param s
+     * @return
+     */
+    private SuccessfulPerm removeDimission(SuccessfulPerm s) {
+        List<User> userList = userRepository.findAll();
+        User user = null;
+        // 检查CW是否离职，离职就清空顾问信息
+        if (Strings.isNotBlank(s.getCwUserName())) {
+            user = userList.stream().filter(u -> u.getUsername().equals(s.getCwUserName())).findFirst().get();
+            if (null != user.getDimissionDate()) {
+                // 对离职的员工进行清除
+                s.setCwUserName(null);
+            }
+        }
+        // 检查Leader是否离职，离职就清空顾问信息
+        if (Strings.isNotBlank(s.getLeaderUserName())) {
+            user = userList.stream().filter(u -> u.getUsername().equals(s.getLeaderUserName())).findFirst().get();
+            if (null != user.getDimissionDate()) {
+                // 对离职的员工进行清除
+                s.setLeaderUserName(null);
+            }
+        }
+        // 检查顾问是否离职，离职就清空顾问信息
+        if (Strings.isNotBlank(s.getConsultantUserName())) {
+            user = userList.stream().filter(u -> u.getUsername().equals(s.getConsultantUserName())).findFirst().get();
+            if (null != user.getDimissionDate()) {
+                // 对离职的员工进行清除
+                s.setConsultantUserName(null);
+            }
+        }
+        // 检查顾问2是否离职，离职就清空顾问信息
+        if (Strings.isNotBlank(s.getConsultantUserName2())) {
+            user = userList.stream().filter(u -> u.getUsername().equals(s.getConsultantUserName2())).findFirst().get();
+            if (null != user.getDimissionDate()) {
+                // 对离职的员工进行清除
+                s.setConsultantUserName2(null);
+            }
+        }
+        // 检查顾问3是否离职，离职就清空顾问信息
+        if (Strings.isNotBlank(s.getConsultantUserName3())) {
+            user = userList.stream().filter(u -> u.getUsername().equals(s.getConsultantUserName3())).findFirst().get();
+            if (null != user.getDimissionDate()) {
+                // 对离职的员工进行清除
+                s.setConsultantUserName3(null);
+            }
+        }
+        return s;
     }
 
 }

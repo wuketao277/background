@@ -1,9 +1,11 @@
 package com.hello.background.utils;
 
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.convert.Jsr310Converters;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -95,5 +97,14 @@ public class DateTimeUtil {
             return null;
         }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * 获取当天0时0分0秒
+     *
+     * @return
+     */
+    public static Date getToday000() {
+        return Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE.convert(LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth(), 0, 0, 0));
     }
 }
