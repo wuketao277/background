@@ -107,31 +107,15 @@ public class MyTaskService {
                 List<Predicate> list = new ArrayList<>();
                 String search = queryVO.getSearch();
                 if (null != search) {
-//                    if (!StringUtils.isEmpty(search.getExecuteUserName())) {
-//                        Path<String> path = root.get("executeUserName");
-//                        Predicate equal = criteriaBuilder.equal(path, search.getExecuteUserName());
-//                        list.add(criteriaBuilder.and(equal));
-//                    }
-//                    if ("FINISHED".equals(search.getFinished())) {
-//                        Path<Boolean> path = root.get("finished");
-//                        Predicate equal = criteriaBuilder.equal(path, Boolean.TRUE);
-//                        list.add(criteriaBuilder.and(equal));
-//                    } else if ("UNFINISHED".equals(search.getFinished())) {
-//                        Path<Boolean> path = root.get("finished");
-//                        Predicate equal = criteriaBuilder.equal(path, Boolean.FALSE);
-//                        list.add(criteriaBuilder.and(equal));
-//                    }
-//                    if (!StringUtils.isEmpty(search.getTaskTitle())) {
-//                        Path<String> path = root.get("taskTitle");
-//                        Predicate like = criteriaBuilder.like(path, search.getTaskTitle());
-//                        list.add(criteriaBuilder.and(like));
-//                    }
-//                    if (!StringUtils.isEmpty(search.getTaskContent())) {
-//                        Path<String> path = root.get("taskContent");
-//                        Predicate like = criteriaBuilder.like(path, search.getTaskContent());
-//                        list.add(criteriaBuilder.and(like));
-//                    }
-
+                    Path<String> path1 = root.get("executeUserName");
+                    Predicate equal1 = criteriaBuilder.equal(path1, search);
+                    Path<String> path2 = root.get("relativeCandidateChineseName");
+                    Predicate like2 = criteriaBuilder.like(path2, "%" + search + "%");
+                    Path<String> path3 = root.get("taskTitle");
+                    Predicate like3 = criteriaBuilder.like(path3, "%" + search + "%");
+                    Path<String> path4 = root.get("taskContent");
+                    Predicate like4 = criteriaBuilder.like(path4, "%" + search + "%");
+                    list.add(criteriaBuilder.or(equal1, like2, like3, like4));
                 }// 非管理员只能查询自己的任务或者是自己创建的任务
                 if (!user.getRoles().contains(RoleEnum.ADMIN) && !user.getRoles().contains(RoleEnum.ADMIN_COMPANY)) {
                     Path<String> path = root.get("executeUserName");

@@ -15,7 +15,11 @@ public enum CandidateDoubleCheckEnum {
     /**
      * 竞业协议检查
      */
-    PROHIBITION("PROHIBITION");
+    PROHIBITION("PROHIBITION"),
+    /**
+     * 候选人确认岗位信息
+     */
+    CANDIDATECONFIRM("CANDIDATECONFIRM");
 
     /**
      * 描述
