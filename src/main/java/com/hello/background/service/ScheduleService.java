@@ -1,22 +1,19 @@
 package com.hello.background.service;
 
 import com.hello.background.constant.JobTypeEnum;
-import com.hello.background.domain.Candidate;
-import com.hello.background.domain.Comment;
-import com.hello.background.domain.User;
-import com.hello.background.repository.CandidateRepository;
-import com.hello.background.repository.CommentRepository;
-import com.hello.background.repository.SuccessfulPermRepository;
-import com.hello.background.repository.UserRepository;
+import com.hello.background.domain.*;
+import com.hello.background.repository.*;
+import com.hello.background.utils.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -41,13 +38,99 @@ public class ScheduleService {
     private CandidateRepository candidateRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private MyTaskRepository myTaskRepository;
 
     /**
-     * 候选人生日提醒
+     * 凌晨1点生成follow候选人的定时任务
      */
-    @Scheduled(cron = "0 0/1 * * * *")
-    public void generateCVORecommendationRemind() {
+//    @Scheduled(cron = "0 0 1 * * *")
+//    @Scheduled(cron = "0 0/1 * * * *")
+    public void generateTaskForFollowCandidate() {
+        if (LocalDate.now().getDayOfWeek().getValue() != 1) {
+            // 只有周一才创建任务
+            return;
+        }
+        Date today000 = DateTimeUtil.getToday000();
+        // 查询所有成功case
+        Iterable<SuccessfulPerm> successfulPermIterable = successfulPermRepository.findAll();
+        for (SuccessfulPerm successfulPerm : successfulPermIterable) {
+            if (Strings.isBlank(successfulPerm.getType()) && !"perm".equals(successfulPerm.getType())) {
+                // 非perm类型的成功case，直接返回
+                continue;
+            }
+            // 如果还未入职，创建follow候选人入职任务
+            Date onBoardDate = successfulPerm.getOnBoardDate();
+            if (null != onBoardDate && onBoardDate.compareTo(today000) > 0) {
+                // 给leader创建任务
+                createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow入职");
+                // 给顾问1创建任务
+                createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow入职");
+                // 给顾问2创建任务
+                createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow入职");
+                // 给顾问3创建任务
+                createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow入职");
+                // 给顾问4创建任务
+                createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow入职");
+            }
+            // 如果已入职但还在保证期中的，创建follow候选人近况任务
+            Date guaranteeDate = successfulPerm.getGuaranteeDate();
+            if (null != guaranteeDate && guaranteeDate.compareTo(today000) > 0) {
+                if (null != onBoardDate && (today000.getTime() - onBoardDate.getTime()) < 30 * 24 * 60 * 60) {
+                    // 入职后一个月以内，每周都要follow候选人
+                    // 给leader创建任务
+                    createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow工作情况");
+                    // 给顾问1创建任务
+                    createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow工作情况");
+                    // 给顾问2创建任务
+                    createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow工作情况");
+                    // 给顾问3创建任务
+                    createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow工作情况");
+                    // 给顾问4创建任务
+                    createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow工作情况");
+                } else if (LocalDate.now().getDayOfMonth() < 7) {
+                    // 入职后一个月以外，每月都要follow候选人
+                    // 给leader创建任务
+                    createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow工作情况");
+                    // 给顾问1创建任务
+                    createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow工作情况");
+                    // 给顾问2创建任务
+                    createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow工作情况");
+                    // 给顾问3创建任务
+                    createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow工作情况");
+                    // 给顾问4创建任务
+                    createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow工作情况");
+                }
+            }
+        }
+    }
 
+    /**
+     * 通过成功case，创建任务
+     *
+     * @param userName
+     * @param successfulPerm
+     */
+    private void createTask(String userName, SuccessfulPerm successfulPerm, String title) {
+        if (Strings.isNotBlank(userName)) {
+            User user = userRepository.findByUsername(userName);
+            if (null != user.getDimissionDate()) {
+                // 离职的不用创建任务，直接返回
+                return;
+            }
+            MyTask task = new MyTask();
+            task.setRelativeCandidateId(successfulPerm.getCandidateId());
+            task.setRelativeCandidateChineseName(successfulPerm.getCandidateChineseName());
+            task.setTaskTitle(title);
+            task.setTaskContent(title);
+            task.setExecuteDate(LocalDate.now().plusDays(-1));
+            task.setExecuteUserName(user.getUsername());
+            task.setExecuteRealName(user.getRealname());
+            task.setCreateRealName("吴克涛");
+            task.setCreateUserName("Howard");
+            task.setCreateDateTime(LocalDateTime.now());
+            myTaskRepository.save(task);
+        }
     }
 
     /**

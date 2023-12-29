@@ -48,8 +48,8 @@ public class SummaryService {
     public List<PipelineVO> queryPipeline(String range, UserVO userVO) {
         List<PipelineVO> pipelineVOList = new ArrayList<>();
         List<UserVO> userList = userService.findByScope(range, userVO);
-        // 遍历用户列表，只保留全职人员且在职人员，生成pipeline情况
-        userList.stream().filter(u -> null != u.getJobType() && u.getJobType().equals(JobTypeEnum.FULLTIME) && null == u.getDimissionDate())
+        // 遍历用户列表，只保留全职人员或实习生且在职人员，生成pipeline情况
+        userList.stream().filter(u -> null != u.getJobType() && (u.getJobType().equals(JobTypeEnum.FULLTIME) || u.getJobType().equals(JobTypeEnum.INTERN)) && null == u.getDimissionDate())
                 .forEach(u -> pipelineVOList.add(generatePipeline(u)));
         return pipelineVOList;
     }
