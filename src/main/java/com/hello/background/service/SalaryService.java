@@ -149,9 +149,8 @@ public class SalaryService {
         // 查找所有当月工资特殊项
         List<SalarySpecialItem> salarySpecialItemList = salarySpecialItemRepository.findByMonth(month);
         // 查找开启状态的所有人
-        // 屏蔽体验账号，屏蔽入职日期晚于计算工资月的账号，屏蔽兼职账号且没有成功case
+        // 获取所有正常状态的账号，屏蔽入职日期晚于计算工资月的账号，屏蔽兼职账号且没有成功case
         List<User> userList = userRepository.findByEnabled(true).stream()
-                .filter(user -> null != user.getJobType() && !JobTypeEnum.EXPERIENCE.equals(user.getJobType()))
                 .filter(x -> null != x.getOnBoardDate() && x.getOnBoardDate().compareTo(end) <= 0)
                 .filter(z -> z.getJobType() != JobTypeEnum.PARTTIME || hasSuccessfulPerm(successfulPermList, z.getUsername()))
                 .collect(Collectors.toList());
