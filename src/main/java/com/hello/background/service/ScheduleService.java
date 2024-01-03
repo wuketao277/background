@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -44,7 +45,7 @@ public class ScheduleService {
     /**
      * 凌晨1点生成follow候选人的定时任务
      */
-//    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 0 1 * * *")
 //    @Scheduled(cron = "0 0/1 * * * *")
     public void generateTaskForFollowCandidate() {
         if (LocalDate.now().getDayOfWeek().getValue() != 1) {
@@ -123,7 +124,7 @@ public class ScheduleService {
             task.setRelativeCandidateChineseName(successfulPerm.getCandidateChineseName());
             task.setTaskTitle(title);
             task.setTaskContent(title);
-            task.setExecuteDate(LocalDate.now().plusDays(-1));
+            task.setExecuteDate(LocalDate.now());
             task.setExecuteUserName(user.getUsername());
             task.setExecuteRealName(user.getRealname());
             task.setCreateRealName("吴克涛");
