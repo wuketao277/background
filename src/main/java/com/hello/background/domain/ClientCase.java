@@ -137,8 +137,8 @@ public class ClientCase {
     /**
      * HC情况
      */
-    @Column
-    private Integer headCount;
+    @Column(length = 200)
+    private String headCount;
 
     /**
      * pipeline

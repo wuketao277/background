@@ -113,7 +113,7 @@ public class CaseVO {
     /**
      * HC情况
      */
-    private Integer headCount;
+    private String headCount;
 
     /**
      * pipeline
