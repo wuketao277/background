@@ -50,17 +50,34 @@ public class CommonService {
             String todayStr = String.format("%d月%d日", start.getMonthValue(), start.getDayOfMonth());
             // 首先判断是否是周末
             if (start.getDayOfWeek() == DayOfWeek.SATURDAY || start.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                //  如果当天是周末，判断是否是调休的工作日
-                if (HolidayConstants.workday2023.contains(todayStr)) {
-                    // 是周末的调休日，需要计算到工作天数中
-                    workdays = workdays.add(leaveTime(start, leaveList));
+                if (start.getYear() == 2023) {
+                    //  如果当天是周末，判断是否是调休的工作日
+                    if (HolidayConstants.workday2023.contains(todayStr)) {
+                        // 是周末的调休日，需要计算到工作天数中
+                        workdays = workdays.add(leaveTime(start, leaveList));
+                    }
+                } else if (start.getYear() == 2024) {
+                    //  如果当天是周末，判断是否是调休的工作日
+                    if (HolidayConstants.workday2024.contains(todayStr)) {
+                        // 是周末的调休日，需要计算到工作天数中
+                        workdays = workdays.add(leaveTime(start, leaveList));
+                    }
                 }
             } else {
-                // 非周末，判断是否是公休
-                if (!HolidayConstants.holiday2023.contains(todayStr)) {
-                    // 不是公休，需要计算到工作天数中
-                    // 判断是否有请假
-                    workdays = workdays.add(leaveTime(start, leaveList));
+                if (start.getYear() == 2023) {
+                    // 非周末，判断是否是公休
+                    if (!HolidayConstants.holiday2024.contains(todayStr)) {
+                        // 不是公休，需要计算到工作天数中
+                        // 判断是否有请假
+                        workdays = workdays.add(leaveTime(start, leaveList));
+                    }
+                } else if (start.getYear() == 2024) {
+                    // 非周末，判断是否是公休
+                    if (!HolidayConstants.holiday2024.contains(todayStr)) {
+                        // 不是公休，需要计算到工作天数中
+                        // 判断是否有请假
+                        workdays = workdays.add(leaveTime(start, leaveList));
+                    }
                 }
             }
             // 计算日期向后+1，如果超过结束日期就终止；
