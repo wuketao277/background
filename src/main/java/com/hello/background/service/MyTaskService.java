@@ -84,8 +84,10 @@ public class MyTaskService {
      * @param executeDate     执行日期
      * @return 任务集合
      */
-    public List<MyTaskVO> findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(String executeUserName, Boolean finished, LocalDate executeDate) {
-        List<MyTask> myTaskList = myTaskRepository.findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(executeUserName, finished, executeDate);
+    public List<MyTaskVO> findNotFinishTask(String executeUserName, LocalDate executeDate) {
+        List<MyTask> myTaskList = myTaskRepository.findByExecuteUserNameAndExecuteDateLessThanEqual(executeUserName, executeDate);
+        // 只保留未完成的任务
+        myTaskList = myTaskList.stream().filter(t -> null == t.getFinished() || !t.getFinished()).collect(Collectors.toList());
         return myTaskList.stream().map(task -> TransferUtil.transferTo(task, MyTaskVO.class)).collect(Collectors.toList());
     }
 

@@ -33,7 +33,7 @@ public interface MyTaskRepository extends PagingAndSortingRepository<MyTask, Int
      * @param executeDate     执行日期
      * @return 任务集合
      */
-    List<MyTask> findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(String executeUserName, Boolean finished, LocalDate executeDate);
+    List<MyTask> findByExecuteUserNameAndExecuteDateLessThanEqual(String executeUserName, LocalDate executeDate);
 
     /**
      * 通过 任务名称 执行人 创建人 模糊匹配

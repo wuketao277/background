@@ -101,7 +101,7 @@ public class MyTaskController {
         if (null == userVO) {
             return Collections.emptyList();
         }
-        return myTaskService.findByExecuteUserNameAndFinishedAndExecuteDateLessThanEqual(userVO.getUsername(), false, LocalDate.now());
+        return myTaskService.findNotFinishTask(userVO.getUsername(), LocalDate.now());
     }
 
     /**
