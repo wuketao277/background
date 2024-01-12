@@ -153,6 +153,12 @@ public class ClientCase {
     private String description;
 
     /**
+     * top 3 skills
+     */
+    @Column(length = 2000)
+    private String top3Skills;
+
+    /**
      * 面试准备题
      */
     @Column(length = 2000)

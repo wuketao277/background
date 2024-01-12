@@ -126,6 +126,11 @@ public class CaseVO {
     private String description;
 
     /**
+     * top 3 skills
+     */
+    private String top3Skills;
+
+    /**
      * 面试准备题
      */
     private String question;
