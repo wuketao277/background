@@ -104,6 +104,16 @@ public class CaseController {
     }
 
     /**
+     * 查询所有用户所有职位关注
+     *
+     * @return
+     */
+    @GetMapping("queryAllUserCaseAttention")
+    public List<CaseAttention4ClientVO> queryAllUserCaseAttention() {
+        return caseAttentionService.queryAllUserCaseAttention();
+    }
+
+    /**
      * 查询当前用户所有对接的职位
      *
      * @param session

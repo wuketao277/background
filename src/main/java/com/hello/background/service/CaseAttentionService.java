@@ -1,16 +1,17 @@
 package com.hello.background.service;
 
 import com.hello.background.constant.CaseStatusEnum;
-import com.hello.background.domain.*;
-import com.hello.background.repository.CandidateForCaseRepository;
-import com.hello.background.repository.CaseAttentionRepository;
-import com.hello.background.repository.CaseRepository;
-import com.hello.background.repository.CommentRepository;
+import com.hello.background.domain.CandidateForCase;
+import com.hello.background.domain.CaseAttention;
+import com.hello.background.domain.ClientCase;
+import com.hello.background.domain.Comment;
+import com.hello.background.repository.*;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,8 @@ public class CaseAttentionService {
     private CandidateForCaseRepository candidateForCaseRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 查询关注列表
@@ -62,14 +65,11 @@ public class CaseAttentionService {
     }
 
     /**
-     * 查询所有关注职位信息
+     * 处理关注职位信息
      *
-     * @param userVO
      * @return
      */
-    public List<CaseAttention4ClientVO> queryAllCaseAttention(UserVO userVO) {
-        // 用户关注的职位，按照ID倒排序（最新关注的在最上面）
-        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByClientChineseNameAscIdDesc(userVO.getUsername());
+    private List<CaseAttention4ClientVO> dealwithCaseAttention(List<CaseAttention> caseAttentionList) {
         if (CollectionUtils.isEmpty(caseAttentionList)) {
             return Collections.EMPTY_LIST;
         } else {
@@ -117,6 +117,34 @@ public class CaseAttentionService {
             }
             return clientVOList;
         }
+    }
+
+    /**
+     * 查询所有关注职位信息
+     *
+     * @param userVO
+     * @return
+     */
+    public List<CaseAttention4ClientVO> queryAllCaseAttention(UserVO userVO) {
+        // 用户关注的职位，按照ID倒排序（最新关注的在最上面）
+        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByClientChineseNameAscIdDesc(userVO.getUsername());
+        return dealwithCaseAttention(caseAttentionList);
+    }
+
+    /**
+     * 查询所有关注职位信息
+     *
+     * @return
+     */
+    public List<CaseAttention4ClientVO> queryAllUserCaseAttention() {
+        List<Sort.Order> orderList = new ArrayList<>();
+        orderList.add(new Sort.Order(Sort.Direction.ASC, "userName"));
+        orderList.add(new Sort.Order(Sort.Direction.ASC, "clientChineseName"));
+        orderList.add(new Sort.Order(Sort.Direction.ASC, "id"));
+        // 在职用户关注的职位，按照用户和ID倒排序（最新关注的在最上面）
+        List<String> userNameList = userRepository.findByEnabled(true).stream().map(user -> user.getUsername()).collect(Collectors.toList());
+        List<CaseAttention> caseAttentionList = caseAttentionRepository.findAll(new Sort(orderList)).parallelStream().filter(c -> userNameList.contains(c.getUserName())).collect(Collectors.toList());
+        return dealwithCaseAttention(caseAttentionList);
     }
 
 
