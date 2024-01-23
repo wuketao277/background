@@ -49,6 +49,23 @@ public class UserService {
     }
 
     /**
+     * 通过姓名查询用户信息
+     *
+     * @param name
+     * @return
+     */
+    public UserVO findByName(String name) {
+        User user = userRepository.findByUsername(name);
+        if (null == user) {
+            return null;
+        } else {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }
+    }
+
+    /**
      * 保存用户基本信息
      *
      * @param vo

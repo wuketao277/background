@@ -48,6 +48,17 @@ public class UserController {
     }
 
     /**
+     * 通过姓名查询用户信息
+     *
+     * @param name
+     * @return
+     */
+    @GetMapping("findByName")
+    public UserVO findByName(String name) {
+        return userService.findByName(name);
+    }
+
+    /**
      * 查询当前用户信息
      *
      * @param session
