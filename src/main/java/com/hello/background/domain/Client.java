@@ -52,7 +52,7 @@ public class Client {
     /**
      * 客户信息
      */
-    @Column(length = 1000)
+    @Column(length = 8000)
     private String information;
 
     /**
