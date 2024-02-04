@@ -196,6 +196,11 @@ public class CaseService {
     public String deleteById(Integer id) {
         Optional<ClientCase> optional = caseRepository.findById(id);
         if (optional.isPresent()) {
+            // 删除关注职位
+            caseAttentionRepository.deleteByCaseId(id);
+            // 删除候选人与职位关系
+            candidateForCaseRepository.deleteByCaseId(id);
+            // 删除职位
             caseRepository.deleteById(id);
             return "";
         } else {

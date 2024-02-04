@@ -41,6 +41,13 @@ public interface CandidateAttentionRepository extends PagingAndSortingRepository
     void deleteByCandidateIdAndUserId(Integer candidateId, Integer userId);
 
     /**
+     * 通过候选人ID进行删除
+     *
+     * @param candidateId
+     */
+    void deleteByCandidateId(Integer candidateId);
+
+    /**
      * 通过用户的关注情况
      *
      * @param userId

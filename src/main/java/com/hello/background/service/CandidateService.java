@@ -140,6 +140,11 @@ public class CandidateService {
      * @param id
      */
     public void deleteById(Integer id) {
+        // 删除关注候选人
+        candidateAttentionRepository.deleteByCandidateId(id);
+        // 删除候选人与职位关联信息
+        candidateForCaseRepository.deleteByCandidateId(id);
+        // 删除候选人
         candidateRepository.deleteById(id);
     }
 

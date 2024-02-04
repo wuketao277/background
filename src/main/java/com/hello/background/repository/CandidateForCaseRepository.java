@@ -47,4 +47,18 @@ public interface CandidateForCaseRepository extends JpaRepository<CandidateForCa
      * @return
      */
     List<CandidateForCase> findByCandidateId(Integer candidateId);
+
+    /**
+     * 通过caseId删除
+     *
+     * @param caseId
+     */
+    void deleteByCaseId(Integer caseId);
+
+    /**
+     * 通过候选人id删除
+     *
+     * @param candidateId
+     */
+    void deleteByCandidateId(Integer candidateId);
 }

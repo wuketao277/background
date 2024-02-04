@@ -24,4 +24,6 @@ public interface CaseAttentionRepository extends JpaRepository<CaseAttention, In
     void deleteByCaseIdAndUserName(Integer CaseId, String userName);
 
     List<CaseAttention> findByCaseId(Integer caseId);
+
+    void deleteByCaseId(Integer CaseId);
 }
