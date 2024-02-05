@@ -46,7 +46,6 @@ public class ScheduleService {
      * 凌晨1点生成follow候选人的定时任务
      */
     @Scheduled(cron = "0 0 1 * * *")
-//    @Scheduled(cron = "0 0/1 * * * *")
     public void generateTaskForFollowCandidate() {
         if (LocalDate.now().getDayOfWeek().getValue() != 1) {
             // 只有周一才创建任务
@@ -73,34 +72,35 @@ public class ScheduleService {
                 createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow入职");
                 // 给顾问4创建任务
                 createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow入职");
-            }
-            // 如果已入职但还在保证期中的，创建follow候选人近况任务
-            Date guaranteeDate = successfulPerm.getGuaranteeDate();
-            if (null != guaranteeDate && guaranteeDate.compareTo(today000) > 0) {
-                if (null != onBoardDate && (today000.getTime() - onBoardDate.getTime()) < 30 * 24 * 60 * 60) {
-                    // 入职后一个月以内，每周都要follow候选人
-                    // 给leader创建任务
-                    createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow工作情况");
-                    // 给顾问1创建任务
-                    createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow工作情况");
-                    // 给顾问2创建任务
-                    createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow工作情况");
-                    // 给顾问3创建任务
-                    createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow工作情况");
-                    // 给顾问4创建任务
-                    createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow工作情况");
-                } else if (LocalDate.now().getDayOfMonth() < 7) {
-                    // 入职后一个月以外，每月都要follow候选人
-                    // 给leader创建任务
-                    createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow工作情况");
-                    // 给顾问1创建任务
-                    createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow工作情况");
-                    // 给顾问2创建任务
-                    createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow工作情况");
-                    // 给顾问3创建任务
-                    createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow工作情况");
-                    // 给顾问4创建任务
-                    createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow工作情况");
+            } else {
+                // 如果已入职但还在保证期中的，创建follow候选人近况任务
+                Date guaranteeDate = successfulPerm.getGuaranteeDate();
+                if (null != guaranteeDate && guaranteeDate.compareTo(today000) > 0) {
+                    if (null != onBoardDate && (today000.getTime() - onBoardDate.getTime()) < 30 * 24 * 60 * 60) {
+                        // 入职后一个月以内，每周都要follow候选人
+                        // 给leader创建任务
+                        createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow工作情况");
+                        // 给顾问1创建任务
+                        createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow工作情况");
+                        // 给顾问2创建任务
+                        createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow工作情况");
+                        // 给顾问3创建任务
+                        createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow工作情况");
+                        // 给顾问4创建任务
+                        createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow工作情况");
+                    } else if (LocalDate.now().getDayOfMonth() < 7) {
+                        // 入职后一个月以外，每月都要follow候选人
+                        // 给leader创建任务
+                        createTask(successfulPerm.getLeaderUserName(), successfulPerm, "follow工作情况");
+                        // 给顾问1创建任务
+                        createTask(successfulPerm.getConsultantUserName(), successfulPerm, "follow工作情况");
+                        // 给顾问2创建任务
+                        createTask(successfulPerm.getConsultantUserName2(), successfulPerm, "follow工作情况");
+                        // 给顾问3创建任务
+                        createTask(successfulPerm.getConsultantUserName3(), successfulPerm, "follow工作情况");
+                        // 给顾问4创建任务
+                        createTask(successfulPerm.getConsultantUserName4(), successfulPerm, "follow工作情况");
+                    }
                 }
             }
         }
