@@ -292,6 +292,9 @@ public class UserService {
      */
     public List<UserVO> findByScope(String scope, UserVO userVO) {
         List<User> userList = new ArrayList<>();
+        if (null == userVO) {
+            return new ArrayList<>();
+        }
         if ("myself".equals(scope)) {
             userList.add(TransferUtil.transferTo(userVO, User.class));
         } else if ("all".equals(scope)) {
