@@ -352,8 +352,10 @@ public class SuccessfulPermService {
                 return criteriaBuilder.and(list.toArray(p));
             }
         };
+        // 从数据库中查询数据
         Page<SuccessfulPerm> all = successfulPermRepository.findAll(specification, pageable);
-        Page<SuccessfulPermVO> map = all.map(x -> {
+        // 进行数据转换
+        Page<SuccessfulPermVO> map = new PageImpl<>(all.getContent().parallelStream().map(x -> {
             SuccessfulPermVO successfulPermVO = TransferUtil.transferTo(x, SuccessfulPermVO.class);
             // 获取候选人信息
             Optional<Candidate> optionalCandidate = candidateRepository.findById(x.getCandidateId());
@@ -362,9 +364,8 @@ public class SuccessfulPermService {
                 successfulPermVO.setGender(optionalCandidate.get().getGender().getDescribe());
             }
             return successfulPermVO;
-        });
-        map = new PageImpl<>(map.getContent(),
-                new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
+        }).collect(Collectors.toList()),
+                new PageRequest(all.getPageable().getPageNumber(), all.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;
     }
