@@ -8,6 +8,7 @@ import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.repository.UserRepository;
 import com.hello.background.utils.DateTimeUtil;
+import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
 import org.apache.logging.log4j.util.Strings;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,6 +62,18 @@ public class SuccessfulPermService {
         successfulPerm = successfulPermRepository.save(successfulPerm);
         vo.setId(successfulPerm.getId());
         return vo;
+    }
+
+    /**
+     * 下载成功case
+     *
+     * @return
+     */
+    public void downloadSuccessfulCase(SuccessfulPermVOPageRequest request, HttpSession session,
+                                       HttpServletResponse response) {
+        Page<SuccessfulPermVO> successfulPermVOList = queryPage(request, session);
+        // 封装返回response
+        EasyExcelUtil.downloadExcel(response, "成功case", null, successfulPermVOList.getContent(), SuccessfulPermVO.class);
     }
 
     /**

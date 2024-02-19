@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +75,17 @@ public class SuccessfulPermController {
     @PostMapping("queryPage")
     public Page<SuccessfulPermVO> queryPage(@RequestBody SuccessfulPermVOPageRequest request, HttpSession session) {
         return successfulPermService.queryPage(request, session);
+    }
+
+    /**
+     * 下载成功case
+     *
+     * @return
+     */
+    @PostMapping("downloadSuccessfulCase")
+    public void downloadSuccessfulCase(@RequestBody SuccessfulPermVOPageRequest request, HttpSession session,
+                                       HttpServletResponse response) {
+        successfulPermService.downloadSuccessfulCase(request, session, response);
     }
 
     /**
