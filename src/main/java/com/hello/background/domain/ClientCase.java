@@ -135,6 +135,12 @@ public class ClientCase {
     private String interviewProcess;
 
     /**
+     * 目标公司
+     */
+    @Column(length = 200)
+    private String targetCompany;
+
+    /**
      * HC情况
      */
     @Column(length = 200)
@@ -200,4 +206,10 @@ public class ClientCase {
      */
     @Column(length = 2000)
     private String sourcingMap;
+
+    /**
+     * 前任情况
+     */
+    @Column(length = 800)
+    private String predecessor;
 }

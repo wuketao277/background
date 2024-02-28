@@ -111,6 +111,11 @@ public class CaseVO {
     private String interviewProcess;
 
     /**
+     * 目标公司
+     */
+    private String targetCompany;
+
+    /**
      * HC情况
      */
     private String headCount;
@@ -164,4 +169,9 @@ public class CaseVO {
      * sourcingMap
      */
     private String sourcingMap;
+
+    /**
+     * 前任情况
+     */
+    private String predecessor;
 }
