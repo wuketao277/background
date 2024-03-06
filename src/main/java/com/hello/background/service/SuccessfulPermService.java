@@ -357,11 +357,13 @@ public class SuccessfulPermService {
         // 进行数据转换
         Page<SuccessfulPermVO> map = new PageImpl<>(all.getContent().parallelStream().map(x -> {
             SuccessfulPermVO successfulPermVO = TransferUtil.transferTo(x, SuccessfulPermVO.class);
-            // 获取候选人信息
-            Optional<Candidate> optionalCandidate = candidateRepository.findById(x.getCandidateId());
-            // 设置候选人性别
-            if (optionalCandidate.isPresent() && null != optionalCandidate.get().getGender()) {
-                successfulPermVO.setGender(optionalCandidate.get().getGender().getDescribe());
+            if (null != x.getCandidateId()) {
+                // 获取候选人信息
+                Optional<Candidate> optionalCandidate = candidateRepository.findById(x.getCandidateId());
+                // 设置候选人性别
+                if (optionalCandidate.isPresent() && null != optionalCandidate.get().getGender()) {
+                    successfulPermVO.setGender(optionalCandidate.get().getGender().getDescribe());
+                }
             }
             return successfulPermVO;
         }).collect(Collectors.toList()),
