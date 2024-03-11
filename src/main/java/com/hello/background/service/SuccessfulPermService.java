@@ -319,12 +319,6 @@ public class SuccessfulPermService {
                 }
                 // 到期未付款
                 if (Optional.ofNullable(search).map(x -> x.getNonPaymentDue()).orElse(false)) {
-                    // paymentDate小于等于今天，actualPaymentDate是空
-//                    Date start = null != search.getPaymentDateStart() ? search.getPaymentDateStart() : DateTimeUtil.startDate;
-//                    Date end = null != search.getPaymentDateEnd() ? search.getPaymentDateEnd() : DateTimeUtil.endDate;
-//                    Path<Date> startPath = root.get("paymentDate");
-//                    Predicate startEqual = criteriaBuilder.greaterThanOrEqualTo(startPath, start);
-//                    list.add(criteriaBuilder.and(startEqual));
                     // paymentDate小于等于今天
                     Path<Date> paymentDatePath = root.get("paymentDate");
                     Predicate paymentDatePathPredicate = criteriaBuilder.lessThanOrEqualTo(paymentDatePath, DateTimeUtil.getToday000());
@@ -333,6 +327,39 @@ public class SuccessfulPermService {
                     Path<Date> actualPaymentDatePath = root.get("actualPaymentDate");
                     Predicate actualPaymentDatePredicate = criteriaBuilder.isNull(actualPaymentDatePath);
                     list.add(criteriaBuilder.and(actualPaymentDatePredicate));
+                }
+                // 一汽以外的到期未付款
+                if (Optional.ofNullable(search).map(x -> x.getNonPaymentDueExcludeYiQi()).orElse(false)) {
+                    // paymentDate小于等于今天
+                    Path<Date> paymentDatePath = root.get("paymentDate");
+                    Predicate paymentDatePathPredicate = criteriaBuilder.lessThanOrEqualTo(paymentDatePath, DateTimeUtil.getToday000());
+                    list.add(criteriaBuilder.and(paymentDatePathPredicate));
+                    // 且actualPaymentDate是空
+                    Path<Date> actualPaymentDatePath = root.get("actualPaymentDate");
+                    Predicate actualPaymentDatePredicate = criteriaBuilder.isNull(actualPaymentDatePath);
+                    list.add(criteriaBuilder.and(actualPaymentDatePredicate));
+                    // 排除一汽
+                    List<Integer> yiqiList = new ArrayList<>();
+                    yiqiList.add(83128);
+                    yiqiList.add(116400);
+                    yiqiList.add(506794);
+                    yiqiList.add(530067);
+                    yiqiList.add(534813);
+                    yiqiList.add(536829);
+                    yiqiList.add(551408);
+                    yiqiList.add(554065);
+                    yiqiList.add(561173);
+                    yiqiList.add(562083);
+                    yiqiList.add(565134);
+                    yiqiList.add(565142);
+                    yiqiList.add(567055);
+                    yiqiList.add(567056);
+                    yiqiList.add(567118);
+                    yiqiList.add(567119);
+                    yiqiList.add(567119);
+                    yiqiList.add(599905);
+                    Predicate clientIdPredicate = root.get("clientId").in(yiqiList);
+                    list.add(criteriaBuilder.not(clientIdPredicate));
                 }
                 // 还在保证期的
                 if (Optional.ofNullable(search).map(x -> x.getGuaranteePeriod()).orElse(false)) {

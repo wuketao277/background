@@ -109,6 +109,10 @@ public class SuccessfulPermVOPageSearchRequest {
      */
     private Boolean nonPaymentDue;
     /**
+     * 一汽以外的到期未付款
+     */
+    private Boolean nonPaymentDueExcludeYiQi;
+    /**
      * 未入职
      */
     private Boolean nonOnboard;
