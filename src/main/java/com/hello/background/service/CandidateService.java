@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.CandidateDoubleCheckEnum;
 import com.hello.background.constant.CandidateSearchQuickItemEnum;
+import com.hello.background.constant.EducationEnum;
 import com.hello.background.constant.SchoolConstant;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.CandidateAttention;
@@ -539,13 +540,47 @@ public class CandidateService {
                             , getPredicate("createRealName", searchWord, root, criteriaBuilder)
                     )));
                 }
+                // 性别
                 if (null != condition.getGender()) {
                     list.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("gender"), condition.getGender())));
                 }
+                // 手机号
                 if (null != condition.getQuickItem() && condition.getQuickItem().contains(CandidateSearchQuickItemEnum.HAVETELEPHONE)) {
                     list.add(criteriaBuilder.and(criteriaBuilder.isNotNull(root.get("phoneNo"))));
                     list.add(criteriaBuilder.and(criteriaBuilder.notEqual(root.get("phoneNo"), "")));
                     list.add(criteriaBuilder.and(criteriaBuilder.notEqual(root.get("phoneNo"), "空")));
+                }
+                // 教育经历
+                if (!CollectionUtils.isEmpty(condition.getEducationList())) {
+                    // 博士
+                    Predicate doctorPre;
+                    if (condition.getEducationList().contains(EducationEnum.DOCTOR)) {
+                        doctorPre = criteriaBuilder.like(root.get("schoolName"), "%博士%");
+                    } else {
+                        doctorPre = criteriaBuilder.equal(root.get("schoolName"), "&&&&");
+                    }
+                    // 硕士
+                    Predicate masterPre;
+                    if (condition.getEducationList().contains(EducationEnum.MASTER)) {
+                        masterPre = criteriaBuilder.like(root.get("schoolName"), "%硕士%");
+                    } else {
+                        masterPre = criteriaBuilder.equal(root.get("schoolName"), "&&&&");
+                    }
+                    // 本科
+                    Predicate bachelor;
+                    if (condition.getEducationList().contains(EducationEnum.BACHELOR)) {
+                        bachelor = criteriaBuilder.like(root.get("schoolName"), "%本科%");
+                    } else {
+                        bachelor = criteriaBuilder.equal(root.get("schoolName"), "&&&&");
+                    }
+                    // 大专
+                    Predicate junior;
+                    if (condition.getEducationList().contains(EducationEnum.JUNIORCOLLEGE)) {
+                        junior = criteriaBuilder.like(root.get("schoolName"), "%大专%");
+                    } else {
+                        junior = criteriaBuilder.equal(root.get("schoolName"), "&&&&");
+                    }
+                    list.add(criteriaBuilder.or(doctorPre, masterPre, bachelor, junior));
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
