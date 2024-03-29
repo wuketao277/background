@@ -105,6 +105,10 @@ public class SuccessfulPermVOPageSearchRequest {
      */
     private String type;
     /**
+     * 未付款
+     */
+    private Boolean nonPayment;
+    /**
      * 到期未付款
      */
     private Boolean nonPaymentDue;

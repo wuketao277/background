@@ -324,6 +324,13 @@ public class SuccessfulPermService {
                             , equal11, equal12, equal13, equal14, equal15
                             , equal16, equal17, equal18, equal19, equal20));
                 }
+                // 未付款
+                if (Optional.ofNullable(search).map(x -> x.getNonPayment()).orElse(false)) {
+                    // 且actualPaymentDate是空
+                    Path<Date> actualPaymentDatePath = root.get("actualPaymentDate");
+                    Predicate actualPaymentDatePredicate = criteriaBuilder.isNull(actualPaymentDatePath);
+                    list.add(criteriaBuilder.and(actualPaymentDatePredicate));
+                }
                 // 到期未付款
                 if (Optional.ofNullable(search).map(x -> x.getNonPaymentDue()).orElse(false)) {
                     // paymentDate小于等于今天
