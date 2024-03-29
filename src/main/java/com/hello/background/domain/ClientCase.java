@@ -137,7 +137,7 @@ public class ClientCase {
     /**
      * 目标公司
      */
-    @Column(length = 200)
+    @Column(length = 2000)
     private String targetCompany;
 
     /**
