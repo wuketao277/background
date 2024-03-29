@@ -82,10 +82,9 @@ public class SuccessfulPermController {
      *
      * @return
      */
-    @PostMapping("downloadSuccessfulCase")
-    public void downloadSuccessfulCase(@RequestBody SuccessfulPermVOPageRequest request, HttpSession session,
-                                       HttpServletResponse response) {
-        successfulPermService.downloadSuccessfulCase(request, session, response);
+    @GetMapping("downloadSuccessfulCase")
+    public void downloadSuccessfulCase(HttpSession session, HttpServletResponse response) {
+        successfulPermService.downloadSuccessfulCase(session, response);
     }
 
     /**

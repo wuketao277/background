@@ -11,6 +11,7 @@ import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  */
 @Transactional
 @Service
+@Slf4j
 public class SuccessfulPermService {
 
     @Autowired
@@ -69,8 +71,13 @@ public class SuccessfulPermService {
      *
      * @return
      */
-    public void downloadSuccessfulCase(SuccessfulPermVOPageRequest request, HttpSession session,
+    public void downloadSuccessfulCase(HttpSession session,
                                        HttpServletResponse response) {
+        // 查询全部成功case
+        SuccessfulPermVOPageRequest request = new SuccessfulPermVOPageRequest();
+        request.setSearch(new SuccessfulPermVOPageSearchRequest());
+        request.setCurrentPage(1);
+        request.setPageSize(100000);
         Page<SuccessfulPermVO> successfulPermVOList = queryPage(request, session);
         // 封装返回response
         EasyExcelUtil.downloadExcel(response, "成功case", null, successfulPermVOList.getContent(), SuccessfulPermVO.class);
