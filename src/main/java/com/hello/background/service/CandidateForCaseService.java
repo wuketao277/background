@@ -1,14 +1,14 @@
 package com.hello.background.service;
 
+import com.hello.background.domain.Candidate;
 import com.hello.background.domain.CandidateForCase;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.CandidateForCaseRepository;
+import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CaseRepository;
+import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
-import com.hello.background.vo.CandidateForCaseVO;
-import com.hello.background.vo.ClientVO;
-import com.hello.background.vo.CommentVO;
-import com.hello.background.vo.CopyFromOldCaseVO;
+import com.hello.background.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +40,8 @@ public class CandidateForCaseService {
     private CommentService commentService;
     @Autowired
     private CaseRepository caseRepository;
+    @Autowired
+    private CandidateRepository candidateRepository;
 
     /**
      * 保存候选人
@@ -117,6 +117,27 @@ public class CandidateForCaseService {
     public List<CandidateForCaseVO> findByCaseId(Integer caseId) {
         List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(caseId);
         return convertToVOList(candidateForCaseList);
+    }
+
+    /**
+     * 通过职位id下载所有职位推荐候选人信息
+     *
+     * @param caseId
+     * @param response
+     */
+    public void downloadCandidates(Integer caseId, HttpServletResponse response) {
+        List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(caseId);
+        List<CandidateDownloadVO> list = new ArrayList<>();
+        for (CandidateForCase cc : candidateForCaseList) {
+            Optional<Candidate> optionalCandidate = candidateRepository.findById(cc.getCandidateId());
+            list.add(new CandidateDownloadVO(optionalCandidate.get()));
+        }
+        // 封装返回response
+        try {
+            EasyExcelUtil.downloadExcel(response, "候选人列表", null, list, CandidateDownloadVO.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**

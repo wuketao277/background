@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -124,6 +125,17 @@ public class CandidateForCaseController {
     @GetMapping("updateStatus")
     public boolean updateStatus(@RequestParam Integer id, @RequestParam String newStatus) {
         return candidateForCaseService.updateStatus(id, newStatus);
+    }
+
+    /**
+     * 通过职位id下载所有推荐的候选人信息
+     *
+     * @param caseId 职位id
+     * @return 职位推荐候选人信息
+     */
+    @GetMapping("downloadCandidates")
+    public void downloadCandidates(@RequestParam Integer caseId, HttpServletResponse response) {
+        candidateForCaseService.downloadCandidates(caseId, response);
     }
 
     /**

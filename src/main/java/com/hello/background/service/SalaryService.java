@@ -508,7 +508,11 @@ public class SalaryService {
     public void downloadSalary(HttpSession session, HttpServletResponse response, String loginName, String userName, String month, String pretaxIncome, String netPay, String company, Integer currentPage, Integer pageSize) {
         Page<Salary> salaryPage = queryPageData(session, loginName, userName, month, pretaxIncome, netPay, company, currentPage, pageSize);
         // 封装返回response
-        EasyExcelUtil.downloadExcel(response, "薪资", null, salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
+        try {
+            EasyExcelUtil.downloadExcel(response, "薪资", null, salaryPage.getContent().stream().map(x -> TransferUtil.transferTo(x, SalaryVODownload.class)).collect(Collectors.toList()), SalaryVODownload.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**

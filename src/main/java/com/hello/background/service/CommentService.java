@@ -383,7 +383,11 @@ public class CommentService {
         LocalDate end = LocalDate.parse(dates.get(1).substring(0, 10));
         List<KPIPerson> kpiList = calcKPI(start, end, scope, userVO, kpiOnlyShowCheck);
         // 封装返回response
-        EasyExcelUtil.downloadExcel(response, "kpi", null, kpiList, KPIPerson.class);
+        try {
+            EasyExcelUtil.downloadExcel(response, "kpi", null, kpiList, KPIPerson.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**

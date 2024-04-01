@@ -26,4 +26,12 @@ public enum CandidateNotMatchReasonEnum {
         this.code = _code;
         this.name = _name;
     }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }

@@ -80,7 +80,11 @@ public class SuccessfulPermService {
         request.setPageSize(100000);
         Page<SuccessfulPermVO> successfulPermVOList = queryPage(request, session);
         // 封装返回response
-        EasyExcelUtil.downloadExcel(response, "成功case", null, successfulPermVOList.getContent(), SuccessfulPermVO.class);
+        try {
+            EasyExcelUtil.downloadExcel(response, "成功case", null, successfulPermVOList.getContent(), SuccessfulPermVO.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**

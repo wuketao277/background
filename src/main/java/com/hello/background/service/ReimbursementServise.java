@@ -206,7 +206,11 @@ public class ReimbursementServise {
                                           String kind, String invoiceNo, String sum, String description, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
         Page<ReimbursementItem> page = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
         // 封装返回response
-        EasyExcelUtil.downloadExcel(response, "报销项详情", null, page.getContent().stream().map(r -> new ReimbursementItemVODownload(r)).collect(Collectors.toList()), ReimbursementItemVODownload.class);
+        try {
+            EasyExcelUtil.downloadExcel(response, "报销项详情", null, page.getContent().stream().map(r -> new ReimbursementItemVODownload(r)).collect(Collectors.toList()), ReimbursementItemVODownload.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**
@@ -216,7 +220,11 @@ public class ReimbursementServise {
             sum, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
         Page<ReimbursementSummary> page = querySummaryPageData(company, userName, paymentMonth, sum, currentPage, pageSize, session);
         // 封装返回response
-        EasyExcelUtil.downloadExcel(response, "报销", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVODownload.class)).collect(Collectors.toList()), ReimbursementSummaryVODownload.class);
+        try {
+            EasyExcelUtil.downloadExcel(response, "报销", null, page.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementSummaryVODownload.class)).collect(Collectors.toList()), ReimbursementSummaryVODownload.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**
