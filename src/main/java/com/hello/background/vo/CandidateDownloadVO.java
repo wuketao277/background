@@ -153,11 +153,18 @@ public class CandidateDownloadVO {
 
     public CandidateDownloadVO(Candidate candidate, boolean encrypt) {
         TransferUtil.transfer(candidate, this);
-        this.gender = candidate.getGender().getDescribe();
-        this.createTime = DateTimeUtil.getDateStr(candidate.getCreateTime());
-        this.notMatchReason = candidate.getNotMatchReason().getName();
+        if (null != candidate.getGender()) {
+            this.gender = candidate.getGender().getDescribe();
+        }
+        if (null != candidate.getCreateTime()) {
+            this.createTime = DateTimeUtil.getDateStr(candidate.getCreateTime());
+        }
+        if (null != candidate.getNotMatchReason()) {
+            this.notMatchReason = candidate.getNotMatchReason().getName();
+        }
         if (encrypt) {
             this.phoneNo = null;
+            this.email = null;
         }
     }
 }
