@@ -125,12 +125,12 @@ public class CandidateForCaseService {
      * @param caseId
      * @param response
      */
-    public void downloadCandidates(Integer caseId, HttpServletResponse response) {
+    public void downloadCandidates(Integer caseId, HttpServletResponse response, boolean isAdmin) {
         List<CandidateForCase> candidateForCaseList = candidateForCaseRepository.findByCaseId(caseId);
         List<CandidateDownloadVO> list = new ArrayList<>();
         for (CandidateForCase cc : candidateForCaseList) {
             Optional<Candidate> optionalCandidate = candidateRepository.findById(cc.getCandidateId());
-            list.add(new CandidateDownloadVO(optionalCandidate.get(), true));
+            list.add(new CandidateDownloadVO(optionalCandidate.get(), !isAdmin));
         }
         // 封装返回response
         try {

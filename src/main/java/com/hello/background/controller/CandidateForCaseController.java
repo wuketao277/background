@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.constant.CandidateForCaseStatusEnum;
+import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.CandidateForCase;
 import com.hello.background.service.CandidateForCaseService;
 import com.hello.background.service.CandidateService;
@@ -134,8 +135,9 @@ public class CandidateForCaseController {
      * @return 职位推荐候选人信息
      */
     @GetMapping("downloadCandidates")
-    public void downloadCandidates(@RequestParam Integer caseId, HttpServletResponse response) {
-        candidateForCaseService.downloadCandidates(caseId, response);
+    public void downloadCandidates(@RequestParam Integer caseId, HttpServletResponse response, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        candidateForCaseService.downloadCandidates(caseId, response, userVO.getRoles().contains(RoleEnum.ADMIN));
     }
 
     /**
