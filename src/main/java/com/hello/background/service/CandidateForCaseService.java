@@ -130,7 +130,7 @@ public class CandidateForCaseService {
         List<CandidateDownloadVO> list = new ArrayList<>();
         for (CandidateForCase cc : candidateForCaseList) {
             Optional<Candidate> optionalCandidate = candidateRepository.findById(cc.getCandidateId());
-            list.add(new CandidateDownloadVO(optionalCandidate.get()));
+            list.add(new CandidateDownloadVO(optionalCandidate.get(), true));
         }
         // 封装返回response
         try {

@@ -151,10 +151,13 @@ public class CandidateDownloadVO {
     @ExcelProperty(value = "创建时间")
     private String createTime;
 
-    public CandidateDownloadVO(Candidate candidate) {
+    public CandidateDownloadVO(Candidate candidate, boolean encrypt) {
         TransferUtil.transfer(candidate, this);
         this.gender = candidate.getGender().getDescribe();
         this.createTime = DateTimeUtil.getDateStr(candidate.getCreateTime());
         this.notMatchReason = candidate.getNotMatchReason().getName();
+        if (encrypt) {
+            this.phoneNo = null;
+        }
     }
 }
