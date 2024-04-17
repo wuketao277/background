@@ -46,7 +46,7 @@ public class Client {
     /**
      * 地址
      */
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String address;
 
     /**
@@ -58,50 +58,20 @@ public class Client {
     /**
      * 推荐流程
      */
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String recommendationProcess;
 
     /**
      * 查重要求
      */
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String duplicateCheck;
 
     /**
      * 简历标准
      */
-    @Column(length = 1000)
-    private String resumeStandard;
-
-    /**
-     * 薪资架构
-     */
-    @Column(length = 1000)
-    private String salaryStructure;
-
-    /**
-     * 推荐理由
-     */
-    @Column(length = 1000)
-    private String recommendationReason;
-
-    /**
-     * 面试准备
-     */
-    @Column(length = 1000)
-    private String interviewPrepare;
-
-    /**
-     * 公司卖点
-     */
-    @Column(length = 1000)
-    private String sellingPoint;
-
-    /**
-     * 特别说明
-     */
     @Column(length = 2000)
-    private String remark;
+    private String resumeStandard;
 
     /**
      * 创建时间
@@ -114,16 +84,4 @@ public class Client {
      */
     @Column(length = 50)
     private String createUserName;
-
-    /**
-     * 发票联系信息
-     */
-    @Column(length = 400)
-    private String invoiceContact;
-
-    /**
-     * 发票备注
-     */
-    @Column(length = 400)
-    private String invoiceRemark;
 }

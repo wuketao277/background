@@ -2,6 +2,8 @@ package com.hello.background.service;
 
 import com.google.common.base.Strings;
 import com.hello.background.domain.Client;
+import com.hello.background.domain.ClientExt;
+import com.hello.background.repository.ClientExtRepository;
 import com.hello.background.repository.ClientRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ClientVO;
@@ -24,11 +26,18 @@ public class ClientService {
 
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private ClientExtRepository clientExtRepository;
 
     public ClientVO save(ClientVO vo) {
+        // 保存客户基本信息
         Client client = TransferUtil.transferTo(vo, Client.class);
         client = clientRepository.save(client);
-        return TransferUtil.transferTo(client, ClientVO.class);
+        // 保存客户扩展信息
+        ClientExt clientExt = TransferUtil.transferTo(vo, ClientExt.class);
+        clientExt.setId(client.getId());
+        clientExtRepository.save(clientExt);
+        return new ClientVO(client, clientExt);
     }
 
     /**
@@ -50,7 +59,11 @@ public class ClientService {
             page = clientRepository.findByEnglishNameLikeOrChineseNameLike(search, search, pageable);
             total = clientRepository.countByEnglishNameLikeOrChineseNameLike(search, search);
         }
-        Page<ClientVO> map = page.map(x -> TransferUtil.transferTo(x, ClientVO.class));
+        Page<ClientVO> map = page.map(c -> {
+            ClientExt clientExt = clientExtRepository.queryById(c.getId());
+            ClientVO vo = new ClientVO(c, clientExt);
+            return vo;
+        });
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 total);
@@ -65,7 +78,8 @@ public class ClientService {
      */
     public ClientVO queryById(Integer id) {
         Client client = clientRepository.queryById(id);
-        return TransferUtil.transferTo(client, ClientVO.class);
+        ClientExt clientExt = clientExtRepository.queryById(client.getId());
+        return new ClientVO(client, clientExt);
     }
 
     /**
@@ -75,7 +89,11 @@ public class ClientService {
      */
     public List<ClientVO> findAll() {
         List<Client> all = clientRepository.findAll();
-        return all.stream().map(c -> TransferUtil.transferTo(c, ClientVO.class)).collect(Collectors.toList());
+        return all.stream().map(c -> {
+            ClientExt clientExt = clientExtRepository.queryById(c.getId());
+            ClientVO vo = new ClientVO(c, clientExt);
+            return vo;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -86,6 +104,10 @@ public class ClientService {
     public List<ClientVO> findAllOrderByChineseName() {
         Sort sort = new Sort(Sort.Direction.ASC, "chineseName");
         List<Client> all = clientRepository.findAll(sort);
-        return all.stream().map(c -> TransferUtil.transferTo(c, ClientVO.class)).collect(Collectors.toList());
+        return all.stream().map(c -> {
+            ClientExt clientExt = clientExtRepository.queryById(c.getId());
+            ClientVO vo = new ClientVO(c, clientExt);
+            return vo;
+        }).collect(Collectors.toList());
     }
 }

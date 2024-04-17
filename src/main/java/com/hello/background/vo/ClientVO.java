@@ -1,5 +1,8 @@
 package com.hello.background.vo;
 
+import com.hello.background.domain.Client;
+import com.hello.background.domain.ClientExt;
+import com.hello.background.utils.TransferUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -101,4 +104,15 @@ public class ClientVO {
      * 发票备注
      */
     private String invoiceRemark;
+
+    /**
+     * 通过客户基本信息和客户扩展信息
+     *
+     * @param client
+     * @param ext
+     */
+    public ClientVO(Client client, ClientExt ext) {
+        TransferUtil.transfer(client, this);
+        TransferUtil.transfer(ext, this);
+    }
 }
