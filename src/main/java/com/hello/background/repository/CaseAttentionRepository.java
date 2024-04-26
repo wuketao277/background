@@ -21,6 +21,8 @@ public interface CaseAttentionRepository extends JpaRepository<CaseAttention, In
 
     List<CaseAttention> findByUserNameOrderByClientChineseNameAscIdDesc(String userName);
 
+    List<CaseAttention> findByUserNameOrderByIdDesc(String userName);
+
     void deleteByCaseIdAndUserName(Integer CaseId, String userName);
 
     List<CaseAttention> findByCaseId(Integer caseId);

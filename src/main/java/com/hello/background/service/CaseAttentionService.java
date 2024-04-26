@@ -127,7 +127,7 @@ public class CaseAttentionService {
      */
     public List<CaseAttention4ClientVO> queryAllCaseAttention(UserVO userVO) {
         // 用户关注的职位，按照ID倒排序（最新关注的在最上面）
-        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByClientChineseNameAscIdDesc(userVO.getUsername());
+        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByIdDesc(userVO.getUsername());
         return dealwithCaseAttention(caseAttentionList);
     }
 
