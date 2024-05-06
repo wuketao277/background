@@ -395,7 +395,7 @@ public class SalaryService {
         if (currentUserName.equals(consultantUserName)
                 && (null != consultantCommissionPercent && consultantCommissionPercent.compareTo(BigDecimal.ZERO) > 0)) {
             commission = perm.getGp().multiply(consultantCommissionPercent).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-            msgSB.append(String.format("%s %s:%s*%s=%s \r\n", perm.getCandidateChineseName(), consultantUserName, perm.getGp(), consultantCommissionPercent.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_DOWN), commission));
+            msgSB.append(String.format("%s %s:%s*%s=%s \r\n", perm.getCandidateChineseName(), consultantUserName, perm.getGp(), consultantCommissionPercent.divide(BigDecimal.valueOf(100), 3, BigDecimal.ROUND_HALF_DOWN), commission));
         }
         return commission;
     }
