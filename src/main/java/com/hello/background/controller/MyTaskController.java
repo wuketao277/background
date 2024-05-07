@@ -37,8 +37,6 @@ public class MyTaskController {
      */
     @PostMapping("save")
     public MyTaskVO save(@RequestBody MyTaskVO vo, HttpSession session) {
-        // 由于后台接收前台数据时，日期会少一天。这里要单独做一个补偿
-        vo.setExecuteDate(vo.getExecuteDate().plusDays(1));
         // 获取当前用户
         UserVO userVO = (UserVO) session.getAttribute("user");
         vo.setCreateDateTime(LocalDateTime.now());

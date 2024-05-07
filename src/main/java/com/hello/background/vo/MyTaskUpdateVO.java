@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+
 /**
  * 我的任务
  *
@@ -32,4 +34,9 @@ public class MyTaskUpdateVO {
      * 执行结果
      */
     private String executeResult;
+
+    /**
+     * 任务的执行日期
+     */
+    private LocalDate executeDate;
 }

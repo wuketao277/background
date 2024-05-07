@@ -59,6 +59,7 @@ public class MyTaskService {
             MyTask myTask = optionalMyTask.get();
             myTask.setFinished(vo.getFinished());
             myTask.setExecuteResult(vo.getExecuteResult());
+            myTask.setExecuteDate(vo.getExecuteDate());
             myTaskRepository.save(myTask);
             return true;
         } else {
