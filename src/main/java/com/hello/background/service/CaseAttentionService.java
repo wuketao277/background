@@ -134,6 +134,18 @@ public class CaseAttentionService {
     /**
      * 查询所有关注职位信息
      *
+     * @param userVO
+     * @return
+     */
+    public List<CaseAttentionVO> queryAllCaseAttention2(UserVO userVO) {
+        // 用户关注的职位，按照ID倒排序（最新关注的在最上面）
+        List<CaseAttention> caseAttentionList = caseAttentionRepository.findByUserNameOrderByIdDesc(userVO.getUsername());
+        return caseAttentionList.stream().map(ca -> TransferUtil.transferTo(ca, CaseAttentionVO.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * 查询所有关注职位信息
+     *
      * @return
      */
     public List<CaseAttention4ClientVO> queryAllUserCaseAttention() {
