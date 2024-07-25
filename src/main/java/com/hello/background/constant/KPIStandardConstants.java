@@ -36,7 +36,7 @@ public class KPIStandardConstants {
     /**
      * AM CVO 占比
      */
-    public static BigDecimal amCVOPercent = new BigDecimal(0.3);
+    public static BigDecimal amCVOPercent = new BigDecimal(0.4);
     /**
      * AM CVO 每天数量
      */

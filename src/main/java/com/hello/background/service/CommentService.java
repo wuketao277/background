@@ -264,13 +264,13 @@ public class CommentService {
         // 读取各项指标数据，计算得分
         if (isAM) {
             //  计算AM的KPI完成比例
-            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays, true);
-            kpiPerson.setFinishRateVIIOI(viioiPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
+//            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays, true);
+//            kpiPerson.setFinishRateVIIOI(viioiPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays, true);
             kpiPerson.setFinishRateCVO(cvoPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal interviewPercent = calcKPIPercentForInterview(kpiPerson, true, workingDays);
             kpiPerson.setFinishRateInterview(interviewPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            kpiPerson.setFinishRate(viioiPercent.add(cvoPercent).add(interviewPercent).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
+            kpiPerson.setFinishRate(cvoPercent.add(interviewPercent).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
         } else {
             // 计算Recruiter的KPI完成比例
             BigDecimal ticfPercent = calcKPIPercent(kpiPerson.getTicf(), KPIStandardConstants.reTICFCount, KPIStandardConstants.reTICFPercent, workingDays, false);
