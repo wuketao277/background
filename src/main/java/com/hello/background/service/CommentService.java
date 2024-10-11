@@ -266,7 +266,7 @@ public class CommentService {
             //  计算AM的KPI完成比例
 //            BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.amVIIOICount, KPIStandardConstants.amVIIOIPercent, workingDays, true);
 //            kpiPerson.setFinishRateVIIOI(viioiPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays, true);
+            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.amCVOCount, KPIStandardConstants.amCVOPercent, workingDays, false);
             kpiPerson.setFinishRateCVO(cvoPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal interviewPercent = calcKPIPercentForInterview(kpiPerson, true, workingDays);
             kpiPerson.setFinishRateInterview(interviewPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
@@ -277,7 +277,7 @@ public class CommentService {
             kpiPerson.setFinishRateTICF(ticfPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal viioiPercent = calcKPIPercent(kpiPerson.getViioi(), KPIStandardConstants.reVIIOICount, KPIStandardConstants.reVIIOIPercent, workingDays, true);
             kpiPerson.setFinishRateVIIOI(viioiPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
-            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays, true);
+            BigDecimal cvoPercent = calcKPIPercent(kpiPerson.getCvo(), KPIStandardConstants.reCVOCount, KPIStandardConstants.reCVOPercent, workingDays, false);
             kpiPerson.setFinishRateCVO(cvoPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
             BigDecimal interviewPercent = calcKPIPercentForInterview(kpiPerson, false, workingDays);
             kpiPerson.setFinishRateInterview(interviewPercent.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
@@ -327,8 +327,8 @@ public class CommentService {
             percent5 = calcFinishPercent(kpiPerson.getInterview5th(), KPIStandardConstants.am5thCount, workdays, false);
             percent6 = calcFinishPercent(kpiPerson.getInterviewFinal(), KPIStandardConstants.am6thCount, workdays, false);
             // 把6轮面试完成率加在一起
-            BigDecimal sum = percent1.add(percent2).add(percent3).add(percent4).add(percent5).add(percent6);
-            return sum.compareTo(BigDecimal.ONE) > 0 ? BigDecimal.ONE.multiply(KPIStandardConstants.amInterviewPercent) : sum.multiply(KPIStandardConstants.amInterviewPercent);
+            return percent1.add(percent2).add(percent3).add(percent4).add(percent5).add(percent6);
+//            return sum.compareTo(BigDecimal.ONE) > 0 ? BigDecimal.ONE.multiply(KPIStandardConstants.amInterviewPercent) : sum.multiply(KPIStandardConstants.amInterviewPercent);
         } else {
             percent1 = calcFinishPercent(kpiPerson.getInterview1st(), KPIStandardConstants.re1stCount, workdays, false);
             percent2 = calcFinishPercent(kpiPerson.getInterview2nd(), KPIStandardConstants.re2ndCount, workdays, false);
@@ -337,8 +337,8 @@ public class CommentService {
             percent5 = calcFinishPercent(kpiPerson.getInterview5th(), KPIStandardConstants.re5thCount, workdays, false);
             percent6 = calcFinishPercent(kpiPerson.getInterviewFinal(), KPIStandardConstants.re6thCount, workdays, false);
             // 把6轮面试完成率加在一起
-            BigDecimal sum = percent1.add(percent2).add(percent3).add(percent4).add(percent5).add(percent6);
-            return sum.compareTo(BigDecimal.ONE) > 0 ? BigDecimal.ONE.multiply(KPIStandardConstants.reInterviewPercent) : sum.multiply(KPIStandardConstants.reInterviewPercent);
+            return percent1.add(percent2).add(percent3).add(percent4).add(percent5).add(percent6);
+//            return sum.compareTo(BigDecimal.ONE) > 0 ? BigDecimal.ONE.multiply(KPIStandardConstants.reInterviewPercent) : sum.multiply(KPIStandardConstants.reInterviewPercent);
         }
     }
 
