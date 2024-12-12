@@ -94,8 +94,8 @@ public class UploadFileService {
                         // 将文件信息写入数据库
                         UploadFile uploadFile = new UploadFile();
                         uploadFile.setCreateTime(LocalDateTime.now());
-                        uploadFile.setCreateUserName(userVO.getUsername());
-                        uploadFile.setCreateRealName(userVO.getRealname());
+                        uploadFile.setCreateUserName(Optional.ofNullable(userVO).map(vo->vo.getUsername()).orElse("admin"));
+                        uploadFile.setCreateRealName(Optional.ofNullable(userVO).map(vo->vo.getRealname()).orElse("admin"));
                         uploadFile.setUuid(uuid);
                         uploadFile.setOriginalFileName(originalFileName);
                         if (null != tableId) {
