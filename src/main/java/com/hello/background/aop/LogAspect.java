@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * 日志切片，在控制器方法执行前后记录日志，通过traceId串联一个请求的所有调用方法。
  * @author wuketao
  * @date 2024/6/4
  * @Description
@@ -15,7 +16,8 @@ import java.util.UUID;
 @Component
 @Aspect
 public class LogAspect {
-    ThreadLocal<String> tlUUID = new ThreadLocal<>();
+    // 线程本地变量，用于记录traceId
+    public static ThreadLocal<String> tlUUID = new ThreadLocal<>();
 
     @Pointcut("execution(* com.hello.background.controller.*.*(..))")
     public void logPointCut() {

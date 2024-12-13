@@ -5,3 +5,8 @@ spring:
     multipart:
       max-file-size: 1000MB #单个文件大小
       max-request-size: 1000MB # 总文件大小（允许存储文件的文件夹大小）
+
+# spring data jpa底层是通过hibernate实现的。这里设置为trace，可以打印出sql语句和参数
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: trace  # 打印SQL语句中的参数
