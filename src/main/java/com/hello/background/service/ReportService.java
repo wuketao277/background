@@ -78,7 +78,9 @@ public class ReportService {
             // 计算月平均数据
             generateAvgGPData(response, request);
             // 计算未来收款情况
-            calcFutureReceiveBillingData(response);
+            calcFutureReceiveBillingData(response, false);
+            // 计算未来收款情况，不包含一汽的数据
+            calcFutureReceiveBillingData(response, true);
         } catch (Exception ex) {
             log.error("queryGeneral", ex);
         }
@@ -89,8 +91,9 @@ public class ReportService {
      * 计算未来收款数据
      *
      * @param response
+     * @param excludeYiQi 是否排除一汽数据
      */
-    private void calcFutureReceiveBillingData(QueryGeneralReportResponse response) {
+    private void calcFutureReceiveBillingData(QueryGeneralReportResponse response, boolean excludeYiQi) {
         Iterable<SuccessfulPerm> successfulPerms = successfulPermRepository.findAll();
         // 如果当前日期小于等于10号，则当前月份，否则下一个月
         int addMonthValue = LocalDate.now().getDayOfMonth() <= 10 ? 0 : 1;
@@ -106,7 +109,7 @@ public class ReportService {
             Iterator<SuccessfulPerm> iterator = successfulPerms.iterator();
             while (iterator.hasNext()) {
                 SuccessfulPerm next = iterator.next();
-                if (next.getClientName().contains("一汽")) {
+                if (excludeYiQi && next.getClientName().contains("一汽")) {
                     // 排除一汽的数据
                     continue;
                 }
@@ -129,8 +132,13 @@ public class ReportService {
                 }
             }
             // 最后把值存入XY列中
-            response.getFutureReceiveBillingDataX().add(endLd.getMonthValue() + ".10");
-            response.getFutureReceiveBillingDataY().add(yValue);
+            if (excludeYiQi) {
+                response.getFutureReceiveBillingDataX2().add(endLd.getMonthValue() + ".10");
+                response.getFutureReceiveBillingDataY2().add(yValue);
+            } else {
+                response.getFutureReceiveBillingDataX().add(endLd.getMonthValue() + ".10");
+                response.getFutureReceiveBillingDataY().add(yValue);
+            }
             // 计算下一个周期的开始和结束日期
             startLd = endLd.plusDays(1);
             endLd = endLd.plusMonths(1);
