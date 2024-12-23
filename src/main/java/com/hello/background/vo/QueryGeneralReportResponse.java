@@ -30,4 +30,8 @@ public class QueryGeneralReportResponse {
     private List<QueryGeneralReportResponseKeyValue> teamOfferGPData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> teamMonthlyOfferGPData = new ArrayList<>();
     private List<QueryGeneralReportResponseKeyValue> avgOfferData = new ArrayList<>();
+    // 未来收款X轴数据
+    private List<String> futureReceiveBillingDataX = new ArrayList<>();
+    // 未来收款Y轴数据
+    private List<BigDecimal> futureReceiveBillingDataY = new ArrayList<>();
 }

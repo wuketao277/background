@@ -93,7 +93,7 @@ public class DateTimeUtil {
     }
 
     public static LocalDate date2LocalDate(Date date) {
-        if (null != date) {
+        if (null == date) {
             return null;
         }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

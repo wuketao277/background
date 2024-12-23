@@ -5,6 +5,7 @@ import com.hello.background.domain.SuccessfulPerm;
 import com.hello.background.domain.User;
 import com.hello.background.repository.SuccessfulPermRepository;
 import com.hello.background.repository.UserRepository;
+import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.vo.QueryGeneralReportRequest;
 import com.hello.background.vo.QueryGeneralReportResponse;
 import com.hello.background.vo.QueryGeneralReportResponseKeyValue;
@@ -76,10 +77,64 @@ public class ReportService {
             generateTeamMonthlyOfferGPData(response, request);
             // 计算月平均数据
             generateAvgGPData(response, request);
+            // 计算未来收款情况
+            calcFutureReceiveBillingData(response);
         } catch (Exception ex) {
             log.error("queryGeneral", ex);
         }
         return response;
+    }
+
+    /**
+     * 计算未来收款数据
+     *
+     * @param response
+     */
+    private void calcFutureReceiveBillingData(QueryGeneralReportResponse response) {
+        Iterable<SuccessfulPerm> successfulPerms = successfulPermRepository.findAll();
+        // 如果当前日期小于等于10号，则当前月份，否则下一个月
+        int addMonthValue = LocalDate.now().getDayOfMonth() <= 10 ? 0 : 1;
+        // 计算第一个周期的起始和结束日期
+        LocalDate startLd = LocalDate.now();
+        LocalDate endLd = startLd.plusMonths(addMonthValue);
+        endLd = LocalDate.of(endLd.getYear(), endLd.getMonthValue(), 10);
+        // 后面几个周期的起始和结束日期通过循环计算
+        for (int i = 0; i < 6; i++) {
+            // Y坐标的值，表示周期内的总金额
+            BigDecimal yValue = BigDecimal.ZERO;
+            // 遍历所有成功case，统计周期内的billing总和
+            Iterator<SuccessfulPerm> iterator = successfulPerms.iterator();
+            while (iterator.hasNext()) {
+                SuccessfulPerm next = iterator.next();
+                if (next.getClientName().contains("一汽")) {
+                    // 排除一汽的数据
+                    continue;
+                }
+                if (null == next.getPaymentDate()) {
+                    // 排除没有收款日期的数据
+                    continue;
+                }
+                if (null != next.getActualPaymentDate()) {
+                    // 排除已付款的
+                    continue;
+                }
+                if (null == next.getBilling()) {
+                    // 排除没有计费金额的
+                    continue;
+                }
+                LocalDate paymentDate = DateTimeUtil.date2LocalDate(next.getPaymentDate());
+                // 判断是否在当前周期内，把周期内的billing相加
+                if ((paymentDate.isAfter(startLd) || paymentDate.isEqual(startLd)) && (paymentDate.isBefore(endLd) || paymentDate.isEqual(endLd))) {
+                    yValue = yValue.add(next.getBilling());
+                }
+            }
+            // 最后把值存入XY列中
+            response.getFutureReceiveBillingDataX().add(endLd.getMonthValue() + ".10");
+            response.getFutureReceiveBillingDataY().add(yValue);
+            // 计算下一个周期的开始和结束日期
+            startLd = endLd.plusDays(1);
+            endLd = endLd.plusMonths(1);
+        }
     }
 
     /**
