@@ -62,6 +62,12 @@ public class CommonService {
                         // 是周末的调休日，需要计算到工作天数中
                         workdays = workdays.add(leaveTime(start, leaveList));
                     }
+                } else if (start.getYear() == 2025) {
+                    //  如果当天是周末，判断是否是调休的工作日
+                    if (HolidayConstants.workday2025.contains(todayStr)) {
+                        // 是周末的调休日，需要计算到工作天数中
+                        workdays = workdays.add(leaveTime(start, leaveList));
+                    }
                 }
             } else {
                 if (start.getYear() == 2023) {
@@ -74,6 +80,13 @@ public class CommonService {
                 } else if (start.getYear() == 2024) {
                     // 非周末，判断是否是公休
                     if (!HolidayConstants.holiday2024.contains(todayStr)) {
+                        // 不是公休，需要计算到工作天数中
+                        // 判断是否有请假
+                        workdays = workdays.add(leaveTime(start, leaveList));
+                    }
+                } else if (start.getYear() == 2025) {
+                    // 非周末，判断是否是公休
+                    if (!HolidayConstants.holiday2025.contains(todayStr)) {
                         // 不是公休，需要计算到工作天数中
                         // 判断是否有请假
                         workdays = workdays.add(leaveTime(start, leaveList));
