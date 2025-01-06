@@ -16,6 +16,15 @@ import java.util.List;
 @Repository
 public interface SuccessfulPermRepository extends PagingAndSortingRepository<SuccessfulPerm, Integer>, JpaSpecificationExecutor<SuccessfulPerm> {
     /**
+     * 通过候选人Id和入职日期查询
+     *
+     * @param candidateId
+     * @param onBoardDate
+     * @return
+     */
+    List<SuccessfulPerm> findByCandidateIdAndOnBoardDate(Integer candidateId, Date onBoardDate);
+
+    /**
      * 通过审批状态和实际付款日期查询
      *
      * @return

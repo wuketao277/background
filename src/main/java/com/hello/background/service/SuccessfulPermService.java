@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +52,49 @@ public class SuccessfulPermService {
     private CandidateRepository candidateRepository;
     @Autowired
     private UserRepository userRepository;
+
+    /**
+     * 生成下一个case
+     *
+     * @param preId
+     */
+    public GenNextContractingResponse genNextContracting(Integer preId) {
+        GenNextContractingResponse response = new GenNextContractingResponse();
+        // 先查询上一个成功case
+        Optional<SuccessfulPerm> optional = successfulPermRepository.findById(preId);
+        if (optional.isPresent()) {
+            //  生成本月1号的日期
+            Date date1 = DateTimeUtil.localDate2Date(LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1).plusDays(1));
+            SuccessfulPerm preSuccessfulPerm = optional.get();
+            // 通过候选人id和入职日期查询是否已经存在成功case
+            if (!successfulPermRepository.findByCandidateIdAndOnBoardDate(preSuccessfulPerm.getCandidateId(), date1).isEmpty()) {
+                response.setSuccess(false);
+                response.setMsg("该候选人当月已经生成成功case，请勿重复生成");
+                return response;
+            }
+            // 将原来的成功case，改成新的
+            SuccessfulPerm successfulPerm = new SuccessfulPerm();
+            BeanUtils.copyProperties(preSuccessfulPerm, successfulPerm);
+            successfulPerm.setId(null);
+            successfulPerm.setApproveStatus("applied");
+            successfulPerm.setOfferDate(date1);
+            successfulPerm.setOnBoardDate(date1);
+            successfulPerm.setGuaranteeDate(null);
+            successfulPerm.setInvoiceDate(null);
+            successfulPerm.setInvoiceNo(null);
+            successfulPerm.setPaymentDate(null);
+            successfulPerm.setActualPaymentDate(null);
+            successfulPerm.setCommissionDate(null);
+            successfulPerm.setPo(null);
+            // 保存新的成功case
+            successfulPerm = successfulPermRepository.save(successfulPerm);
+            if (successfulPerm.getId() != null) {
+                response.setSuccess(true);
+                response.setMsg(null);
+            }
+        }
+        return response;
+    }
 
     /**
      * 保存

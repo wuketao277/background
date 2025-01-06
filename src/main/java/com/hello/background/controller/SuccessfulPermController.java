@@ -31,6 +31,16 @@ public class SuccessfulPermController {
     private CandidateForCaseService candidateForCaseService;
 
     /**
+     * 生成下一个成功case
+     *
+     * @param preId 上一个case的id
+     */
+    @GetMapping("genNextContracting")
+    public GenNextContractingResponse genNextContracting(@RequestParam("preId") Integer preId) {
+        return successfulPermService.genNextContracting(preId);
+    }
+
+    /**
      * 保存
      *
      * @param vo
