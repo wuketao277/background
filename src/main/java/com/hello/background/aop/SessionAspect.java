@@ -37,7 +37,7 @@ public class SessionAspect {
         String classMethodName = className + "." + methodName;
         boolean loginFlag = false;
         List<String> excludeURLList = Arrays.asList("SecurityController.login", "SecurityController.checkLogin"
-                , "SecurityController.checkVersion", "UserController.findSelf");
+                , "SecurityController.checkVersion", "UserController.findSelf", "CommentController.downloadInterviews");
         if (!excludeURLList.contains(classMethodName)) {
             // 检查是否有登陆
             loginFlag = Optional.ofNullable((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())

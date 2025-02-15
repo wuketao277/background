@@ -10,6 +10,7 @@ import com.hello.background.domain.KPI;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.CaseRepository;
 import com.hello.background.repository.CommentRepository;
+import com.hello.background.utils.DateTimeUtil;
 import com.hello.background.utils.EasyExcelUtil;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.*;
@@ -28,6 +29,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -665,5 +667,39 @@ public class CommentService {
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
                 all.getTotalElements());
         return map;
+    }
+
+    /**
+     * 下载所有面试
+     *
+     * @return
+     */
+    public void downloadInterviews(String loginName, String clientName, String title, String startDate, String endDate, String phase, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
+        QueryInterviewSearchRequest search = new QueryInterviewSearchRequest();
+        search.setLoginName(loginName);
+        search.setClientName(clientName);
+        search.setTitle(title);
+        if (Strings.isNotBlank(startDate)) {
+            search.setStartDate(LocalDate.parse(startDate));
+        }
+        if (Strings.isNotBlank(endDate)) {
+            search.setEndDate(LocalDate.parse(endDate));
+        }
+        search.setPhase(phase);
+        Page<InterviewVO> interviewList = queryInterviewPage(search, currentPage, pageSize);
+        List<InterviewDownloadVO> downloadList = interviewList.stream().map(i -> {
+            InterviewDownloadVO downloadVO = TransferUtil.transferTo(i, InterviewDownloadVO.class);
+            if (null != i.getInterviewTime()) {
+                downloadVO.setInterviewTime(DateTimeUtil.localDate2Date(i.getInterviewTime().toLocalDate()));
+                downloadVO.setInterviewTimeStr(String.format("%d年%d月%d日", i.getInterviewTime().getYear(), i.getInterviewTime().getMonthValue(), i.getInterviewTime().getDayOfMonth()));
+            }
+            return downloadVO;
+        }).collect(Collectors.toList());
+        // 封装返回response
+        try {
+            EasyExcelUtil.downloadExcel(response, "面试记录", null, downloadList, InterviewDownloadVO.class);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
     }
 }

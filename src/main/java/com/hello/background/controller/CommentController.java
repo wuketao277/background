@@ -145,7 +145,6 @@ public class CommentController {
         return commentService.queryInterviewPlan(range, userVO);
     }
 
-
     /**
      * 面试分页查询
      *
@@ -154,5 +153,15 @@ public class CommentController {
     @PostMapping("queryInterviewPage")
     public Page<InterviewVO> queryInterviewPage(@RequestBody QueryInterviewRequest request) {
         return commentService.queryInterviewPage(request.getSearch(), request.getCurrentPage(), request.getPageSize());
+    }
+
+    /**
+     * 下载面试
+     *
+     * @return
+     */
+    @GetMapping("downloadInterviews")
+    public void downloadInterviews(@RequestParam(value = "loginName", required = false) String loginName, @RequestParam(value = "clientName", required = false) String clientName, @RequestParam(value = "title", required = false) String title, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate, @RequestParam(value = "phase", required = false) String phase, @RequestParam(value = "currentPage", required = false) Integer currentPage, @RequestParam(value = "pageSize", required = false) Integer pageSize, HttpSession session, HttpServletResponse response) {
+        commentService.downloadInterviews(loginName, clientName, title, startDate, endDate, phase, currentPage, pageSize, session, response);
     }
 }
