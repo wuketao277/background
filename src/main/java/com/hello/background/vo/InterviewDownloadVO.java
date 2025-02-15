@@ -101,4 +101,16 @@ public class InterviewDownloadVO {
      */
     @ExcelProperty(value = "content")
     private String content;
+
+    /**
+     * 录入时间
+     */
+    @ExcelProperty(value = "inputTime")
+    private Date inputTime;
+
+    /**
+     * 录入时间
+     */
+    @ExcelProperty(value = "inputTimeStr")
+    private String inputTimeStr;
 }

@@ -693,6 +693,10 @@ public class CommentService {
                 downloadVO.setInterviewTime(DateTimeUtil.localDate2Date(i.getInterviewTime().toLocalDate()));
                 downloadVO.setInterviewTimeStr(String.format("%d年%d月%d日", i.getInterviewTime().getYear(), i.getInterviewTime().getMonthValue(), i.getInterviewTime().getDayOfMonth()));
             }
+            if (null != i.getInputTime()) {
+                downloadVO.setInputTime(DateTimeUtil.localDate2Date(i.getInputTime().toLocalDate()));
+                downloadVO.setInputTimeStr(String.format("%d年%d月%d日", i.getInputTime().getYear(), i.getInputTime().getMonthValue(), i.getInputTime().getDayOfMonth()));
+            }
             return downloadVO;
         }).collect(Collectors.toList());
         // 封装返回response
