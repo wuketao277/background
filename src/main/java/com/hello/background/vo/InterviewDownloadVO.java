@@ -25,16 +25,46 @@ public class InterviewDownloadVO {
     private Integer id;
 
     /**
-     * 候选人id
+     * 客户公司名称
      */
-    @ExcelProperty(value = "candidateId")
-    private Integer candidateId;
+    @ExcelProperty(value = "客户公司名称")
+    private String clientName;
+
+    /**
+     * 职位名称
+     */
+    @ExcelProperty(value = "职位名称")
+    private String caseTitle;
 
     /**
      * 候选人姓名
      */
-    @ExcelProperty(value = "candidateName")
+    @ExcelProperty(value = "候选人姓名")
     private String candidateName;
+
+    /**
+     * 阶段
+     */
+    @ExcelProperty(value = "阶段")
+    private String phase;
+
+    /**
+     * 面试时间
+     */
+    @ExcelProperty(value = "面试时间")
+    private String interviewTimeStr;
+
+    /**
+     * 录入时间
+     */
+    @ExcelProperty(value = "录入时间")
+    private String inputTimeStr;
+
+    /**
+     * 内容
+     */
+    @ExcelProperty(value = "内容")
+    private String content;
 
     /**
      * 客户id
@@ -43,22 +73,16 @@ public class InterviewDownloadVO {
     private Integer clientId;
 
     /**
-     * 客户公司名称
-     */
-    @ExcelProperty(value = "clientName")
-    private String clientName;
-
-    /**
      * 职位id
      */
     @ExcelProperty(value = "caseId")
     private Integer caseId;
-
+    
     /**
-     * 职位名称
+     * 候选人id
      */
-    @ExcelProperty(value = "caseTitle")
-    private String caseTitle;
+    @ExcelProperty(value = "candidateId")
+    private Integer candidateId;
 
     /**
      * 录入人名称
@@ -73,12 +97,6 @@ public class InterviewDownloadVO {
     private String realname;
 
     /**
-     * 阶段
-     */
-    @ExcelProperty(value = "phase")
-    private String phase;
-
-    /**
      * 是否是终面
      */
     @ExcelProperty(value = "isFinal")
@@ -91,26 +109,8 @@ public class InterviewDownloadVO {
     private Date interviewTime;
 
     /**
-     * 面试时间
-     */
-    @ExcelProperty(value = "interviewTimeStr")
-    private String interviewTimeStr;
-
-    /**
-     * 内容
-     */
-    @ExcelProperty(value = "content")
-    private String content;
-
-    /**
      * 录入时间
      */
     @ExcelProperty(value = "inputTime")
     private Date inputTime;
-
-    /**
-     * 录入时间
-     */
-    @ExcelProperty(value = "inputTimeStr")
-    private String inputTimeStr;
 }
