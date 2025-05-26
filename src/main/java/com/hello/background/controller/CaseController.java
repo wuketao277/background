@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -98,9 +99,28 @@ public class CaseController {
      * @return
      */
     @GetMapping("queryAllCaseAttention")
-    public List<CaseAttention4ClientVO> queryAllCaseAttention(HttpSession session) {
+    public List<CaseAttention4ClientVO> queryAllCaseAttention(@RequestParam boolean onlyShowMyselfCandidate, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
-        return caseAttentionService.queryAllCaseAttention(userVO);
+        List<CaseAttention4ClientVO> caseAttention4ClientVOS = caseAttentionService.queryAllCaseAttention(userVO);
+        if (onlyShowMyselfCandidate) {
+            // 如果勾选了只关注自己的候选人复选框，就要把其他人的候选人排除
+            Iterator<CaseAttention4ClientVO> caseAttention4ClientVOIterator = caseAttention4ClientVOS.iterator();
+            while (caseAttention4ClientVOIterator.hasNext()) {
+                CaseAttention4ClientVO caseAttention4ClientVO = caseAttention4ClientVOIterator.next();
+                Iterator<CaseAttention4CaseVO> caseAttention4CaseVOIterator = caseAttention4ClientVO.getCaseList().iterator();
+                while (caseAttention4CaseVOIterator.hasNext()) {
+                    CaseAttention4CaseVO caseAttention4CaseVO = caseAttention4CaseVOIterator.next();
+                    Iterator<CaseAttention4CandidateVO> caseAttention4CandidateVOIterator = caseAttention4CaseVO.getCandidateList().iterator();
+                    while (caseAttention4CandidateVOIterator.hasNext()) {
+                        CaseAttention4CandidateVO caseAttention4CandidateVO = caseAttention4CandidateVOIterator.next();
+                        if (!caseAttention4CandidateVO.getLatestCommentUsername().equals(userVO.getUsername())) {
+                            caseAttention4CandidateVOIterator.remove();
+                        }
+                    }
+                }
+            }
+        }
+        return caseAttention4ClientVOS;
     }
 
     /**
