@@ -120,7 +120,7 @@ public class Candidate {
     /**
      * 公司名称
      */
-    @Column(length = 2000)
+    @Column(length = 4000)
     private String companyName;
 
     /**
