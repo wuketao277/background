@@ -1,6 +1,7 @@
 package com.hello.background.service;
 
 import com.hello.background.common.CommonUtils;
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.KPIStandardConstants;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.Candidate;
@@ -527,7 +528,14 @@ public class CommentService {
             // 通过公司、职位、候选人、第几轮、时间 来去重。
             List<InterviewPlanVO> subList = list.stream().filter(x -> x.getClientId().equals(vo.getClientId()) && x.getCaseId().equals(vo.getCaseId()) && x.getCandidateId().equals(vo.getCandidateId()) && x.getPhase().equals(vo.getPhase()) && x.getInterviewTime().equals(vo.getInterviewTime())).collect(Collectors.toList());
             if (subList.size() == 0) {
-                list.add(vo);
+                if (userVO.getJobType().compareTo(JobTypeEnum.PARTTIME) == 0) {
+                    // 如果是兼职，就只显示当前用户的面试安排
+                    if (c.getUsername().equals(userVO.getUsername())) {
+                        list.add(vo);
+                    }
+                } else {
+                    list.add(vo);
+                }
             } else {
                 InterviewPlanVO interviewPlanVO = subList.get(0);
                 interviewPlanVO.setUsername(interviewPlanVO.getUsername() + "&" + vo.getUsername());
