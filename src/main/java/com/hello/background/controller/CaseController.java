@@ -113,7 +113,7 @@ public class CaseController {
                     Iterator<CaseAttention4CandidateVO> caseAttention4CandidateVOIterator = caseAttention4CaseVO.getCandidateList().iterator();
                     while (caseAttention4CandidateVOIterator.hasNext()) {
                         CaseAttention4CandidateVO caseAttention4CandidateVO = caseAttention4CandidateVOIterator.next();
-                        if (!caseAttention4CandidateVO.getLatestCommentUsername().equals(userVO.getUsername())) {
+                        if (Strings.isBlank(caseAttention4CandidateVO.getLatestCommentUsername()) || !caseAttention4CandidateVO.getLatestCommentUsername().equals(userVO.getUsername())) {
                             caseAttention4CandidateVOIterator.remove();
                         }
                     }
