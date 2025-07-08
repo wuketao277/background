@@ -367,10 +367,13 @@ public class SuccessfulPermService {
                     Predicate equal19 = criteriaBuilder.equal(path19, user.getId());
                     Path<String> path20 = root.get("consultantId20");
                     Predicate equal20 = criteriaBuilder.equal(path20, user.getId());
+                    // 更新人数据可以查看
+                    Path<String> path21 = root.get("updateUserName");
+                    Predicate equal21 = criteriaBuilder.equal(path21, user.getUsername());
                     list.add(criteriaBuilder.or(equalbd, equalcw, equalLeaderId, equal, equal2, equal3, equal4, equal5
                             , equal6, equal7, equal8, equal9, equal10
                             , equal11, equal12, equal13, equal14, equal15
-                            , equal16, equal17, equal18, equal19, equal20));
+                            , equal16, equal17, equal18, equal19, equal20, equal21));
                 }
                 // 未付款
                 if (Optional.ofNullable(search).map(x -> x.getNonPayment()).orElse(false)) {
