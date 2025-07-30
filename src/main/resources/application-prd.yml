@@ -4,6 +4,10 @@ server:
     session:
       timeout: 600000
 spring:
+  # 配置临时文件存储位置。避免因为长时间未使用上传文件功能导致临时文件被删除
+  http:
+    multipart:
+      location: /var/tmp
   # 配置写数据库信息
   datasource:
     url: jdbc:mysql://rm-uf6rr8230awt5kuku.mysql.rds.aliyuncs.com:3306/hello?characterEncoding=utf8&useSSL=false
