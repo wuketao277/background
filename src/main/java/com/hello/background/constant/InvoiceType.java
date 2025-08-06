@@ -8,6 +8,7 @@ import java.math.BigDecimal;
  * @Description
  */
 public enum InvoiceType {
+    Z1(new BigDecimal(1), "1%专票"),
     Z3(new BigDecimal(3), "3%专票"),
     Z6(new BigDecimal(6), "6%专票"),
     P3(new BigDecimal(3), "3%普票"),
