@@ -440,6 +440,24 @@ public class SuccessfulPermService {
                     Predicate onBoardDatePathPredicate = criteriaBuilder.greaterThanOrEqualTo(onBoardDatePath, DateTimeUtil.getToday000());
                     list.add(criteriaBuilder.and(onBoardDatePathPredicate));
                 }
+                // 未开票的
+                if (Optional.ofNullable(search).map(x -> x.getNonInvoice()).orElse(false)) {
+                    // 开票日期字段为空
+                    Path<Date> invoiceDatePath = root.get("invoiceDate");
+                    Predicate invoiceDatePredicate = criteriaBuilder.isNull(invoiceDatePath);
+                    list.add(criteriaBuilder.and(invoiceDatePredicate));
+                }
+                // 开发票但是未付款
+                if (Optional.ofNullable(search).map(x -> x.getInvoicedAndNonPay()).orElse(false)) {
+                    // 开票日期字段不为空
+                    Path<Date> invoiceDatePath = root.get("invoiceDate");
+                    Predicate invoiceDatePredicate = criteriaBuilder.isNotNull(invoiceDatePath);
+                    list.add(criteriaBuilder.and(invoiceDatePredicate));
+                    // 且actualPaymentDate是空
+                    Path<Date> actualPaymentDatePath = root.get("actualPaymentDate");
+                    Predicate actualPaymentDatePredicate = criteriaBuilder.isNull(actualPaymentDatePath);
+                    list.add(criteriaBuilder.and(actualPaymentDatePredicate));
+                }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
             }

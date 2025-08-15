@@ -125,6 +125,14 @@ public class SuccessfulPermVOPageSearchRequest {
      */
     private Boolean guaranteePeriod;
     /**
+     * 未开发票
+     */
+    private Boolean nonInvoice;
+    /**
+     * 开发票但未付款
+     */
+    private Boolean invoicedAndNonPay;
+    /**
      * 岗位名称
      */
     private String title;
