@@ -45,8 +45,8 @@ public class Invoice {
     /**
      * 发票类型
      */
-    @Enumerated
-    private InvoiceType type;
+    @Enumerated(value = EnumType.STRING)
+    private InvoiceType invoiceType;
 
     /**
      * 客户Id

@@ -37,7 +37,7 @@ public class InvoiceVO {
     /**
      * 发票类型
      */
-    private InvoiceType type;
+    private InvoiceType invoiceType;
 
     /**
      * 客户Id
