@@ -51,7 +51,7 @@ public class InvoiceService {
      * @return
      */
     public Page<InvoiceVO> queryPage(InvoiceVOPageRequest request) {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate");
         Pageable pageable = new PageRequest(request.getCurrentPage() - 1, request.getPageSize(), sort);
         Specification<Invoice> specification = new Specification<Invoice>() {
             @Override

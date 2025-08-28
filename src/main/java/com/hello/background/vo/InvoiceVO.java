@@ -105,6 +105,11 @@ public class InvoiceVO {
     private Date receiveDate;
 
     /**
+     * 实际付款日期
+     */
+    private Date actualPaymentDate;
+
+    /**
      * 正常/作废
      */
     private Boolean status;

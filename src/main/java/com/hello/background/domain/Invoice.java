@@ -127,6 +127,12 @@ public class Invoice {
     private Date receiveDate;
 
     /**
+     * 实际付款日期
+     */
+    @Column
+    private Date actualPaymentDate;
+
+    /**
      * 正常/作废
      */
     @Column
