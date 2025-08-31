@@ -2,11 +2,16 @@ package com.hello.background.vo;
 
 import com.hello.background.constant.CaseStatusEnum;
 import com.hello.background.constant.JobTypeEnum;
+import com.hello.background.domain.ClientCase;
+import com.hello.background.utils.TransferUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -174,4 +179,36 @@ public class CaseVO {
      * 前任情况
      */
     private String predecessor;
+
+    /**
+     * 兼职
+     */
+    private List<String> parttimers = new ArrayList<>();
+
+    /**
+     * 通过domain对象转换vo对象
+     *
+     * @param clientCase
+     * @return
+     */
+    public static CaseVO fromCandidate(ClientCase clientCase) {
+        CaseVO vo = TransferUtil.transferTo(clientCase, CaseVO.class);
+        if (Strings.isNotBlank(clientCase.getParttimers())) {
+            vo.setParttimers(Arrays.asList(clientCase.getParttimers().split(",")));
+        }
+        return vo;
+    }
+
+    /**
+     * 通过vo对象转换domain对象
+     *
+     * @return
+     */
+    public ClientCase toClientCase() {
+        ClientCase clientCase = TransferUtil.transferTo(this, ClientCase.class);
+        if (null != this.getParttimers() && !this.getParttimers().isEmpty()) {
+            clientCase.setParttimers(Strings.join(this.getParttimers(), ','));
+        }
+        return clientCase;
+    }
 }

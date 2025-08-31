@@ -6,10 +6,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import com.hello.background.common.CommonUtils;
-import com.hello.background.constant.CandidateDoubleCheckEnum;
-import com.hello.background.constant.CandidateSearchQuickItemEnum;
-import com.hello.background.constant.EducationEnum;
-import com.hello.background.constant.SchoolConstant;
+import com.hello.background.constant.*;
 import com.hello.background.domain.Candidate;
 import com.hello.background.domain.CandidateAttention;
 import com.hello.background.domain.CandidateForCase;
@@ -76,10 +73,16 @@ public class CandidateService {
      * @param id 候选人主键
      * @return
      */
-    public CandidateVO findById(Integer id) {
+    public CandidateVO findById(Integer id, UserVO user) {
         Optional<Candidate> candidateOptional = candidateRepository.findById(id);
         if (candidateOptional.isPresent()) {
             Candidate candidate = candidateOptional.get();
+            // 如果当前用户为兼职，只能查询自己创建的候选人信息
+            if (JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
+                if (!candidate.getCreateUserId().equals(user.getId())) {
+                    return null;
+                }
+            }
             return CandidateVO.fromCandidate(candidate);
         }
         return null;
@@ -157,7 +160,7 @@ public class CandidateService {
      * @param pageSize    页尺寸
      * @return
      */
-    public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize) {
+    public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize, UserVO user) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
         List<String> searchWordList = CommonUtils.splitSearchWord(search);
         Specification<Candidate> specification = new Specification<Candidate>() {
@@ -182,6 +185,12 @@ public class CandidateService {
                             , getPredicate("createUserName", searchWord, root, criteriaBuilder)
                             , getPredicate("createRealName", searchWord, root, criteriaBuilder)
                     )));
+                }
+                // 如果当前用户是兼职用户，只能查看自己创建的候选人
+                if (JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
+                    Path<Integer> path = root.get("createUserId");
+                    Predicate equal = criteriaBuilder.equal(path, user.getId());
+                    list.add(equal);
                 }
                 Predicate[] p = new Predicate[list.size()];
                 return criteriaBuilder.and(list.toArray(p));
@@ -215,9 +224,39 @@ public class CandidateService {
      * @param search 搜索关键字
      * @return
      */
-    public List<CandidateVO> queryCandidate(String search) {
+    public List<CandidateVO> queryCandidate(String search, UserVO user) {
         // 首先搜索候选人信息
-        List<Candidate> candidateList = candidateRepository.findByChineseNameLikeOrEnglishNameLikeOrPhoneNoLikeOrEmailLikeOrCompanyNameLikeOrDepartmentLikeOrTitleLikeOrSchoolNameLikeOrCurrentAddressLikeOrFutureAddressLikeOrRemarkLikeOrderByIdDesc(search, search, search, search, search, search, search, search, search, search, search);
+        List<Candidate> candidateList = candidateRepository.findAll(new Specification<Candidate>() {
+            @Override
+            public Predicate toPredicate(Root<Candidate> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                list.add(criteriaBuilder.and(criteriaBuilder.or(
+                        getPredicate("chineseName", search, root, criteriaBuilder)
+                        , getPredicate("englishName", search, root, criteriaBuilder)
+                        , getPredicate("phoneNo", search, root, criteriaBuilder)
+                        , getPredicate("email", search, root, criteriaBuilder)
+                        , getPredicate("hometown", search, root, criteriaBuilder)
+                        , getPredicate("family", search, root, criteriaBuilder)
+                        , getPredicate("companyName", search, root, criteriaBuilder)
+                        , getPredicate("department", search, root, criteriaBuilder)
+                        , getPredicate("title", search, root, criteriaBuilder)
+                        , getPredicate("schoolName", search, root, criteriaBuilder)
+                        , getPredicate("currentAddress", search, root, criteriaBuilder)
+                        , getPredicate("futureAddress", search, root, criteriaBuilder)
+                        , getPredicate("remark", search, root, criteriaBuilder)
+                        , getPredicate("createUserName", search, root, criteriaBuilder)
+                        , getPredicate("createRealName", search, root, criteriaBuilder)
+                )));
+                // 如果当前用户是兼职用户，只能查看自己创建的候选人
+                if (JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
+                    Path<Integer> path = root.get("createUserId");
+                    Predicate equal = criteriaBuilder.equal(path, user.getId());
+                    list.add(equal);
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        });
         List<Integer> candidateIdList = candidateList.stream().map(x -> x.getId()).collect(Collectors.toList());
         // 在简历中搜索关键字
         Set<Integer> resumeCandidateIdSet = resumeService.findByContentLikeOrderByCandidateIdAscIdAsc(search).stream().map(x -> x.getCandidateId()).collect(Collectors.toSet());

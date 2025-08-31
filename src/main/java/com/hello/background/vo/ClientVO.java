@@ -6,8 +6,12 @@ import com.hello.background.utils.TransferUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 客户
@@ -106,6 +110,24 @@ public class ClientVO {
     private String invoiceRemark;
 
     /**
+     * 兼职
+     */
+    private List<String> parttimers = new ArrayList<>();
+
+    /**
+     * 通过vo对象转换domain对象
+     *
+     * @return
+     */
+    public Client toClient() {
+        Client client = TransferUtil.transferTo(this, Client.class);
+        if (null != this.getParttimers() && !this.getParttimers().isEmpty()) {
+            client.setParttimers(Strings.join(this.getParttimers(), ','));
+        }
+        return client;
+    }
+
+    /**
      * 通过客户基本信息和客户扩展信息
      *
      * @param client
@@ -113,6 +135,9 @@ public class ClientVO {
      */
     public ClientVO(Client client, ClientExt ext) {
         TransferUtil.transfer(client, this);
+        if (Strings.isNotBlank(client.getParttimers())) {
+            this.setParttimers(Arrays.asList(client.getParttimers().split(",")));
+        }
         TransferUtil.transfer(ext, this);
     }
 }

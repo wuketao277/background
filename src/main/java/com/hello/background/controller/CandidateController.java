@@ -94,8 +94,9 @@ public class CandidateController {
      * @return 候选人信息
      */
     @GetMapping("findById")
-    public CandidateVO findById(@RequestParam Integer id) {
-        return candidateService.findById(id);
+    public CandidateVO findById(@RequestParam Integer id, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return candidateService.findById(id, userVO);
     }
 
     /**
@@ -119,8 +120,9 @@ public class CandidateController {
      * @return
      */
     @GetMapping("queryCandidatePage")
-    public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize) {
-        return candidateService.queryCandidatePage(search, currentPage, pageSize);
+    public Page<CandidateVO> queryCandidatePage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return candidateService.queryCandidatePage(search, currentPage, pageSize, userVO);
     }
 
     /**
@@ -140,9 +142,9 @@ public class CandidateController {
      * @return
      */
     @GetMapping("queryCandidate")
-    public List<CandidateVO> queryCandidate(@NotEmpty String search) {
-        search = "%" + search + "%";
-        return candidateService.queryCandidate(search);
+    public List<CandidateVO> queryCandidate(@NotEmpty String search, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return candidateService.queryCandidate(search, userVO);
     }
 
     /**

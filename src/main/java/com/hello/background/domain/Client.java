@@ -84,4 +84,10 @@ public class Client {
      */
     @Column(length = 50)
     private String createUserName;
+
+    /**
+     * 兼职成员
+     */
+    @Column(length = 500)
+    private String parttimers;
 }

@@ -52,7 +52,7 @@ public class SuccessfulPermController {
         vo.setUpdateTime(new Date());
         vo.setUpdateUserName(user.getUsername());
         if (!StringUtils.isEmpty(vo.getClientId())) {
-            vo.setClientName(Optional.ofNullable(clientService.queryById(vo.getClientId())).map(x -> x.getChineseName()).orElse(""));
+            vo.setClientName(Optional.ofNullable(clientService.queryById(vo.getClientId(), user)).map(x -> x.getChineseName()).orElse(""));
         }
         SuccessfulPermVO successfulPermVO = successfulPermService.save(vo);
         // 更新候选人关联职位最新阶段

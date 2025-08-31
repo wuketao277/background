@@ -1,5 +1,6 @@
 package com.hello.background.controller;
 
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.UserService;
 import com.hello.background.vo.SaveUserBasicInfoResponse;
@@ -201,5 +202,17 @@ public class UserController {
         // 获取当前用户
         UserVO user = (UserVO) session.getAttribute("user");
         return user.getRoles().stream().map(r -> r.name()).collect(Collectors.toList()).contains(role);
+    }
+
+    /**
+     * 获取所有正常状态的兼职用户名
+     *
+     * @return
+     */
+    @GetMapping("getAllEnabledParttimerUserName")
+    public List<String> getAllEnabledParttimerUserName() {
+        return userService.findAll().stream().filter(u -> {
+            return u.getEnabled() && JobTypeEnum.PARTTIME.compareTo(u.getJobType()) == 0;
+        }).map(u -> u.getUsername()).collect(Collectors.toList());
     }
 }

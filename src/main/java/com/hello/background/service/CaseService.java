@@ -7,7 +7,6 @@ import com.hello.background.domain.CaseAttention;
 import com.hello.background.domain.Client;
 import com.hello.background.domain.ClientCase;
 import com.hello.background.repository.*;
-import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CaseQueryPageRequest;
 import com.hello.background.vo.CaseVO;
 import com.hello.background.vo.UserVO;
@@ -23,6 +22,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,17 +53,19 @@ public class CaseService {
      * @param id
      * @return
      */
-    public CaseVO findById(Integer id) {
+    public CaseVO findById(Integer id, UserVO user) {
         Optional<ClientCase> clientCaseOptional = caseRepository.findById(id);
         if (!clientCaseOptional.isPresent()) {
             return null;
         }
-        return TransferUtil.transferTo(clientCaseOptional.get(), CaseVO.class);
-    }
-
-    private CaseVO fromDoToVo(ClientCase clientCase) {
-        CaseVO vo = TransferUtil.transferTo(clientCase, CaseVO.class);
-        return vo;
+        CaseVO caseVO = CaseVO.fromCandidate(clientCaseOptional.get());
+        // 兼职用户，只能查看指定的岗位信息
+        if (user != null && JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
+            if (caseVO.getParttimers().isEmpty() || !caseVO.getParttimers().contains(user.getUsername())) {
+                return null;
+            }
+        }
+        return caseVO;
     }
 
     /**
@@ -73,10 +75,10 @@ public class CaseService {
      * @return
      */
     public CaseVO save(CaseVO vo) {
-        ClientCase c = TransferUtil.transferTo(vo, ClientCase.class);
-        Optional<Client> clientOptional = clientRepository.findById(c.getClientId());
-        c.setClientChineseName(clientOptional.get().getChineseName());
-        c = caseRepository.save(c);
+        ClientCase clientCase = vo.toClientCase();
+        Optional<Client> clientOptional = clientRepository.findById(clientCase.getClientId());
+        clientCase.setClientChineseName(clientOptional.get().getChineseName());
+        clientCase = caseRepository.save(clientCase);
         // 更新关联数据中的名称缓存
         if (null != vo.getId()) {
             // 更新关注职位
@@ -96,7 +98,7 @@ public class CaseService {
                 }
             });
         }
-        return fromDoToVo(c);
+        return CaseVO.fromCandidate(clientCase);
     }
 
     /**
@@ -104,12 +106,17 @@ public class CaseService {
      *
      * @return
      */
-    public Page<CaseVO> queryPage(CaseQueryPageRequest request, UserVO userVO) {
+    public Page<CaseVO> queryPage(CaseQueryPageRequest request, UserVO user) {
         Page<CaseVO> map = null;
         // 判断当前用户是否是体验用户
-        boolean isExperience = userVO.getJobType().equals(JobTypeEnum.EXPERIENCE);
+        boolean isExperience = user.getJobType().equals(JobTypeEnum.EXPERIENCE);
         if (isExperience) {
-            List<CaseVO> all = caseRepository.findAll().stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).map(x -> fromDoToVo(x)).collect(Collectors.toList());
+            List<CaseVO> all = caseRepository.findAll(new Specification<ClientCase>() {
+                @Override
+                public Predicate toPredicate(Root<ClientCase> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    return null;
+                }
+            }).stream().filter(c -> null != c.getShow4JobType() && c.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)).map(CaseVO::fromCandidate).collect(Collectors.toList());
             map = new PageImpl<>(all,
                     new PageRequest(0, all.size()),
                     all.size());
@@ -137,12 +144,16 @@ public class CaseService {
 //                            list.add(criteriaBuilder.(root.get("show4JobType"), "EXPERIENCE"));
 //                        }
                     }
+                    // 兼职用户，只能查看指定的岗位信息
+                    if (user != null && JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
+                        list.add(criteriaBuilder.like(root.get("parttimers"), "%" + user.getUsername() + "%"));
+                    }
                     Predicate[] p = new Predicate[list.size()];
                     return criteriaBuilder.and(list.toArray(p));
                 }
             };
             Page<ClientCase> all = caseRepository.findAll(specification, pageable);
-            map = all.map(x -> fromDoToVo(x));
+            map = all.map(x -> CaseVO.fromCandidate(x));
             // 通过是否是体验用户，觉得返回内容和总元素数
             List<CaseVO> content = map.getContent();
             map = new PageImpl<>(content,
@@ -160,7 +171,7 @@ public class CaseService {
      */
     public List<CaseVO> query(String search) {
         List<ClientCase> caseList = caseRepository.findByTitleLikeOrDescriptionLikeOrderByIdDesc(search, search);
-        return caseList.stream().map(x -> fromDoToVo(x)).collect(Collectors.toList());
+        return caseList.stream().map(x -> CaseVO.fromCandidate(x)).collect(Collectors.toList());
     }
 
     /**
@@ -172,7 +183,7 @@ public class CaseService {
      */
     public List<CaseVO> queryByTitleAndStatus(String title, CaseStatusEnum status) {
         List<ClientCase> caseList = caseRepository.findByTitleLikeAndStatusOrderByIdDesc(title, status);
-        return caseList.stream().map(x -> fromDoToVo(x)).collect(Collectors.toList());
+        return caseList.stream().map(x -> CaseVO.fromCandidate(x)).collect(Collectors.toList());
     }
 
     /**
@@ -183,7 +194,7 @@ public class CaseService {
      */
     public List<CaseVO> queryByTitle(String title) {
         List<ClientCase> caseList = caseRepository.findByTitleLikeOrderByIdDesc(title);
-        return caseList.stream().map(x -> fromDoToVo(x)).collect(Collectors.toList());
+        return caseList.stream().map(x -> CaseVO.fromCandidate(x)).collect(Collectors.toList());
     }
 
     /**
@@ -213,8 +224,9 @@ public class CaseService {
      */
     public void clearExperience() {
         // 遍历所有职位，找到有体验选项的职位进行更新
-        List<ClientCase> allCaseList = caseRepository.findAll();
-        for (ClientCase cc : allCaseList) {
+        Iterator<ClientCase> iterator = caseRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            ClientCase cc = iterator.next();
             if (null != cc.getShow4JobType() && cc.getShow4JobType().contains(JobTypeEnum.EXPERIENCE)) {
                 cc.getShow4JobType().remove(JobTypeEnum.EXPERIENCE);
                 caseRepository.save(cc);

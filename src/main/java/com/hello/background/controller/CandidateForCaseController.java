@@ -63,7 +63,7 @@ public class CandidateForCaseController {
         vo.setStatus(CandidateForCaseStatusEnum.PREPARE.getCode());
         // 通过候选人id获取候选人信息
         Integer candidateId = vo.getCandidateId();
-        CandidateVO candidateVO = candidateService.findById(candidateId);
+        CandidateVO candidateVO = candidateService.findById(candidateId, userVO);
         if (null != candidateVO) {
             vo.setChineseName(candidateVO.getChineseName());
             vo.setEnglishName(candidateVO.getEnglishName());
@@ -96,12 +96,12 @@ public class CandidateForCaseController {
             UserVO userVO = (UserVO) session.getAttribute("user");
             CandidateForCaseVO candidateForCaseVO = new CandidateForCaseVO();
             // 获取候选人信息
-            CandidateVO candidateVO = candidateService.findById(vo.getCandidateId());
+            CandidateVO candidateVO = candidateService.findById(vo.getCandidateId(), userVO);
             candidateForCaseVO.setCandidateId(candidateVO.getId());
             candidateForCaseVO.setChineseName(candidateVO.getChineseName());
             candidateForCaseVO.setEnglishName(candidateVO.getEnglishName());
             // 获取职位信息
-            CaseVO caseVO = caseService.findById(vo.getCaseId());
+            CaseVO caseVO = caseService.findById(vo.getCaseId(), userVO);
             candidateForCaseVO.setCaseId(caseVO.getId());
             candidateForCaseVO.setClientId(caseVO.getClientId());
             candidateForCaseVO.setTitle(caseVO.getTitle());

@@ -164,7 +164,7 @@ public class CandidateForCaseService {
 
     private List<CandidateForCaseVO> convertToVOList(List<CandidateForCase> candidateForCaseList) {
         List<CandidateForCaseVO> candidateForCaseVOList = candidateForCaseList.stream().map(x -> TransferUtil.transferTo(x, CandidateForCaseVO.class)).collect(Collectors.toList());
-        List<ClientVO> clientVOList = clientService.findAll();
+        List<ClientVO> clientVOList = clientService.findAll(null);
         candidateForCaseVOList.forEach(cc -> {
             Optional<ClientVO> firstClientVOOptional = clientVOList.stream().filter(clientVO -> clientVO.getId().equals(cc.getClientId())).findFirst();
             if (firstClientVOOptional.isPresent()) {

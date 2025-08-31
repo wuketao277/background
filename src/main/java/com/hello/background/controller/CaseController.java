@@ -75,8 +75,9 @@ public class CaseController {
      * @return
      */
     @GetMapping("queryById")
-    public CaseVO queryById(Integer id) {
-        return caseService.findById(id);
+    public CaseVO queryById(Integer id, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return caseService.findById(id, userVO);
     }
 
     /**

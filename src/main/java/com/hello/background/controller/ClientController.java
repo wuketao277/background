@@ -51,9 +51,10 @@ public class ClientController {
      * @return
      */
     @GetMapping("queryPage")
-    public Page<ClientVO> queryPage(String search, Integer currentPage, Integer pageSize) {
+    public Page<ClientVO> queryPage(String search, Integer currentPage, Integer pageSize, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
         search = "%" + search + "%";
-        return clientService.queryPage(search, currentPage, pageSize);
+        return clientService.queryPage(search, currentPage, pageSize, user);
     }
 
     /**
@@ -63,8 +64,9 @@ public class ClientController {
      * @return 客户
      */
     @GetMapping("queryById")
-    public ClientVO queryById(Integer id) {
-        return clientService.queryById(id);
+    public ClientVO queryById(Integer id, HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        return clientService.queryById(id, user);
     }
 
     /**
@@ -73,8 +75,9 @@ public class ClientController {
      * @return
      */
     @GetMapping("findAll")
-    public List<ClientVO> findAll() {
-        return clientService.findAll();
+    public List<ClientVO> findAll(HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        return clientService.findAll(user);
     }
 
     /**
@@ -83,8 +86,9 @@ public class ClientController {
      * @return
      */
     @GetMapping("findAllOrderByChineseName")
-    public List<ClientVO> findAllOrderByChineseName() {
-        return clientService.findAllOrderByChineseName();
+    public List<ClientVO> findAllOrderByChineseName(HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        return clientService.findAllOrderByChineseName(user);
     }
 
     /**

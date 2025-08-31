@@ -3,7 +3,8 @@ package com.hello.background.repository;
 import com.hello.background.domain.Client;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * @Description
  */
 @Repository
-public interface ClientRepository extends JpaRepository<Client, Integer> {
+public interface ClientRepository extends PagingAndSortingRepository<Client, Integer>, JpaSpecificationExecutor<Client> {
 
     Page<Client> findByEnglishNameLikeOrChineseNameLike(String englishName, String chineseName, Pageable pageable);
 

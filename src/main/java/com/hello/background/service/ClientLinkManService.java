@@ -10,9 +10,14 @@ import com.hello.background.vo.ClientLinkManSimpleVO;
 import com.hello.background.vo.ClientLinkManVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,7 +99,12 @@ public class ClientLinkManService {
         List<ClientLinkMan> list = clientLinkManRepository.findAll(sort);
         List<ClientLinkManVO> clientLinkManVOList = list.stream().map(c -> TransferUtil.transferTo(c, ClientLinkManVO.class)).collect(Collectors.toList());
         // 获取全部客户信息
-        List<Client> clientList = clientRepository.findAll();
+        List<Client> clientList = clientRepository.findAll(new Specification<Client>() {
+            @Override
+            public Predicate toPredicate(Root<Client> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                return null;
+            }
+        });
         // 每个hr添加客户名称
         clientLinkManVOList.forEach(m -> {
             if (null != m.getClientId()) {

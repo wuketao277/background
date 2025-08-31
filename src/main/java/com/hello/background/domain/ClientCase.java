@@ -212,4 +212,10 @@ public class ClientCase {
      */
     @Column(length = 800)
     private String predecessor;
+
+    /**
+     * 兼职配置
+     */
+    @Column(length = 500)
+    private String parttimers;
 }
