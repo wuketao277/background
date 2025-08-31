@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.constant.CandidateForCaseStatusEnum;
+import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.CandidateForCase;
 import com.hello.background.service.CandidateForCaseService;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 候选人与职位关联表 控制器
@@ -147,10 +149,15 @@ public class CandidateForCaseController {
      * @return 职位推荐候选人信息
      */
     @GetMapping("findByCaseId")
-    public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId) {
+    public List<CandidateForCaseVO> findByCaseId(@RequestParam Integer caseId, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
         List<CandidateForCaseVO> voList = candidateForCaseService.findByCaseId(caseId);
         voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
         voList.sort(Comparator.comparing(CandidateForCaseVO::getAttention).reversed());
+        // 兼职只能看见自己的数据
+        if (JobTypeEnum.PARTTIME.compareTo(userVO.getJobType()) == 0) {
+            voList = voList.stream().filter(vo -> userVO.getUsername().equals(vo.getCreateUserName())).collect(Collectors.toList());
+        }
         return voList;
     }
 
@@ -161,9 +168,14 @@ public class CandidateForCaseController {
      * @return 职位推荐候选人信息
      */
     @GetMapping("findAttentionByCaseId")
-    public List<CandidateForCaseVO> findAttentionByCaseId(@RequestParam Integer caseId) {
+    public List<CandidateForCaseVO> findAttentionByCaseId(@RequestParam Integer caseId, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
         List<CandidateForCaseVO> voList = candidateForCaseService.findAttentionByCaseId(caseId);
         voList.sort(Comparator.comparing(CandidateForCaseVO::getCandidateId).reversed());
+        // 兼职只能看见自己的数据
+        if (JobTypeEnum.PARTTIME.compareTo(userVO.getJobType()) == 0) {
+            voList = voList.stream().filter(vo -> userVO.getUsername().equals(vo.getCreateUserName())).collect(Collectors.toList());
+        }
         return voList;
     }
 
@@ -174,8 +186,13 @@ public class CandidateForCaseController {
      * @return 职位推荐候选人信息
      */
     @GetMapping("findByCandidateId")
-    public List<CandidateForCaseVO> findByCandidateId(@RequestParam Integer candidateId) {
+    public List<CandidateForCaseVO> findByCandidateId(@RequestParam Integer candidateId, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
         List<CandidateForCaseVO> voList = candidateForCaseService.findByCandidateId(candidateId);
+        // 兼职只能看见自己的数据
+        if (JobTypeEnum.PARTTIME.compareTo(userVO.getJobType()) == 0) {
+            voList = voList.stream().filter(vo -> userVO.getUsername().equals(vo.getCreateUserName())).collect(Collectors.toList());
+        }
         return voList;
     }
 
