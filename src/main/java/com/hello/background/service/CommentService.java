@@ -495,7 +495,7 @@ public class CommentService {
     public List<InterviewPlanVO> queryInterviewPlan(String range, UserVO userVO) {
         List<InterviewPlanVO> list = new ArrayList<>();
         // 组装数据
-        List<String> phaseList = Arrays.asList("1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "5th Interview", "6th Interview", "Final Interview");
+        List<String> phaseList = Arrays.asList("1st Interview", "2nd Interview", "3rd Interview", "4th Interview", "5th Interview", "6th Interview", "Final Interview", "Cancel Interview");
         LocalDate ld = LocalDate.now();
         LocalDateTime ldt = LocalDateTime.of(ld.getYear(), ld.getMonthValue(), ld.getDayOfMonth(), 0, 0, 0);
         List<String> usernameList = userService.findByScope(range, userVO).stream().map(u -> u.getUsername()).collect(Collectors.toList());
