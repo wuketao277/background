@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 
 /**
  * 发票控制器
@@ -51,5 +52,15 @@ public class InvoiceController {
     @GetMapping("deleteById")
     public String deleteById(Integer id) {
         return invoiceService.deleteById(id);
+    }
+
+    /**
+     * 获取未付款金额
+     *
+     * @return
+     */
+    @GetMapping("getNoPaymentSum")
+    public BigDecimal getNoPaymentSum() {
+        return invoiceService.getNoPaymentSum();
     }
 }

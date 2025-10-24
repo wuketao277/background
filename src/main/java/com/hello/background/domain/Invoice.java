@@ -137,4 +137,10 @@ public class Invoice {
      */
     @Column
     private Boolean status;
+
+    /**
+     * 发票号码
+     */
+    @Column(length = 200)
+    private String invoiceNumber;
 }

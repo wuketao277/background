@@ -113,4 +113,9 @@ public class InvoiceVO {
      * 正常/作废
      */
     private Boolean status;
+
+    /**
+     * 发票号码
+     */
+    private String invoiceNumber;
 }

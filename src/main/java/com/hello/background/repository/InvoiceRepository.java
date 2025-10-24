@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 发票
  *
@@ -14,4 +16,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface InvoiceRepository extends PagingAndSortingRepository<Invoice, Integer>, JpaSpecificationExecutor<Invoice> {
+    /**
+     * 查询所有未付款的
+     *
+     * @return
+     */
+    List<Invoice> findByActualPaymentDateIsNull();
 }

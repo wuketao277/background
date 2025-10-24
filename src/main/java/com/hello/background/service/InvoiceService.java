@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,5 +120,14 @@ public class InvoiceService {
         } else {
             return "信息不存在！";
         }
+    }
+
+    /**
+     * 获取未付款金额
+     *
+     * @return
+     */
+    public BigDecimal getNoPaymentSum() {
+        return invoiceRepository.findByActualPaymentDateIsNull().stream().map(Invoice::getSum).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
