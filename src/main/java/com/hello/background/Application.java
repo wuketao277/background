@@ -24,7 +24,7 @@ public class Application {
     /**
      * 拆到db文件
      */
-    //    public static void main(String[] args) {
+//    public static void main(String[] args) {
     public void splitDBFile() {
         try {
             // 行号
@@ -43,7 +43,7 @@ public class Application {
                 if (null == context) {
                     // 如果已经读到文件结尾，就返回。
                     break;
-                } else if (context.endsWith(";")) {
+                } else if (context.endsWith(");")) {
                     // 如果读完一条完整sql就写入到新文件中
                     System.out.println(rowNo);
                     writeDataToFile(context, fileNo);
@@ -52,7 +52,7 @@ public class Application {
                     // 每次读取一行数据，行号自动加一
                     rowNo++;
                     // 控制一个新文件中存储的内容不要太多
-                    if (rowNo > 10000) {
+                    if (rowNo > 50000) {
                         rowNo = 1;
                         fileNo++;
                     }
