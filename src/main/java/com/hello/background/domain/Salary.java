@@ -109,6 +109,6 @@ public class Salary {
     /**
      * 描述
      */
-    @Column(length = 2000)
+    @Column(length = 4000)
     private String description;
 }
