@@ -50,9 +50,11 @@ public class ReimbursementController {
                                                @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
                                                @RequestParam(value = "sum", required = false) String sum,
                                                @RequestParam(value = "description", required = false) String description,
+                                               @RequestParam(value = "paymentMonthStart", required = false) String paymentMonthStart,
+                                               @RequestParam(value = "paymentMonthEnd", required = false) String paymentMonthEnd,
                                                @RequestParam("currentPage") Integer currentPage,
                                                @RequestParam("pageSize") Integer pageSize, HttpSession session) {
-        return reimbursementServise.queryPage(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
+        return reimbursementServise.queryPage(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, paymentMonthStart, paymentMonthEnd, currentPage, pageSize, session);
     }
 
     /**
@@ -73,10 +75,12 @@ public class ReimbursementController {
                                           @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
                                           @RequestParam(value = "sum", required = false) String sum,
                                           @RequestParam(value = "description", required = false) String description,
+                                          @RequestParam(value = "paymentMonth", required = false) String paymentMonthStart,
+                                          @RequestParam(value = "paymentMonth", required = false) String paymentMonthEnd,
                                           @RequestParam("currentPage") Integer currentPage,
                                           @RequestParam("pageSize") Integer pageSize,
                                           HttpSession session, HttpServletResponse response) {
-        reimbursementServise.downloadReimbursementItem(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session, response);
+        reimbursementServise.downloadReimbursementItem(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, paymentMonthStart, paymentMonthEnd, currentPage, pageSize, session, response);
     }
 
     /**

@@ -104,7 +104,7 @@ public class ReimbursementServise {
      */
     private Page<ReimbursementItem> queryPageData(String userName, String approveStatus, String needPay, String date,
                                                   String location, String company, String paymentMonth, String type,
-                                                  String kind, String invoiceNo, String sum, String description,
+                                                  String kind, String invoiceNo, String sum, String description, String paymentMonthStart, String paymentMonthEnd,
                                                   Integer currentPage, Integer pageSize, HttpSession session) {
         UserVO userVO = (UserVO) session.getAttribute("user");
         User user = userRepository.findByUsername(userVO.getUsername());
@@ -133,6 +133,12 @@ public class ReimbursementServise {
                 }
                 if (Strings.isNotBlank(paymentMonth)) {
                     list.add(criteriaBuilder.equal(root.get("paymentMonth"), paymentMonth));
+                }
+                if (Strings.isNotBlank(paymentMonthStart)) {
+                    list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("paymentMonth"), paymentMonthStart));
+                }
+                if (Strings.isNotBlank(paymentMonthEnd)) {
+                    list.add(criteriaBuilder.lessThanOrEqualTo(root.get("paymentMonth"), paymentMonthEnd));
                 }
 
                 if (Strings.isNotBlank(type)) {
@@ -179,8 +185,8 @@ public class ReimbursementServise {
      */
     public ReimbursementItemPageInfo queryPage(String userName, String approveStatus, String needPay, String date,
                                                String location, String company, String paymentMonth, String type,
-                                               String kind, String invoiceNo, String sum, String description, Integer currentPage, Integer pageSize, HttpSession session) {
-        Page<ReimbursementItem> all = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
+                                               String kind, String invoiceNo, String sum, String description, String paymentMonthStart, String paymentMonthEnd, Integer currentPage, Integer pageSize, HttpSession session) {
+        Page<ReimbursementItem> all = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, paymentMonthStart, paymentMonthEnd, currentPage, pageSize, session);
         ReimbursementItemPageInfo pageInfo = new ReimbursementItemPageInfo();
         pageInfo.setPage(new PageImpl<>(all.getContent().stream().map(x -> TransferUtil.transferTo(x, ReimbursementItemVO.class)).collect(Collectors.toList()), new PageRequest(all.getPageable().getPageNumber(), all.getPageable().getPageSize()), all.getTotalElements()));
         all.stream().forEach(r -> {
@@ -203,8 +209,8 @@ public class ReimbursementServise {
      */
     public void downloadReimbursementItem(String userName, String approveStatus, String needPay, String date,
                                           String location, String company, String paymentMonth, String type,
-                                          String kind, String invoiceNo, String sum, String description, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
-        Page<ReimbursementItem> page = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, currentPage, pageSize, session);
+                                          String kind, String invoiceNo, String sum, String description, String paymentMonthStart, String paymentMonthEnd, Integer currentPage, Integer pageSize, HttpSession session, HttpServletResponse response) {
+        Page<ReimbursementItem> page = queryPageData(userName, approveStatus, needPay, date, location, company, paymentMonth, type, kind, invoiceNo, sum, description, paymentMonthStart, paymentMonthEnd, currentPage, pageSize, session);
         // 封装返回response
         try {
             EasyExcelUtil.downloadExcel(response, "报销项详情", null, page.getContent().stream().map(r -> new ReimbursementItemVODownload(r)).collect(Collectors.toList()), ReimbursementItemVODownload.class);
