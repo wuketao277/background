@@ -136,4 +136,8 @@ public class SuccessfulPermVOPageSearchRequest {
      * 岗位名称
      */
     private String title;
+    /**
+     * 备注
+     */
+    private String comment;
 }
