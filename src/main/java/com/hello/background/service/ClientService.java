@@ -58,7 +58,8 @@ public class ClientService {
             @Override
             public Predicate toPredicate(Root<Client> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                list.add(criteriaBuilder.and(criteriaBuilder.or(getPredicate("chineseName", search, root, criteriaBuilder))));
+                list.add(criteriaBuilder.and(criteriaBuilder.or(getPredicate("chineseName", search, root, criteriaBuilder)
+                        , getPredicate("englishName", search, root, criteriaBuilder))));
                 // 兼职用户，只能查看指定的客户信息
                 if (user != null && JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
                     list.add(criteriaBuilder.and(getPredicate("parttimers", user.getUsername(), root, criteriaBuilder)));
