@@ -643,4 +643,10 @@ public class SuccessfulPermVO implements Serializable {
      */
     @ExcelProperty(value = "type")
     private String type;
+
+    /**
+     * 候选人年龄
+     */
+    @ExcelProperty(value = "candidateAge")
+    private Integer candidateAge;
 }

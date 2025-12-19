@@ -153,7 +153,7 @@ public class SalaryController {
 
             }
             // 通过billing计算gp
-            gp = billingToGp(billing);
+            gp = billingToGp(billing, clientId);
         }
         ArrayList<BigDecimal> list = new ArrayList<>();
         list.add(billing.setScale(2, RoundingMode.DOWN));
@@ -168,9 +168,14 @@ public class SalaryController {
      * @return
      */
     @GetMapping("billingToGp")
-    public BigDecimal billingToGp(@RequestParam("billing") BigDecimal billing) {
+    public BigDecimal billingToGp(@RequestParam("billing") BigDecimal billing, @RequestParam("clientId") Integer clientId) {
         // 首先计算增值税
-        BigDecimal vat = billing.multiply(new BigDecimal(0.06)).setScale(2, RoundingMode.DOWN);
+        double rate = 0.06;
+        if (712827 == clientId) {
+            // 712827  环浔
+            rate = 0.01;
+        }
+        BigDecimal vat = billing.multiply(new BigDecimal(rate)).setScale(2, RoundingMode.DOWN);
         // 计算增值税的附加税
         BigDecimal vatAdd = vat.multiply(new BigDecimal(0.07)).setScale(2, RoundingMode.DOWN);
         // gp=billing-增值税-增值税的附加税

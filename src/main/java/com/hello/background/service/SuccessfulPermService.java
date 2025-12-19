@@ -479,6 +479,10 @@ public class SuccessfulPermService {
                 if (optionalCandidate.isPresent() && null != optionalCandidate.get().getGender()) {
                     successfulPermVO.setGender(optionalCandidate.get().getGender().getDescribe());
                 }
+                // 设置候选人年龄
+                if (optionalCandidate.isPresent() && null != optionalCandidate.get().getAge()) {
+                    successfulPermVO.setCandidateAge(optionalCandidate.get().getAge());
+                }
             }
             return successfulPermVO;
         }).collect(Collectors.toList()),
