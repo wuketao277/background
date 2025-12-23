@@ -171,10 +171,10 @@ public class SalaryController {
     public BigDecimal billingToGp(@RequestParam("billing") BigDecimal billing, @RequestParam("clientId") Integer clientId) {
         // 首先计算增值税
         double rate = 0.06;
-        if (712827 == clientId) {
-            // 712827  环浔
-            rate = 0.01;
-        }
+//        if (712827 == clientId) {
+//            // 712827  环浔
+//            rate = 0.01;
+//        }
         BigDecimal vat = billing.multiply(new BigDecimal(rate)).setScale(2, RoundingMode.DOWN);
         // 计算增值税的附加税
         BigDecimal vatAdd = vat.multiply(new BigDecimal(0.07)).setScale(2, RoundingMode.DOWN);

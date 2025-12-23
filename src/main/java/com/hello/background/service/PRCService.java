@@ -5,11 +5,19 @@ import com.hello.background.repository.PRCRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.PRCVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -71,7 +79,18 @@ public class PRCService {
      */
     public Page<PRCVO> queryPage(String search, Integer currentPage, Integer pageSize) {
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, Sort.Direction.DESC, "id");
-        Page<PRC> all = prcRepository.findAll(pageable);
+        Specification<PRC> specification = new Specification<PRC>() {
+            @Override
+            public Predicate toPredicate(Root<PRC> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (Strings.isNotBlank(search)) {
+                    list.add(criteriaBuilder.or(criteriaBuilder.like(root.get("chineseName"), "%" + search + "%"), criteriaBuilder.like(root.get("companyName"), "%" + search + "%"), criteriaBuilder.like(root.get("schoolName"), "%" + search + "%")));
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        Page<PRC> all = prcRepository.findAll(specification, pageable);
         Page<PRCVO> map = all.map(x -> TransferUtil.transferTo(x, PRCVO.class));
         map = new PageImpl<>(map.getContent(),
                 new PageRequest(map.getPageable().getPageNumber(), map.getPageable().getPageSize()),
