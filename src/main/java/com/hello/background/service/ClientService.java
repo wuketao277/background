@@ -7,6 +7,7 @@ import com.hello.background.repository.ClientExtRepository;
 import com.hello.background.repository.ClientRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ClientVO;
+import com.hello.background.vo.ClientVOSummary;
 import com.hello.background.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -148,6 +149,31 @@ public class ClientService {
             ClientExt clientExt = clientExtRepository.queryById(c.getId());
             ClientVO vo = new ClientVO(c, clientExt);
             return vo;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取全部客户信息
+     *
+     * @return
+     */
+    public List<ClientVOSummary> findAllOrderByChineseNameSummary(UserVO user) {
+        Sort sort = new Sort(Sort.Direction.ASC, "chineseName");
+        Specification<Client> specification = new Specification<Client>() {
+            @Override
+            public Predicate toPredicate(Root<Client> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                // 兼职用户，只能查看指定的客户信息
+                if (user != null && JobTypeEnum.PARTTIME.compareTo(user.getJobType()) == 0) {
+                    list.add(criteriaBuilder.and(getPredicate("parttimers", user.getUsername(), root, criteriaBuilder)));
+                }
+                Predicate[] p = new Predicate[list.size()];
+                return criteriaBuilder.and(list.toArray(p));
+            }
+        };
+        List<Client> all = clientRepository.findAll(specification, sort);
+        return all.stream().map(c -> {
+            return TransferUtil.transferTo(c, ClientVOSummary.class);
         }).collect(Collectors.toList());
     }
 

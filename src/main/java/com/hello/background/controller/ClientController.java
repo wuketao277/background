@@ -4,6 +4,7 @@ import com.hello.background.service.ClientContractService;
 import com.hello.background.service.ClientService;
 import com.hello.background.vo.ClientContractVO;
 import com.hello.background.vo.ClientVO;
+import com.hello.background.vo.ClientVOSummary;
 import com.hello.background.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,17 @@ public class ClientController {
     public List<ClientVO> findAllOrderByChineseName(HttpSession session) {
         UserVO user = (UserVO) session.getAttribute("user");
         return clientService.findAllOrderByChineseName(user);
+    }
+
+    /**
+     * 获取全部客户的摘要信息
+     *
+     * @return
+     */
+    @GetMapping("findAllOrderByChineseNameSummary")
+    public List<ClientVOSummary> findAllOrderByChineseNameSummary(HttpSession session) {
+        UserVO user = (UserVO) session.getAttribute("user");
+        return clientService.findAllOrderByChineseNameSummary(user);
     }
 
     /**
