@@ -134,7 +134,14 @@ public class CaseService {
                             list.add(criteriaBuilder.equal(root.get("hrId"), request.getSearch().getHrId()));
                         }
                         if (Strings.isNotBlank(request.getSearch().getTitle())) {
-                            list.add(criteriaBuilder.like(root.get("title"), "%" + request.getSearch().getTitle() + "%"));
+                            if (null != request.getSearch().getClientId()) {
+                                // 如果指定客户信息的情况下，这里只查title。
+                                list.add(criteriaBuilder.like(root.get("title"), "%" + request.getSearch().getTitle() + "%"));
+                            } else {
+                                // 如果没有指定客户信息的情况下，这里用title搜索title和公司名称。
+                                list.add(criteriaBuilder.or(criteriaBuilder.like(root.get("title"), "%" + request.getSearch().getTitle() + "%")
+                                        , criteriaBuilder.like(root.get("clientChineseName"), "%" + request.getSearch().getTitle() + "%")));
+                            }
                         }
                         if (null != request.getSearch().getStatus()) {
                             list.add(criteriaBuilder.equal(root.get("status"), request.getSearch().getStatus()));
