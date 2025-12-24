@@ -35,7 +35,7 @@ public class PRCCommentController {
      * @param id 主键
      */
     @GetMapping("deleteById")
-    public void deleteById(Integer id) {
+    public void deleteById(@RequestParam("id") Integer id) {
         prcCommentService.deleteById(id);
     }
 
