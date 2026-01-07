@@ -1,5 +1,6 @@
 package com.hello.background.service;
 
+import com.hello.background.common.CommonUtils;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.domain.SuccessfulPerm;
 import com.hello.background.domain.User;
@@ -81,6 +82,10 @@ public class ReportService {
             calcFutureReceiveBillingData(response, false);
             // 计算未来收款情况，不包含一汽的数据
             calcFutureReceiveBillingData(response, true);
+            // 计算按客户offer分组数据
+            generateGroupingByClientOfferData(iterable, startDate, endDate, response);
+            // 计算按客户到账分组数据
+            generateGroupingByClientReceiveData(iterable, startDate, endDate, response);
         } catch (Exception ex) {
             log.error("queryGeneral", ex);
         }
@@ -548,5 +553,69 @@ public class ReportService {
         }
         // 个人 gp到账数据倒排序展示
         response.getPersonalReceiveData().sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+    }
+
+    /**
+     * 生成按照客户offer分组的数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generateGroupingByClientOfferData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        List<QueryGeneralReportResponseKeyValue> groupingByClientOfferDataList = new ArrayList<>();
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (s.getOfferDate() != null && s.getOfferDate().compareTo(startDate) >= 0 && endDate.compareTo(s.getOfferDate()) >= 0 && s.getBilling() != null && s.getType().equals("perm")) {
+                // 获取时间条件符合的数据
+                // 查找数组中是否已经存在该客户
+                List<QueryGeneralReportResponseKeyValue> tempList = groupingByClientOfferDataList.stream().filter(k -> k.getName().equals(s.getClientName())).collect(Collectors.toList());
+                if (tempList.isEmpty()) {
+                    groupingByClientOfferDataList.add(new QueryGeneralReportResponseKeyValue(s.getClientName(), s.getBilling()));
+                } else {
+                    tempList.get(0).setValue(tempList.get(0).getValue().add(s.getBilling()));
+                }
+            }
+        }
+        // 将数据按照gp倒序排序
+        groupingByClientOfferDataList.sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+        for (QueryGeneralReportResponseKeyValue kv : groupingByClientOfferDataList) {
+            response.getGroupingByClientOfferDataX().add(CommonUtils.getClientShortName(kv.getName()));
+            response.getGroupingByClientOfferDataY().add(kv.getValue());
+        }
+    }
+
+    /**
+     * 生成按照客户到账分组的数据
+     *
+     * @param iterable
+     * @param startDate
+     * @param endDate
+     * @param response
+     */
+    private void generateGroupingByClientReceiveData(Iterable<SuccessfulPerm> iterable, Date startDate, Date endDate, QueryGeneralReportResponse response) {
+        List<QueryGeneralReportResponseKeyValue> groupingByClientReceiveDataList = new ArrayList<>();
+        Iterator<SuccessfulPerm> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            SuccessfulPerm s = iterator.next();
+            if (s.getActualPaymentDate() != null && s.getActualPaymentDate().compareTo(startDate) >= 0 && endDate.compareTo(s.getActualPaymentDate()) >= 0 && s.getBilling() != null && s.getType().equals("perm")) {
+                // 获取时间条件符合的数据
+                // 查找数组中是否已经存在该客户
+                List<QueryGeneralReportResponseKeyValue> tempList = groupingByClientReceiveDataList.stream().filter(k -> k.getName().equals(s.getClientName())).collect(Collectors.toList());
+                if (tempList.isEmpty()) {
+                    groupingByClientReceiveDataList.add(new QueryGeneralReportResponseKeyValue(s.getClientName(), s.getBilling()));
+                } else {
+                    tempList.get(0).setValue(tempList.get(0).getValue().add(s.getBilling()));
+                }
+            }
+        }
+        // 将数据按照gp倒序排序
+        groupingByClientReceiveDataList.sort(Comparator.comparing(QueryGeneralReportResponseKeyValue::getValue).reversed());
+        for (QueryGeneralReportResponseKeyValue kv : groupingByClientReceiveDataList) {
+            response.getGroupingByClientReceiveDataX().add(CommonUtils.getClientShortName(kv.getName()));
+            response.getGroupingByClientReceiveDataY().add(kv.getValue());
+        }
     }
 }

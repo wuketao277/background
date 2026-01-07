@@ -38,4 +38,12 @@ public class QueryGeneralReportResponse {
     private List<String> futureReceiveBillingDataX2 = new ArrayList<>();
     // 未来收款Y轴数据，不包含一汽的数据
     private List<BigDecimal> futureReceiveBillingDataY2 = new ArrayList<>();
+    // 按客户offer分组的X轴数据
+    private List<String> groupingByClientOfferDataX = new ArrayList<>();
+    // 按客户offer分组的Y轴数据
+    private List<BigDecimal> groupingByClientOfferDataY = new ArrayList<>();
+    // 按客户到账分组的X轴数据
+    private List<String> groupingByClientReceiveDataX = new ArrayList<>();
+    // 按客户到账分组的Y轴数据
+    private List<BigDecimal> groupingByClientReceiveDataY = new ArrayList<>();
 }
