@@ -89,6 +89,17 @@ public class MyTaskController {
     }
 
     /**
+     * 通过PRCid查询
+     *
+     * @param relativePRCId
+     * @return
+     */
+    @GetMapping("findByRelativePRCId")
+    public List<MyTaskVO> findByRelativePRCId(@RequestParam Integer relativePRCId) {
+        return myTaskService.findByRelativePRCId(relativePRCId);
+    }
+
+    /**
      * 查询本人今日任务
      *
      * @return 任务集合

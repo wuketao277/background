@@ -79,6 +79,17 @@ public class MyTaskService {
     }
 
     /**
+     * 通过PRCid查询
+     *
+     * @param relativePRCId
+     * @return
+     */
+    public List<MyTaskVO> findByRelativePRCId(Integer relativePRCId) {
+        List<MyTask> taskList = myTaskRepository.findByRelativePRCId(relativePRCId);
+        return taskList.stream().map(task -> TransferUtil.transferTo(task, MyTaskVO.class)).collect(Collectors.toList());
+    }
+
+    /**
      * 通过任务执行人与执行日志查询
      *
      * @param executeUserName 执行人登录名

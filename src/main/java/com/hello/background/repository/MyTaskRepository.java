@@ -27,6 +27,14 @@ public interface MyTaskRepository extends PagingAndSortingRepository<MyTask, Int
     List<MyTask> findByRelativeCandidateId(Integer relativeCandidateId);
 
     /**
+     * 通过PRCid查询
+     *
+     * @param relativePRCId
+     * @return
+     */
+    List<MyTask> findByRelativePRCId(Integer relativePRCId);
+
+    /**
      * 通过任务执行人与执行日志查询
      *
      * @param executeUserName 执行人登录名

@@ -47,6 +47,18 @@ public class MyTask {
     private String relativeCandidateChineseName;
 
     /**
+     * 关联PRCid
+     */
+    @Column
+    private Integer relativePRCId;
+
+    /**
+     * 关联PRC中文名字
+     */
+    @Column(length = 50)
+    private String relativePRCChineseName;
+
+    /**
      * 任务的标题
      */
     @Column(length = 200, nullable = false)

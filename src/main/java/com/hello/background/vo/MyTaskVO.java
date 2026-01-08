@@ -37,6 +37,16 @@ public class MyTaskVO {
     private String relativeCandidateChineseName;
 
     /**
+     * 关联PRCid
+     */
+    private Integer relativePRCId;
+
+    /**
+     * 关联PRC中文名字
+     */
+    private String relativePRCChineseName;
+
+    /**
      * 任务的标题
      */
     private String taskTitle;
