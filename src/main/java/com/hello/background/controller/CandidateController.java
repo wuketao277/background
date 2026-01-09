@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -216,5 +217,17 @@ public class CandidateController {
     @GetMapping("finishAllDoubleCheck")
     public boolean finishAllDoubleCheck(@RequestParam("id") Integer id) {
         return candidateService.finishAllDoubleCheck(id);
+    }
+
+    /**
+     * 下载候选人简历
+     *
+     * @param candidateId
+     * @param response
+     */
+    @GetMapping("downloadCandidateResume")
+    public void downloadCandidateResume(@RequestParam("candidateId") Integer candidateId,
+                                        HttpServletResponse response) {
+        candidateService.downloadCandidateResume(candidateId, response);
     }
 }

@@ -15,6 +15,7 @@ import com.hello.background.repository.CandidateForCaseRepository;
 import com.hello.background.repository.CandidateRepository;
 import com.hello.background.repository.LabelRepository;
 import com.hello.background.utils.TransferUtil;
+import com.hello.background.utils.WordDocxUtil;
 import com.hello.background.vo.CandidateAttentionVO;
 import com.hello.background.vo.CandidateVO;
 import com.hello.background.vo.SearchCandidateListCondition;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -875,5 +877,20 @@ public class CandidateService {
             }
         }
         return finish;
+    }
+
+    /**
+     * 下载简历
+     *
+     * @param candidateId
+     * @param response
+     */
+    public void downloadCandidateResume(Integer candidateId, HttpServletResponse response) {
+        try {
+            Candidate candidate = candidateRepository.findById(candidateId).get();
+            WordDocxUtil.downloadCandidateResumeDocx(response, candidate);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+        }
     }
 }
