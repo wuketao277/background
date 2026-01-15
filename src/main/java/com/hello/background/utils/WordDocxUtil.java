@@ -36,10 +36,15 @@ public class WordDocxUtil {
         addParagraph(document, "邮箱：" + candidate.getEmail(), null);
         addParagraph(document, "年龄：" + candidate.getAge().toString(), null);
         addParagraph(document, "生日：" + candidate.getBirthDay(), null);
-        addParagraph(document, "性别：" + candidate.getGender(), null);
+        addParagraph(document, "性别：" + candidate.getGender().getDescribe(), null);
         addParagraph(document, "籍贯：" + candidate.getHometown(), null);
         addParagraph(document, "居住地址：" + candidate.getCurrentAddress(), null);
         addParagraph(document, "家庭情况：" + candidate.getFamily(), null);
+        // 添加空白段落
+        addParagraph(document, "", null);
+        // 添加自我介绍
+        addParagraph(document, "自我评价：", titleFontStyle);
+        addParagraph(document, candidate.getRemark(), null);
         // 添加空白段落
         addParagraph(document, "", null);
         // 设置工作经历标题
