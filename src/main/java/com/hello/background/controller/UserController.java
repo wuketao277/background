@@ -3,6 +3,7 @@ package com.hello.background.controller;
 import com.hello.background.constant.JobTypeEnum;
 import com.hello.background.constant.RoleEnum;
 import com.hello.background.service.UserService;
+import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.SaveUserBasicInfoResponse;
 import com.hello.background.vo.UpdatePassword;
 import com.hello.background.vo.UserVO;
@@ -214,5 +215,17 @@ public class UserController {
         return userService.findAll().stream().filter(u -> {
             return u.getEnabled() && JobTypeEnum.PARTTIME.compareTo(u.getJobType()) == 0;
         }).map(u -> u.getUsername()).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取所有正常状态的兼职
+     *
+     * @return
+     */
+    @GetMapping("getAllEnabledParttimer")
+    public List<UserVO> getAllEnabledParttimer() {
+        return userService.findAll().stream().filter(u -> {
+            return u.getEnabled() && JobTypeEnum.PARTTIME.compareTo(u.getJobType()) == 0;
+        }).map(u -> TransferUtil.transferTo(u, UserVO.class)).collect(Collectors.toList());
     }
 }
