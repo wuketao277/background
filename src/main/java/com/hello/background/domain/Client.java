@@ -90,4 +90,22 @@ public class Client {
      */
     @Column(length = 500)
     private String parttimers;
+
+    /**
+     * 语言要求
+     */
+    @Column(length = 400)
+    private String language;
+
+    /**
+     * 学历要求
+     */
+    @Column(length = 400)
+    private String education;
+
+    /**
+     * 一汽测评与视频录制要求
+     */
+    @Column(length = 400)
+    private String testAndVideo;
 }

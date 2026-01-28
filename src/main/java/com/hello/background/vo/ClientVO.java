@@ -115,6 +115,21 @@ public class ClientVO {
     private List<String> parttimers = new ArrayList<>();
 
     /**
+     * 语言要求
+     */
+    private String language;
+
+    /**
+     * 学历要求
+     */
+    private String education;
+
+    /**
+     * 一汽测评与视频录制要求
+     */
+    private String testAndVideo;
+
+    /**
      * 通过vo对象转换domain对象
      *
      * @return

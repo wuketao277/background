@@ -80,7 +80,7 @@ public class BigEventService {
      */
     public Page<BigEventVO> queryPage(String search, Integer currentPage, Integer pageSize) {
         List<Sort.Order> orderList = new ArrayList<>();
-        orderList.add(new Sort.Order(Sort.Direction.ASC, "id"));
+        orderList.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = new PageRequest(currentPage - 1, pageSize, new Sort(orderList));
         search = "%" + search + "%";
         Page<BigEvent> page = bigEventRepository.findByTitleLikeOrDetailLike(search, search, pageable);
