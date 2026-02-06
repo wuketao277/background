@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -57,6 +58,11 @@ public class CandidateVO {
      * 生日
      */
     private String birthDay;
+
+    /**
+     * 民族
+     */
+    private String nation;
 
     /**
      * 电话

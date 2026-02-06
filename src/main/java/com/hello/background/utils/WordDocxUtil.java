@@ -2,6 +2,7 @@ package com.hello.background.utils;
 
 import com.hello.background.common.CommonUtils;
 import com.hello.background.domain.Candidate;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -31,20 +32,38 @@ public class WordDocxUtil {
 
         // 设置姓名
         addParagraph(document, candidate.getChineseName(), titleFontStyle);
-        // 设置年龄
-        addParagraph(document, "电话：" + candidate.getPhoneNo(), null);
-        addParagraph(document, "邮箱：" + candidate.getEmail(), null);
-        addParagraph(document, "年龄：" + candidate.getAge().toString(), null);
-        addParagraph(document, "生日：" + candidate.getBirthDay(), null);
-        addParagraph(document, "性别：" + candidate.getGender().getDescribe(), null);
-        addParagraph(document, "籍贯：" + candidate.getHometown(), null);
-        addParagraph(document, "居住地址：" + candidate.getCurrentAddress(), null);
-        addParagraph(document, "家庭情况：" + candidate.getFamily(), null);
+        if (Strings.isNotBlank(candidate.getPhoneNo())) {
+            addParagraph(document, "电话：" + candidate.getPhoneNo(), null);
+        }
+        if (Strings.isNotBlank(candidate.getEmail())) {
+            addParagraph(document, "邮箱：" + candidate.getEmail(), null);
+        }
+        if (Strings.isNotBlank(candidate.getBirthDay())) {
+            addParagraph(document, "年龄：" + candidate.getAge().toString(), null);
+            addParagraph(document, "生日：" + candidate.getBirthDay(), null);
+        }
+        if (Strings.isNotBlank(candidate.getGender().getDescribe())) {
+            addParagraph(document, "性别：" + candidate.getGender().getDescribe(), null);
+        }
+        if (Strings.isNotBlank(candidate.getNation())) {
+            addParagraph(document, "民族：" + candidate.getNation(), null);
+        }
+        if (Strings.isNotBlank(candidate.getHometown())) {
+            addParagraph(document, "籍贯：" + candidate.getHometown(), null);
+        }
+        if (Strings.isNotBlank(candidate.getCurrentAddress())) {
+            addParagraph(document, "居住地址：" + candidate.getCurrentAddress(), null);
+        }
+        if (Strings.isNotBlank(candidate.getFamily())) {
+            addParagraph(document, "家庭情况：" + candidate.getFamily(), null);
+        }
         // 添加空白段落
         addParagraph(document, "", null);
         // 添加自我介绍
-        addParagraph(document, "自我评价：", titleFontStyle);
-        addParagraph(document, candidate.getRemark(), null);
+        if (Strings.isNotBlank(candidate.getRemark())) {
+            addParagraph(document, "自我评价：", titleFontStyle);
+            addParagraph(document, candidate.getRemark(), null);
+        }
         // 添加空白段落
         addParagraph(document, "", null);
         // 设置工作经历标题

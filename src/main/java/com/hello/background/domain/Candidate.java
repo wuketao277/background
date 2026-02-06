@@ -64,6 +64,12 @@ public class Candidate {
     private String birthDay;
 
     /**
+     * 民族
+     */
+    @Column(length = 20)
+    private String nation;
+
+    /**
      * 电话
      */
     @Column(length = 20)
