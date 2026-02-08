@@ -42,7 +42,7 @@ public class ClientContract {
     @Column(length = 200)
     private String clientChineseName;
     /**
-     * 中文名
+     * 英文名
      */
     @Column(length = 200)
     private String clientEnglishName;

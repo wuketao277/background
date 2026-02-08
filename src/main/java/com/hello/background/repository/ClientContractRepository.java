@@ -1,7 +1,8 @@
 package com.hello.background.repository;
 
 import com.hello.background.domain.ClientContract;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +15,6 @@ import java.util.List;
  * @Description
  */
 @Repository
-public interface ClientContractRepository extends JpaRepository<ClientContract, Integer> {
+public interface ClientContractRepository extends PagingAndSortingRepository<ClientContract, Integer>, JpaSpecificationExecutor<ClientContract> {
     List<ClientContract> findByClientIdOrderByExpireDate(Integer clientId);
 }

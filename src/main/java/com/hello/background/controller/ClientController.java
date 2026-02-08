@@ -135,4 +135,14 @@ public class ClientController {
     public ClientContractVO findContractByClientContractId(Integer id) {
         return clientContractService.findById(id);
     }
+
+    /**
+     * 排序客户合同信息
+     *
+     * @return
+     */
+    @GetMapping("sortContractView")
+    public List<ClientContractVO> sortContractView() {
+        return clientContractService.sortContractView();
+    }
 }
