@@ -136,4 +136,9 @@ public class ClientContract {
      */
     @Enumerated(value = EnumType.STRING)
     private CompanyEnum company;
+    /**
+     * 人选归属期
+     */
+    @Column(length = 200)
+    private String candidateOwnPeriod;
 }

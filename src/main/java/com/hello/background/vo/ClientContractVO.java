@@ -109,4 +109,8 @@ public class ClientContractVO {
      * 签署公司
      */
     private CompanyEnum company;
+    /**
+     * 人选归属期
+     */
+    private String candidateOwnPeriod;
 }
