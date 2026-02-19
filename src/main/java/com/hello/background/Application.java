@@ -25,7 +25,9 @@ public class Application {
      * 拆到db文件
      */
 //    public static void main(String[] args) {
-    public void splitDBFile() {
+//        splitDBFile();
+//    }
+    public static void splitDBFile() {
         try {
             // 行号
             Integer rowNo = 1;
@@ -52,7 +54,7 @@ public class Application {
                     // 每次读取一行数据，行号自动加一
                     rowNo++;
                     // 控制一个新文件中存储的内容不要太多
-                    if (rowNo > 50000) {
+                    if (rowNo > 40000) {
                         rowNo = 1;
                         fileNo++;
                     }
