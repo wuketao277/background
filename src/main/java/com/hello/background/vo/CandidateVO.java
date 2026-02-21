@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
-import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -205,6 +204,11 @@ public class CandidateVO {
     private List<String> labels = new ArrayList<>();
 
     /**
+     * 候选人客户重复标签列表
+     */
+    private List<String> candidateClientRepeatedLabels = new ArrayList<>();
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -225,6 +229,9 @@ public class CandidateVO {
         if (Strings.isNotBlank(candidate.getLabels())) {
             vo.setLabels(Arrays.asList(candidate.getLabels().split(",")));
         }
+        if (Strings.isNotBlank(candidate.getCandidateClientRepeatedLabels())) {
+            vo.setCandidateClientRepeatedLabels(Arrays.asList(candidate.getCandidateClientRepeatedLabels().split(",")));
+        }
         return vo;
     }
 
@@ -235,8 +242,11 @@ public class CandidateVO {
      */
     public Candidate toCandidate() {
         Candidate candidate = TransferUtil.transferTo(this, Candidate.class);
-        if (null != this.getLabels() && this.getLabels().size() > 0) {
+        if (null != this.getLabels() && !this.getLabels().isEmpty()) {
             candidate.setLabels(Strings.join(this.getLabels(), ','));
+        }
+        if (null != this.getCandidateClientRepeatedLabels() && !this.getCandidateClientRepeatedLabels().isEmpty()) {
+            candidate.setCandidateClientRepeatedLabels(Strings.join(this.getCandidateClientRepeatedLabels(), ','));
         }
         return candidate;
     }

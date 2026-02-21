@@ -245,4 +245,10 @@ public class Candidate {
      */
     @Column(length = 500)
     private String labels;
+
+    /**
+     * 候选人客户重复标签集合
+     */
+    @Column(length = 500)
+    private String candidateClientRepeatedLabels;
 }

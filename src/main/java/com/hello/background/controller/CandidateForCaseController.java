@@ -158,6 +158,13 @@ public class CandidateForCaseController {
         if (JobTypeEnum.PARTTIME.compareTo(userVO.getJobType()) == 0) {
             voList = voList.stream().filter(vo -> userVO.getUsername().equals(vo.getCreateUserName())).collect(Collectors.toList());
         }
+        // 异步处理查询候选人客户重复标签
+        voList.parallelStream().forEach(vo -> {
+            CandidateVO candidateVO = candidateService.findById(vo.getCandidateId(), userVO);
+            if (null != candidateVO) {
+                vo.setCandidateClientRepeatedLabels(candidateVO.getCandidateClientRepeatedLabels());
+            }
+        });
         return voList;
     }
 
@@ -176,6 +183,13 @@ public class CandidateForCaseController {
         if (JobTypeEnum.PARTTIME.compareTo(userVO.getJobType()) == 0) {
             voList = voList.stream().filter(vo -> userVO.getUsername().equals(vo.getCreateUserName())).collect(Collectors.toList());
         }
+        // 异步处理查询候选人客户重复标签
+        voList.parallelStream().forEach(vo -> {
+            CandidateVO candidateVO = candidateService.findById(vo.getCandidateId(), userVO);
+            if (null != candidateVO) {
+                vo.setCandidateClientRepeatedLabels(candidateVO.getCandidateClientRepeatedLabels());
+            }
+        });
         return voList;
     }
 

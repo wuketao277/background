@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 候选人与职位对应表
@@ -101,4 +103,9 @@ public class CandidateForCaseVO {
      * 是否关注
      */
     private Boolean attention = true;
+
+    /**
+     * 候选人客户重复标签列表
+     */
+    private List<String> candidateClientRepeatedLabels = new ArrayList<>();
 }
