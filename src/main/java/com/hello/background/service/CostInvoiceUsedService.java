@@ -6,16 +6,14 @@ import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.CostInvoiceUsedVO;
 import com.hello.background.vo.CostInvoiceUsedVOPageRequest;
 import com.hello.background.vo.CostInvoiceUsedVOPageSearchRequest;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +56,11 @@ public class CostInvoiceUsedService {
             public Predicate toPredicate(Root<CostInvoiceUsed> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
                 CostInvoiceUsedVOPageSearchRequest search = request.getSearch();
-//                if (null != search.getAmId()) {
-//                    Path<Integer> path = root.get("amId");
-//                    Predicate equal = criteriaBuilder.equal(path, search.getAmId());
-//                    list.add(criteriaBuilder.and(equal));
-//                }
+                if (Strings.isNotBlank(search.getConsultantUserName())) {
+                    Path<Integer> path = root.get("consultantUserName");
+                    Predicate equal = criteriaBuilder.equal(path, search.getConsultantUserName());
+                    list.add(criteriaBuilder.and(equal));
+                }
 //                if (null != search.getType()) {
 //                    Path<String> path = root.get("type");
 //                    Predicate equal = criteriaBuilder.equal(path, search.getType());

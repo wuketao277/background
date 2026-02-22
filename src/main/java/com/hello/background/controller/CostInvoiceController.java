@@ -1,6 +1,7 @@
 package com.hello.background.controller;
 
 import com.hello.background.service.CostInvoiceService;
+import com.hello.background.vo.CostInvoiceAvailableAmountVO;
 import com.hello.background.vo.CostInvoiceVO;
 import com.hello.background.vo.CostInvoiceVOPageRequest;
 import com.hello.background.vo.UserVO;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 成本发票控制器
@@ -41,8 +44,9 @@ public class CostInvoiceController {
      * @return
      */
     @PostMapping("queryPage")
-    public Page<CostInvoiceVO> queryPage(@RequestBody CostInvoiceVOPageRequest request) {
-        return costInvoiceService.queryPage(request);
+    public Page<CostInvoiceVO> queryPage(@RequestBody CostInvoiceVOPageRequest request, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return costInvoiceService.queryPage(request, userVO);
     }
 
     /**
@@ -53,5 +57,26 @@ public class CostInvoiceController {
     @GetMapping("deleteById")
     public void deleteById(Integer id) {
         costInvoiceService.deleteById(id);
+    }
+
+    /**
+     * 计算可用金额
+     *
+     * @return
+     */
+    @GetMapping("calcAvailableAmount")
+    public BigDecimal calcAvailableAmount(HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        return costInvoiceService.calcAvailableAmount(userVO);
+    }
+
+    /**
+     * 计算所有顾问可用金额
+     *
+     * @return
+     */
+    @GetMapping("calcAllConsultantAvailableAmount")
+    public List<CostInvoiceAvailableAmountVO> calcAllConsultantAvailableAmount() {
+        return costInvoiceService.calcAllConsultantAvailableAmount();
     }
 }

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 成本发票使用情况
  *
@@ -14,5 +16,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CostInvoiceUsedRepository extends PagingAndSortingRepository<CostInvoiceUsed, Integer>, JpaSpecificationExecutor<CostInvoiceUsed> {
-
+    /**
+     * 通过顾问id查询
+     *
+     * @param consultantId
+     * @return
+     */
+    List<CostInvoiceUsed> findAllByConsultantId(Integer consultantId);
 }
