@@ -101,6 +101,6 @@ public class SecurityController {
      */
     @RequestMapping("checkVersion")
     public boolean checkVersion(String version) {
-        return "1.2.4".equals(version);
+        return "1.2.5".equals(version);
     }
 }
