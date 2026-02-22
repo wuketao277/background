@@ -8,7 +8,7 @@ package com.hello.background.constant;
  * @Description
  */
 public enum ReimbursementApproveStatusEnum {
-    Apply,
-    Approved,
-    Denied;
+    applied,
+    approved,
+    denied;
 }
