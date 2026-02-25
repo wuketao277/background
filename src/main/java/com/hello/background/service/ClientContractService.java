@@ -5,7 +5,6 @@ import com.hello.background.repository.ClientContractRepository;
 import com.hello.background.utils.TransferUtil;
 import com.hello.background.vo.ClientContractVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,13 +62,6 @@ public class ClientContractService {
      * @return
      */
     public List<ClientContractVO> sortContractView() {
-        // 按照客户和合同过期时间排序
-        List<Sort.Order> orderList = new ArrayList<>();
-        Sort.Order order1 = new Sort.Order(Sort.Direction.ASC, "clientId");
-        Sort.Order order2 = new Sort.Order(Sort.Direction.ASC, "expireDate");
-        orderList.add(order1);
-        orderList.add(order2);
-        Sort sort = new Sort(orderList);
         Specification<ClientContract> specification = new Specification<ClientContract>() {
             @Override
             public Predicate toPredicate(Root<ClientContract> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -82,7 +74,7 @@ public class ClientContractService {
                 return criteriaBuilder.and(list.toArray(p));
             }
         };
-        List<ClientContract> clientContractList = clientContractRepository.findAll(specification, sort);
+        List<ClientContract> clientContractList = clientContractRepository.findAll(specification);
         return sortContractList(clientContractList).stream().map(c -> TransferUtil.transferTo(c, ClientContractVO.class)).collect(Collectors.toList());
     }
 
@@ -109,7 +101,21 @@ public class ClientContractService {
 
         // 将 map 中的 values 转换为 list 并返回
         List<ClientContract> list = new ArrayList<>(contractMap.values());
-        list.sort((o1, o2) -> o1.getExpireDate().compareTo(o2.getExpireDate()));
+        list.sort(Comparator.comparing(ClientContract::getContractOrder, Comparator.reverseOrder())
+                .thenComparing(ClientContract::getExpireDate, Comparator.nullsFirst(Comparator.naturalOrder())));
         return list;
+    }
+
+    /**
+     * 设置合同顺序为-1
+     *
+     * @param clientId
+     */
+    public void setContractOrderToMinus1(Integer clientId) {
+        List<ClientContract> contractList = clientContractRepository.findByClientIdOrderByExpireDate(clientId);
+        for (ClientContract contract : contractList) {
+            contract.setContractOrder(-1);
+            clientContractRepository.save(contract);
+        }
     }
 }

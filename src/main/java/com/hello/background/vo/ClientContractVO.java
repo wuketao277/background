@@ -113,4 +113,8 @@ public class ClientContractVO {
      * 人选归属期
      */
     private String candidateOwnPeriod;
+    /**
+     * 合同顺序
+     */
+    private Integer contractOrder = 0;
 }

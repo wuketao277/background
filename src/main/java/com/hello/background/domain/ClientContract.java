@@ -141,4 +141,10 @@ public class ClientContract {
      */
     @Column(length = 200)
     private String candidateOwnPeriod;
+
+    /**
+     * 合同顺序
+     */
+    @Column(columnDefinition = "int default 0")
+    private Integer contractOrder = 0;
 }

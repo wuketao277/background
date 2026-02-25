@@ -145,4 +145,15 @@ public class ClientController {
     public List<ClientContractVO> sortContractView() {
         return clientContractService.sortContractView();
     }
+
+    /**
+     * 设置客户合同顺序为-1
+     *
+     * @return
+     */
+    @GetMapping("setContractOrderToMinus1")
+    public boolean setContractOrderToMinus1(@RequestParam("clientId") Integer clientId) {
+        clientContractService.setContractOrderToMinus1(clientId);
+        return true;
+    }
 }
