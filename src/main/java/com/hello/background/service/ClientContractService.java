@@ -101,7 +101,7 @@ public class ClientContractService {
 
         // 将 map 中的 values 转换为 list 并返回
         List<ClientContract> list = new ArrayList<>(contractMap.values());
-        list.sort(Comparator.comparing(ClientContract::getContractOrder, Comparator.reverseOrder())
+        list.sort(Comparator.comparing(ClientContract::getContractOrder, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(ClientContract::getExpireDate, Comparator.nullsFirst(Comparator.naturalOrder())));
         return list;
     }
