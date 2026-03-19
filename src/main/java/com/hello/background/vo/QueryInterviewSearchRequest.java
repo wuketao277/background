@@ -32,6 +32,14 @@ public class QueryInterviewSearchRequest {
      */
     private LocalDate endDate;
     /**
+     * 面试开始时间
+     */
+    private LocalDate interviewStartDate;
+    /**
+     * 面试结束时间
+     */
+    private LocalDate interviewEndDate;
+    /**
      * 阶段
      */
     private String phase;

@@ -647,7 +647,13 @@ public class CommentService {
                         list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("inputTime"), LocalDateTime.of(search.getStartDate().getYear(), search.getStartDate().getMonthValue(), search.getStartDate().getDayOfMonth(), 0, 0, 0)));
                     }
                     if (null != search.getEndDate()) {
-                        list.add(criteriaBuilder.lessThanOrEqualTo(root.get("inputTime"), LocalDateTime.of(search.getEndDate().getYear(), search.getEndDate().getMonthValue(), search.getEndDate().getDayOfMonth(), 0, 0, 0)));
+                        list.add(criteriaBuilder.lessThanOrEqualTo(root.get("inputTime"), LocalDateTime.of(search.getEndDate().getYear(), search.getEndDate().getMonthValue(), search.getEndDate().getDayOfMonth(), 23, 59, 59)));
+                    }
+                    if (null != search.getInterviewStartDate()) {
+                        list.add(criteriaBuilder.greaterThanOrEqualTo(root.get("interviewTime"), LocalDateTime.of(search.getInterviewStartDate().getYear(), search.getInterviewStartDate().getMonthValue(), search.getInterviewStartDate().getDayOfMonth(), 0, 0, 0)));
+                    }
+                    if (null != search.getInterviewEndDate()) {
+                        list.add(criteriaBuilder.lessThanOrEqualTo(root.get("interviewTime"), LocalDateTime.of(search.getInterviewEndDate().getYear(), search.getInterviewEndDate().getMonthValue(), search.getInterviewEndDate().getDayOfMonth(), 23, 59, 59)));
                     }
                 }
                 Predicate[] p = new Predicate[list.size()];
