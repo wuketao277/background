@@ -74,17 +74,17 @@ public class ClientContract {
     /**
      * 费率
      */
-    @Column(length = 200)
+    @Column(length = 1000)
     private String feeRate;
     /**
      * 保证期
      */
-    @Column(length = 200)
+    @Column(length = 1000)
     private String guaranteePeriod;
     /**
      * 付款期
      */
-    @Column(length = 200)
+    @Column(length = 1000)
     private String paymentPeriod;
     /**
      * BDid
@@ -104,7 +104,7 @@ public class ClientContract {
     /**
      * 地点
      */
-    @Column(length = 50)
+    @Column(length = 400)
     private String location;
     /**
      * 便签
