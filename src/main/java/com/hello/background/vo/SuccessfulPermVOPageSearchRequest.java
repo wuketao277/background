@@ -140,4 +140,8 @@ public class SuccessfulPermVOPageSearchRequest {
      * 备注
      */
     private String comment;
+    /**
+     * po
+     */
+    private String po;
 }
