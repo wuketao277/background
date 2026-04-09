@@ -11,6 +11,7 @@ import com.hello.background.vo.CaseQueryPageRequest;
 import com.hello.background.vo.CaseVO;
 import com.hello.background.vo.UserVO;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,6 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +68,25 @@ public class CaseService {
             }
         }
         return caseVO;
+    }
+
+    /**
+     * 复制职位
+     *
+     * @param id
+     */
+    public void copyCaseById(Integer id, UserVO user) {
+        Optional<ClientCase> caseOptional = caseRepository.findById(id);
+        if (!caseOptional.isPresent()) {
+            return;
+        }
+        ClientCase newClientCase = new ClientCase();
+        BeanUtils.copyProperties(caseOptional.get(), newClientCase);
+        newClientCase.setId(null);
+        newClientCase.setTitle(newClientCase.getTitle() + "-NEW");
+        newClientCase.setCreateUserId(user.getUsername());
+        newClientCase.setCreateTime(LocalDateTime.now());
+        caseRepository.save(newClientCase);
     }
 
     /**

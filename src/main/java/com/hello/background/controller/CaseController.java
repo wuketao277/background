@@ -81,6 +81,18 @@ public class CaseController {
     }
 
     /**
+     * 通过职位id复制职位
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("copyCaseById")
+    public void copyCaseById(@RequestParam("id") Integer id, HttpSession session) {
+        UserVO userVO = (UserVO) session.getAttribute("user");
+        caseService.copyCaseById(id, userVO);
+    }
+
+    /**
      * 查询职位关注
      *
      * @param caseId
