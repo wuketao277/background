@@ -29,6 +29,8 @@ public class WordDocxUtil {
         XWPFDocument document = new XWPFDocument();
         // 通用标题样式
         FontStyle titleFontStyle = new FontStyle(16, null, true);
+        // 工作经历通用标题样式
+        FontStyle companyTitleFontStyle = new FontStyle(12, null, true);
 
         // 设置姓名
         addParagraph(document, candidate.getChineseName(), titleFontStyle);
@@ -66,10 +68,24 @@ public class WordDocxUtil {
         }
         // 添加空白段落
         addParagraph(document, "", null);
-        // 设置工作经历标题
-        addParagraph(document, "工作经历：", titleFontStyle);
-        // 设置工作内容
-        addParagraph(document, candidate.getCompanyName(), null);
+        if (!Strings.isEmpty(candidate.getCompanyName())) {
+            // 设置工作经历标题
+            addParagraph(document, "工作经历：", titleFontStyle);
+            String[] companyList = candidate.getCompanyName().split("\n");
+            // 空行标志，表示下一行是每段工作的标题
+            boolean nullLineFlag = false;
+            for (int i = 0; i < companyList.length; i++) {
+                if (i == 0 || nullLineFlag) {
+                    // 设置工作标题
+                    addParagraph(document, companyList[i], companyTitleFontStyle);
+                } else {
+                    // 设置工作内容
+                    addParagraph(document, companyList[i], null);
+                }
+                // 设置空行标志
+                nullLineFlag = Strings.isBlank(companyList[i].trim());
+            }
+        }
         // 添加空白段落
         addParagraph(document, "", null);
         // 添加教育经历标题
